@@ -1,0 +1,5 @@
+x Allows traversal
+x Perform a first pass to gather information about the program - number of qubits, where the registers are etc.
+- Not allow ancillas at the moment
+- Define a form for qasm files that has functions for each type of Pauli
+- First we get it working over clifford circuits 

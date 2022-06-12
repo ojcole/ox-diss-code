@@ -1,0 +1,2 @@
+run --copt=-std=c++2a --copt=-Ofast
+build --copt=-std=c++2a --copt=-Ofast

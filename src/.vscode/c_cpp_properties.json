@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/bazel-bin/external/staq/_virtual_includes/staq",
+                "${workspaceFolder}/bazel-bin/external/staq/_virtual_includes/staq-tools",
+                "${workspaceFolder}/bazel-bin/external/staq/_virtual_includes/staq-tools-int",
+                "${workspaceFolder}/bazel-bin/external/gtest/_objs"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
