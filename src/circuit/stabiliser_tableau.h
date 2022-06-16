@@ -1,5 +1,5 @@
-#ifndef STABILISERS_STABILISER_TABLEAU_H
-#define STABILISERS_STABILISER_TABLEAU_H
+#ifndef CIRCUIT_STABILISER_TABLEAU_H
+#define CIRCUIT_STABILISER_TABLEAU_H
 
 #include <string>
 #include <unordered_map>
@@ -8,7 +8,7 @@
 #include "staq/qasmtools/ast/ast.hpp"
 
 namespace qstabr {
-namespace stabiliser {
+namespace circuit {
 
 struct Qubit {
   const std::string name;
@@ -17,6 +17,7 @@ struct Qubit {
 
 class StabiliserTableau {
  public:
+  StabiliserTableau();
   StabiliserTableau(qasmtools::ast::Program &&program);
 
   void AddQubits(const std::string &name, int number);
@@ -46,7 +47,7 @@ class StabiliserTableau {
   std::vector<std::vector<int>> grid;
 };
 
-}  // namespace stabiliser
+}  // namespace circuit
 }  // namespace qstabr
 
 #endif

@@ -1,55 +1,37 @@
 #include "phase.h"
 
-namespace {
-
-int gcd(int num, int denom) {
-  while (denom != 0) {
-    int tmp = denom;
-    denom = num % denom;
-    num = tmp;
-  }
-  return num;
-}
-
-}  // namespace
+#include <vector>
 
 namespace qstabr {
 namespace phase {
 
-RationalPhase::RationalPhase(bool negated, int numerator, int denominator)
-    : numerator(numerator), denominator(denominator) {
-  if (negated) {
-    numerator *= 1;
-  }
-  normalise();
+RationalPhase::RationalPhase(Fraction fraction) : fraction(fraction) {
+  Normalise();
 }
 
-RationalPhase::RationalPhase(int num) : numerator(num), denominator(1) {}
+Fraction RationalPhase::getFraction() const { return fraction; }
 
-void RationalPhase::negate() { numerator *= -1; }
+bool RationalPhase::IsClifford() const {
+  const int denom = fraction.getDenominator();
+  if (denom < 0) return denom >= -2;
+  return denom <= 2;
+}
 
-void RationalPhase::normalise() {
-  int negations = 0;
-  if (numerator < 0) {
-    numerator *= -1;
-    negations += 1;
-  }
-  if (denominator < 0) {
-    denominator *= -1;
-    negations += 1;
-  }
-
-  int fac = gcd(numerator, denominator);
-  while (fac != 1) {
-    numerator /= fac;
-    denominator /= fac;
-    fac = gcd(numerator, denominator);
-  }
+void RationalPhase::Normalise() {
+  int numerator = fraction.getNumerator();
+  int denominator = fraction.getDenominator();
+  bool negated = (numerator < 0) != (denominator < 0);
+  if (numerator < 0) numerator *= -1;
+  if (denominator < 0) denominator *= -1;
 
   if (numerator > denominator) {
     if (denominator == 1) {
-      numerator = 1;
-      negations = 0;
+      if ((numerator & 1) == 1) {
+        numerator = 1;
+      } else {
+        numerator = 0;
+      }
+      negated = false;
     } else {
       int gap = numerator / denominator;
       if ((gap & 1) == 1) {
@@ -61,27 +43,72 @@ void RationalPhase::normalise() {
     }
   }
 
-  if ((negations & 1) == 1) {
-    numerator *= 1;
+  if (negated) {
+    numerator *= -1;
   }
+  fraction = {numerator, denominator};
 }
 
 class PhaseTraversal : public qasmtools::ast::Traverse {
+ private:
+  struct FractionPI {
+    Fraction fraction = 1;
+    int piPower = 0;
+  };
+
  public:
-  PhaseTraversal(RationalPhase &phase) : phase(phase) {}
+  PhaseTraversal() {}
 
   void visit(qasmtools::ast::BExpr &expr) override {
     expr.lexp().accept(*this);
-    if (expr.op() == qasmtools::ast::BinaryOp::Divide) {
-      if (denominator) {
-        throw std::runtime_error("division can only appear once");
-      }
-      denominator = true;
-    } else if (expr.op() != qasmtools::ast::BinaryOp::Times) {
-      throw std::runtime_error(
-          "only multiplication and division can be used as a unary operation");
-    }
     expr.rexp().accept(*this);
+
+    auto rFrac = stack.back();
+    stack.pop_back();
+    auto &lFrac = stack.back();
+
+    switch (expr.op()) {
+      case qasmtools::ast::BinaryOp::Divide:
+        if (rFrac.fraction == 0) throw std::runtime_error("Division by zero");
+        if (lFrac.fraction != 0) {
+          lFrac.fraction /= rFrac.fraction;
+          lFrac.piPower -= rFrac.piPower;
+        }
+        break;
+      case qasmtools::ast::BinaryOp::Times:
+        if (rFrac.fraction == 0 || lFrac.fraction == 0) {
+          lFrac.fraction = 0;
+          lFrac.piPower = 0;
+        } else {
+          lFrac.fraction *= rFrac.fraction;
+          lFrac.piPower += rFrac.piPower;
+        }
+        break;
+      case qasmtools::ast::BinaryOp::Minus:
+        if (rFrac.fraction == 0) break;
+        if (lFrac.fraction == 0) {
+          lFrac.fraction = rFrac.fraction * -1;
+          lFrac.piPower = rFrac.piPower;
+          break;
+        }
+        if (lFrac.piPower != rFrac.piPower) {
+          throw std::runtime_error("different powers of pi for minus");
+        }
+        lFrac.fraction -= rFrac.piPower;
+        break;
+      case qasmtools::ast::BinaryOp::Plus:
+        if (rFrac.fraction == 0 || lFrac.fraction == 0) {
+          lFrac = rFrac;
+          break;
+        }
+        if (lFrac.piPower != rFrac.piPower) {
+          throw std::runtime_error("different powers of pi for plus");
+        }
+        lFrac.fraction += rFrac.piPower;
+        break;
+      default:
+        throw std::runtime_error("unrecognised binary operation");
+    }
   }
 
   void visit(qasmtools::ast::UExpr &expr) override {
@@ -89,27 +116,15 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
       throw std::runtime_error(
           "only negation can be used as a unary operation");
     }
-
-    phase.negate();
     expr.subexp().accept(*this);
+    auto &frac = stack.back();
+    frac.fraction *= -1;
   }
 
-  void visit(qasmtools::ast::PiExpr &expr) override {
-    if (pi) {
-      throw std::runtime_error("multiple pi found");
-    }
-    if (denominator) {
-      throw std::runtime_error("pi can only exist in the numerator");
-    }
-    pi = true;
-  }
+  void visit(qasmtools::ast::PiExpr &expr) override { stack.push_back({1, 1}); }
 
   void visit(qasmtools::ast::IntExpr &expr) override {
-    if (!denominator) {
-      phase *= expr.value();
-    } else {
-      phase /= expr.value();
-    }
+    stack.push_back({expr.value(), 0});
   }
 
   void visit(qasmtools::ast::RealExpr &expr) override {
@@ -120,19 +135,24 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
     throw std::runtime_error("variable expressions are disallowed");
   }
 
-  bool getPi() const { return pi; }
+  RationalPhase getPhase() {
+    if (stack.size() != 1) throw std::runtime_error("Invalid state");
+
+    auto &fraction = stack.back();
+    if (fraction.piPower != 1 && fraction.fraction != 0) {
+      throw std::runtime_error("Invalid pi power");
+    }
+    return fraction.fraction;
+  }
 
  private:
-  phase::RationalPhase &phase;
-  bool pi = false;
-  bool denominator = false;
+  std::vector<FractionPI> stack;
 };
 
-RationalPhase getPhaseFromExpr(qasmtools::ast::Expr &expression) {
-  RationalPhase phase;
-  PhaseTraversal traversal(phase);
+RationalPhase getRationalPhaseFromExpr(qasmtools::ast::Expr &expression) {
+  PhaseTraversal traversal;
   expression.accept(traversal);
-  return phase;
+  return traversal.getPhase();
 }
 
 }  // namespace phase

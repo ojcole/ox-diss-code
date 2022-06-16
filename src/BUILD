@@ -8,6 +8,7 @@ cc_binary(
     copts = [],
     data = ["@//qasm_files:clifford.qasm"],
     deps = [
+        "//phase",
         "//stabilisers:stabiliser_tableau",
         "@staq",
         "@staq//:staq-tools",

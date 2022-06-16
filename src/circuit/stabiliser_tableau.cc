@@ -8,7 +8,7 @@
 #include "staq/transformations/inline.hpp"
 
 namespace qstabr {
-namespace stabiliser {
+namespace circuit {
 
 namespace {
 
@@ -25,9 +25,9 @@ class StabiliserTraversal : public qasmtools::ast::Traverse {
     const auto &offset = arg.offset();
     assert(offset.has_value());
     tableau.ApplyUnitaryGate({arg.var(), *offset},
-                             phase::getPhaseFromExpr(gate.theta()),
-                             phase::getPhaseFromExpr(gate.phi()),
-                             phase::getPhaseFromExpr(gate.lambda()));
+                             phase::getRationalPhaseFromExpr(gate.theta()),
+                             phase::getRationalPhaseFromExpr(gate.phi()),
+                             phase::getRationalPhaseFromExpr(gate.lambda()));
   }
 
   void visit(qasmtools::ast::CNOTGate &gate) override {
@@ -44,6 +44,8 @@ class StabiliserTraversal : public qasmtools::ast::Traverse {
 };
 
 }  // namespace
+
+StabiliserTableau::StabiliserTableau() {}
 
 StabiliserTableau::StabiliserTableau(qasmtools::ast::Program &&program)
     : numQubits(program.qubits()) {
@@ -108,6 +110,7 @@ void StabiliserTableau::ApplyZRot(const Qubit &qubit,
                                   const phase::RationalPhase &phase) {
   int qubitIndex = GetQubitIndex(qubit);
   int iters = (static_cast<int>(phase / phase::PI_BY_2) + 4) % 4;
+  std::cout << phase << " " << iters << std::endl;
   for (int j{}; j < iters; j++) {
     for (int i{}; i < 2 * numQubits; i++) {
       grid[i][2 * numQubits] ^=
@@ -170,5 +173,5 @@ void StabiliserTableau::Print() {
   }
 }
 
-}  // namespace stabiliser
+}  // namespace circuit
 }  // namespace qstabr

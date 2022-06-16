@@ -1,7 +1,7 @@
 #include "pauli_graph.h"
 
 namespace qstabr {
-namespace stabilisers {
+namespace circuit {
 
 PauliGraph::PauliGraph() {}
 
@@ -25,5 +25,5 @@ void PauliGraph::AddString(const PauliString &string) {
   edges[string] = commutingSet;
 }
 
-}  // namespace stabilisers
+}  // namespace circuit
 }  // namespace qstabr

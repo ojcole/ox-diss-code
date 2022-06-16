@@ -4,12 +4,12 @@
 #include <string>
 
 namespace qstabr {
-namespace stabilisers {
+namespace circuit {
 
-PauliString::PauliString(bool sign, const std::vector<PauliLetter> &string)
-    : sign(sign), string(string) {}
+PauliString::PauliString(const std::vector<PauliLetter> &string)
+    : string(string) {}
 
-bool PauliString::DoesCommute(const PauliString &other) const {
+bool PauliString::CommutesWith(const PauliString &other) const {
   assert(other.string.size() == string.size());
 
   int anticommute{};
@@ -24,7 +24,7 @@ bool PauliString::DoesCommute(const PauliString &other) const {
 }
 
 bool PauliString::operator==(const PauliString &other) const {
-  if (other.string.size() != string.size() || sign != other.sign) return false;
+  if (other.string.size() != string.size()) return false;
   for (size_t i{}; i < string.size(); i++) {
     if (other.string[i] != string[i]) return false;
   }
@@ -33,13 +33,22 @@ bool PauliString::operator==(const PauliString &other) const {
 
 size_t PauliStringHash::operator()(const PauliString &string) const {
   std::string strRep;
-  strRep.resize(string.string.size() + 1);
-  strRep[0] = string.sign ? '+' : '-';
+  strRep.resize(string.string.size());
   for (size_t i{}; i < string.string.size(); i++) {
-    strRep[i + 1] = string.string[i];
+    strRep[i] = string.string[i];
   }
   return std::hash<std::string>()(strRep);
 }
 
-}  // namespace stabilisers
+PauliExponential::PauliExponential(const PauliString &string,
+                                   std::unique_ptr<qasmtools::ast::Expr> phase)
+    : string(string), phase(std::move(phase)) {}
+
+bool PauliExponential::CommutesWith(const PauliExponential &other) const {
+  return string.CommutesWith(other.string);
+}
+
+void PauliExponential::PushCliffordThrough(const CliffordGate &gate) {}
+
+}  // namespace circuit
 }  // namespace qstabr

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "stabilisers/stabiliser_tableau.h"
+#include "circuit/stabiliser_tableau.h"
 #include "staq/qasmtools/parser/parser.hpp"
 
 int main(int argc, char const* argv[]) {
@@ -10,6 +10,9 @@ int main(int argc, char const* argv[]) {
   qasmtools::parser::Parser parser(preprocessor);
   auto ast = parser.parse();
 
-  qstabr::stabiliser::StabiliserTableau tableau(std::move(*ast));
-  tableau.Print();
+  // qstabr::stabiliser::StabiliserTableau tableau(std::move(*ast));
+  // tableau.Print();
+
+  qstabr::phase::RationalPhase phase{{-9, 4}};
+  std::cout << phase << std::endl;
 }

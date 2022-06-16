@@ -1,5 +1,5 @@
-#ifndef STABILISERS_PAULI_GRAPH_H_
-#define STABILISERS_PAULI_GRAPH_H_
+#ifndef CIRCUIT_PAULI_GRAPH_H_
+#define CIRCUIT_PAULI_GRAPH_H_
 
 #include <unordered_map>
 #include <unordered_set>
@@ -8,7 +8,7 @@
 #include "pauli.h"
 
 namespace qstabr {
-namespace stabilisers {
+namespace circuit {
 
 class PauliGraph {
  public:
@@ -23,7 +23,7 @@ class PauliGraph {
   std::vector<PauliString> strings;
 };
 
-}  // namespace stabilisers
+}  // namespace circuit
 }  // namespace qstabr
 
 #endif
