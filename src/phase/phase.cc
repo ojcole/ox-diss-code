@@ -69,7 +69,7 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
 
     switch (expr.op()) {
       case qasmtools::ast::BinaryOp::Divide:
-        if (rFrac.fraction == 0) throw std::runtime_error("Division by zero");
+        if (rFrac.fraction == 0) throw PhaseException("Division by zero");
         if (lFrac.fraction != 0) {
           lFrac.fraction /= rFrac.fraction;
           lFrac.piPower -= rFrac.piPower;
@@ -92,7 +92,7 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
           break;
         }
         if (lFrac.piPower != rFrac.piPower) {
-          throw std::runtime_error("different powers of pi for minus");
+          throw PhaseException("Different powers of pi for minus");
         }
         lFrac.fraction -= rFrac.piPower;
         break;
@@ -102,19 +102,18 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
           break;
         }
         if (lFrac.piPower != rFrac.piPower) {
-          throw std::runtime_error("different powers of pi for plus");
+          throw PhaseException("Different powers of pi for plus");
         }
         lFrac.fraction += rFrac.piPower;
         break;
       default:
-        throw std::runtime_error("unrecognised binary operation");
+        throw PhaseException("Unrecognised binary operation");
     }
   }
 
   void visit(qasmtools::ast::UExpr &expr) override {
     if (expr.op() != qasmtools::ast::UnaryOp::Neg) {
-      throw std::runtime_error(
-          "only negation can be used as a unary operation");
+      throw PhaseException("Only negation can be used as a unary operation");
     }
     expr.subexp().accept(*this);
     auto &frac = stack.back();
@@ -128,19 +127,19 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
   }
 
   void visit(qasmtools::ast::RealExpr &expr) override {
-    throw std::runtime_error("real expressions are disallowed");
+    throw PhaseException("Real expressions are disallowed");
   }
 
   void visit(qasmtools::ast::VarExpr &expr) override {
-    throw std::runtime_error("variable expressions are disallowed");
+    throw PhaseException("Variable expressions are disallowed");
   }
 
   RationalPhase getPhase() {
-    if (stack.size() != 1) throw std::runtime_error("Invalid state");
+    if (stack.size() != 1) throw PhaseException("Invalid state");
 
     auto &fraction = stack.back();
     if (fraction.piPower != 1 && fraction.fraction != 0) {
-      throw std::runtime_error("Invalid pi power");
+      throw PhaseException("Invalid pi power");
     }
     return fraction.fraction;
   }

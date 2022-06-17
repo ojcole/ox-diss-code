@@ -17,7 +17,7 @@ void PauliGraph::AddString(const PauliString &string) {
   if (it != edges.end()) return;
   std::vector<PauliString> commutingSet;
   for (const auto &str : strings) {
-    if (string.DoesCommute(str)) {
+    if (string.CommutesWith(str)) {
       edges[str].push_back(string);
       commutingSet.push_back(str);
     }

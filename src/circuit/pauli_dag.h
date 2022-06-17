@@ -13,9 +13,9 @@ class PauliDAG {
  public:
   PauliDAG();
 
-  void AddPauli(const PauliExponential &pauli);
+  void AddPauli(PauliExponential &&pauli);
 
-  std::vector<std::vector<const PauliExponential &>> GetGroups();
+  std::vector<std::vector<PauliExponential>> GetGroups();
 
  private:
   std::vector<PauliExponential> paulis;

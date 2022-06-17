@@ -2,12 +2,23 @@
 #define PHASE_PHASE_H_
 
 #include <ostream>
+#include <stdexcept>
 
 #include "fraction.h"
 #include "staq/qasmtools/ast/traversal.hpp"
 
 namespace qstabr {
 namespace phase {
+
+class PhaseException : public std::exception {
+ public:
+  PhaseException(const std::string &message) : message(message) {}
+
+  const char *what() const throw() { return message.c_str(); }
+
+ private:
+  std::string message;
+};
 
 class RationalPhase {
  public:
@@ -103,6 +114,9 @@ inline std::ostream &operator<<(std::ostream &stream,
 }
 
 const RationalPhase PI_BY_2{{1, 2}};
+const RationalPhase PI{{1, 2}};
+const RationalPhase ZERO{{0, 1}};
+const RationalPhase MINUS_PI_BY_2{{-1, 2}};
 
 RationalPhase getRationalPhaseFromExpr(qasmtools::ast::Expr &expression);
 

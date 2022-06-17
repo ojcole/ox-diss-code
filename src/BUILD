@@ -8,9 +8,9 @@ cc_binary(
     copts = [],
     data = ["@//qasm_files:clifford.qasm"],
     deps = [
+        "//circuit:pauli_circuit",
         "//phase",
-        "//stabilisers:stabiliser_tableau",
         "@staq",
-        "@staq//:staq-tools",
+        "@staq//:staq_tools",
     ],
 )

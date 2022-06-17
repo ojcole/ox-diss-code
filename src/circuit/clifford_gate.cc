@@ -3,29 +3,36 @@
 namespace qstabr {
 namespace circuit {
 
-GateType CliffordGate::getGateType() const { return type; }
+GateType CliffordGate::GetGateType() const { return type; }
 
-CliffordGate CliffordGate::CreateCNOT(int control, int target) {
+Qubit CliffordGate::GetFirstQubit() const { return qubit1; }
+
+Qubit CliffordGate::GetSecondQubit() const { return qubit2; }
+
+std::optional<phase::RationalPhase> CliffordGate::GetPhase() const {
+  return phase;
+}
+
+CliffordGate CliffordGate::CreateCNOT(Qubit control, Qubit target) {
   return CliffordGate(CNOT, control, target);
 }
 
-CliffordGate CliffordGate::CreateHAD(int qubit) {
+CliffordGate CliffordGate::CreateHAD(Qubit qubit) {
   return CliffordGate(HAD, qubit);
 }
 
-CliffordGate CliffordGate::CreateZRot(int qubit,
+CliffordGate CliffordGate::CreateZRot(Qubit qubit,
                                       const phase::RationalPhase &phase) {
-  return CliffordGate(ZROT, qubit, -1, phase);
+  return CliffordGate(ZROT, qubit, {}, phase);
 }
 
-CliffordGate CliffordGate::CreateXRot(int qubit,
+CliffordGate CliffordGate::CreateXRot(Qubit qubit,
                                       const phase::RationalPhase &phase) {
-  return CliffordGate(XROT, qubit, -1, phase);
+  return CliffordGate(XROT, qubit, {}, phase);
 }
 
-CliffordGate::CliffordGate(
-    GateType type, int qubit1, int qubit2,
-    const std::optional<phase::RationalPhase> &phase = std::nullopt)
+CliffordGate::CliffordGate(GateType type, Qubit qubit1, Qubit qubit2,
+                           const std::optional<phase::RationalPhase> &phase)
     : type(type), qubit1(qubit1), qubit2(qubit2), phase(phase) {}
 
 }  // namespace circuit

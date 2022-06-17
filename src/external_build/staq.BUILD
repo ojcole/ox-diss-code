@@ -1,7 +1,7 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
-    name = "staq-tools-int",
+    name = "staq_tools_int",
     srcs = [],
     hdrs = glob(
         [
@@ -13,7 +13,7 @@ cc_library(
 )
 
 cc_library(
-    name = "staq-tools",
+    name = "staq_tools",
     srcs = [],
     hdrs = glob(
         [
@@ -36,5 +36,5 @@ cc_library(
     include_prefix = "staq",
     strip_include_prefix = "include",
     visibility = ["//visibility:public"],
-    deps = [":staq-tools-int"],
+    deps = [":staq_tools_int"],
 )

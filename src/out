@@ -1,0 +1,52 @@
+Loading: 
+Loading: 0 packages loaded
+Analyzing: target //:main (0 packages loaded, 0 targets configured)
+INFO: Analyzed target //:main (0 packages loaded, 0 targets configured).
+INFO: Found 1 target...
+[0 / 3] [Prepa] BazelWorkspaceStatusAction stable-status.txt
+INFO: From Compiling circuit/pauli_dag.cc:
+circuit/pauli_dag.cc: In member function 'void qstabr::circuit::PauliDAG::AddPauli(qstabr::circuit::PauliExponential&&)':
+circuit/pauli_dag.cc:8:19: warning: comparison of integer expressions of different signedness: 'int' and 'std::vector<qstabr::circuit::PauliExponential>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+    8 |   for (int i{}; i < paulis.size(); i++) {
+      |                 ~~^~~~~~~~~~~~~~~
+circuit/pauli_dag.cc: In member function 'std::vector<std::vector<qstabr::circuit::PauliExponential> > qstabr::circuit::PauliDAG::GetGroups()':
+circuit/pauli_dag.cc:23:21: warning: comparison of integer expressions of different signedness: 'int' and 'std::vector<qstabr::circuit::PauliExponential>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+   23 |     for (int i{}; i < paulis.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~
+INFO: From Compiling circuit/pauli_circuit.cc:
+circuit/pauli_circuit.cc: In member function 'int qstabr::circuit::PauliCircuit::FirstCliffordGate(int)':
+circuit/pauli_circuit.cc:143:24: warning: comparison of integer expressions of different signedness: 'int' and 'std::vector<std::variant<qstabr::circuit::CliffordGate, qstabr::circuit::PauliExponential> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+  143 |   for (int i{after}; i < gates.size(); i++) {
+      |                      ~~^~~~~~~~~~~~~~
+[5 / 9] Compiling main.cc; 1s linux-sandbox ... (3 actions running)
+INFO: From Compiling circuit/helpers.cc:
+In file included from circuit/helpers.cc:4:
+bazel-out/k8-fastbuild/bin/external/staq/_virtual_includes/staq/staq/transformations/inline.hpp:277:13: warning: 'void staq::transformations::inline_ast(qasmtools::ast::ASTNode&, const staq::transformations::Inliner::config&)' defined but not used [-Wunused-function]
+  277 | static void inline_ast(ast::ASTNode& node, const Inliner::config& params) {
+      |             ^~~~~~~~~~
+bazel-out/k8-fastbuild/bin/external/staq/_virtual_includes/staq/staq/transformations/inline.hpp:272:13: warning: 'void staq::transformations::inline_ast(qasmtools::ast::ASTNode&)' defined but not used [-Wunused-function]
+  272 | static void inline_ast(ast::ASTNode& node) {
+      |             ^~~~~~~~~~
+INFO: From Compiling circuit/stabiliser_tableau.cc:
+In file included from circuit/stabiliser_tableau.cc:9:
+bazel-out/k8-fastbuild/bin/external/staq/_virtual_includes/staq/staq/transformations/inline.hpp:277:13: warning: 'void staq::transformations::inline_ast(qasmtools::ast::ASTNode&, const staq::transformations::Inliner::config&)' defined but not used [-Wunused-function]
+  277 | static void inline_ast(ast::ASTNode& node, const Inliner::config& params) {
+      |             ^~~~~~~~~~
+bazel-out/k8-fastbuild/bin/external/staq/_virtual_includes/staq/staq/transformations/inline.hpp:272:13: warning: 'void staq::transformations::inline_ast(qasmtools::ast::ASTNode&)' defined but not used [-Wunused-function]
+  272 | static void inline_ast(ast::ASTNode& node) {
+      |             ^~~~~~~~~~
+[8 / 9] [Prepa] Linking main
+ERROR: /home/ojcole/masters/ox-diss-code/src/BUILD:3:10: Linking main failed: (Exit 1): gcc failed: error executing command /usr/bin/gcc @bazel-out/k8-fastbuild/bin/main-2.params
+
+Use --sandbox_debug to see verbose messages from the sandbox and retain the sandbox build root for debugging
+/usr/bin/ld.gold: error: bazel-out/k8-fastbuild/bin/circuit/_objs/helpers/helpers.pic.o: multiple definition of 'staq::transformations::desugar(qasmtools::ast::ASTNode&)'
+/usr/bin/ld.gold: bazel-out/k8-fastbuild/bin/circuit/_objs/stabiliser_tableau/stabiliser_tableau.pic.o: previous definition here
+bazel-out/k8-fastbuild/bin/circuit/_objs/pauli_circuit/pauli_circuit.pic.o:pauli_circuit.cc:function qstabr::circuit::PauliCircuit::PauliCircuit(qasmtools::ast::Program&&): error: undefined reference to 'qstabr::circuit::PauliDAG::PauliDAG()'
+collect2: error: ld returned 1 exit status
+Target //:main failed to build
+Use --verbose_failures to see the command lines of failed build steps.
+INFO: Elapsed time: 3.624s, Critical Path: 3.58s
+INFO: 9 processes: 2 internal, 7 linux-sandbox.
+FAILED: Build did NOT complete successfully
+ERROR: Build failed. Not running target
+FAILED: Build did NOT complete successfully

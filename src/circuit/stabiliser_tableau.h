@@ -4,20 +4,18 @@
 #include <string>
 #include <unordered_map>
 
+#include "helpers.h"
 #include "phase/phase.h"
+#include "qubit_manager.h"
 #include "staq/qasmtools/ast/ast.hpp"
 
 namespace qstabr {
 namespace circuit {
 
-struct Qubit {
-  const std::string name;
-  const int offset;
-};
-
 class StabiliserTableau {
  public:
-  StabiliserTableau();
+  StabiliserTableau(int qubits,
+                    const std::shared_ptr<QubitManager> &qubitManger);
   StabiliserTableau(qasmtools::ast::Program &&program);
 
   void AddQubits(const std::string &name, int number);
@@ -32,19 +30,12 @@ class StabiliserTableau {
   void Print();
 
  private:
-  void NormaliseProgram(qasmtools::ast::Program &program);
   void GenerateTableau(qasmtools::ast::Program &normalisedProgram);
-  int GetQubitIndex(const Qubit &qubit);
-
-  struct QubitEntry {
-    int size;
-    int firstQubit;
-  };
 
   int numQubits;
-  int nextQubit = 0;
-  std::unordered_map<std::string, QubitEntry> qubits;
   std::vector<std::vector<int>> grid;
+
+  std::shared_ptr<QubitManager> qubitManager;
 };
 
 }  // namespace circuit

@@ -21,7 +21,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":fraction",
-        "@staq//:staq-tools",
+        "@staq//:staq_tools",
     ],
 )
 

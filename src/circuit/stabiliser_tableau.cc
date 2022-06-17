@@ -3,9 +3,8 @@
 #include <cassert>
 #include <stdexcept>
 
+#include "helpers.h"
 #include "staq/qasmtools/ast/traversal.hpp"
-#include "staq/transformations/desugar.hpp"
-#include "staq/transformations/inline.hpp"
 
 namespace qstabr {
 namespace circuit {
@@ -45,22 +44,21 @@ class StabiliserTraversal : public qasmtools::ast::Traverse {
 
 }  // namespace
 
-StabiliserTableau::StabiliserTableau() {}
+StabiliserTableau::StabiliserTableau(
+    int qubits, const std::shared_ptr<QubitManager> &qubitManager)
+    : numQubits(qubits), qubitManager(qubitManager) {
+  grid.resize(2 * numQubits);
+  for (int i{}; i < 2 * numQubits; i++) {
+    grid[i].resize(2 * numQubits + 1);
+    grid[i][i] = 1;
+  }
+}
 
 StabiliserTableau::StabiliserTableau(qasmtools::ast::Program &&program)
     : numQubits(program.qubits()) {
+  qubitManager = std::make_shared<QubitManager>();
   NormaliseProgram(program);
   GenerateTableau(program);
-}
-
-void StabiliserTableau::NormaliseProgram(qasmtools::ast::Program &program) {
-  staq::transformations::desugar(program);
-
-  staq::transformations::Inliner::config config = {
-      false, std::set<std::string_view>()};
-
-  staq::transformations::Inliner inliner(config);
-  program.accept(inliner);
 }
 
 void StabiliserTableau::GenerateTableau(
@@ -75,15 +73,8 @@ void StabiliserTableau::GenerateTableau(
   normalisedProgram.accept(traversal);
 }
 
-int StabiliserTableau::GetQubitIndex(const Qubit &qubit) {
-  auto it = qubits.find(qubit.name);
-  assert(it != qubits.end());
-  return it->second.firstQubit + qubit.offset;
-}
-
 void StabiliserTableau::AddQubits(const std::string &name, int number) {
-  qubits.insert({name, {number, nextQubit}});
-  nextQubit += number;
+  return qubitManager->AddQubits(name, number);
 }
 
 void StabiliserTableau::ApplyUnitaryGate(const Qubit &qubit,
@@ -108,9 +99,8 @@ void StabiliserTableau::ApplyXRot(const Qubit &qubit,
 
 void StabiliserTableau::ApplyZRot(const Qubit &qubit,
                                   const phase::RationalPhase &phase) {
-  int qubitIndex = GetQubitIndex(qubit);
+  int qubitIndex = qubitManager->GetQubitIndex(qubit);
   int iters = (static_cast<int>(phase / phase::PI_BY_2) + 4) % 4;
-  std::cout << phase << " " << iters << std::endl;
   for (int j{}; j < iters; j++) {
     for (int i{}; i < 2 * numQubits; i++) {
       grid[i][2 * numQubits] ^=
@@ -122,8 +112,8 @@ void StabiliserTableau::ApplyZRot(const Qubit &qubit,
 
 void StabiliserTableau::ApplyCNOTGate(const Qubit &control,
                                       const Qubit &target) {
-  int ctrlIndex = GetQubitIndex(control);
-  int tgtIndex = GetQubitIndex(target);
+  int ctrlIndex = qubitManager->GetQubitIndex(control);
+  int tgtIndex = qubitManager->GetQubitIndex(target);
 
   for (int i{}; i < 2 * numQubits; i++) {
     grid[i][2 * numQubits] ^=
@@ -135,7 +125,7 @@ void StabiliserTableau::ApplyCNOTGate(const Qubit &control,
 }
 
 void StabiliserTableau::ApplyHadamard(const Qubit &qubit) {
-  int qubitIndex = GetQubitIndex(qubit);
+  int qubitIndex = qubitManager->GetQubitIndex(qubit);
   for (int i{}; i < 2 * numQubits; i++) {
     grid[i][2 * numQubits] ^=
         grid[i][qubitIndex] * grid[i][qubitIndex + numQubits];

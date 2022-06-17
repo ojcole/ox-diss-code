@@ -3,7 +3,7 @@
 
 #include <optional>
 
-#include "pauli.h"
+#include "helpers.h"
 #include "phase/phase.h"
 
 namespace qstabr {
@@ -13,20 +13,25 @@ enum GateType { CNOT, ZROT, XROT, HAD };
 
 class CliffordGate {
  public:
-  GateType getGateType() const;
+  GateType GetGateType() const;
+  Qubit GetFirstQubit() const;
+  Qubit GetSecondQubit() const;
+  std::optional<phase::RationalPhase> GetPhase() const;
 
-  static CliffordGate CreateCNOT(int control, int target);
-  static CliffordGate CreateHAD(int qubit);
-  static CliffordGate CreateZRot(int qubit, const phase::RationalPhase &phase);
-  static CliffordGate CreateXRot(int qubit, const phase::RationalPhase &phase);
+  static CliffordGate CreateCNOT(Qubit control, Qubit target);
+  static CliffordGate CreateHAD(Qubit qubit);
+  static CliffordGate CreateZRot(Qubit qubit,
+                                 const phase::RationalPhase &phase);
+  static CliffordGate CreateXRot(Qubit qubit,
+                                 const phase::RationalPhase &phase);
 
  private:
-  CliffordGate(GateType type, int qubit1, int qubit2 = -1,
+  CliffordGate(GateType type, Qubit qubit1, Qubit qubit2 = {},
                const std::optional<phase::RationalPhase> &phase = std::nullopt);
 
   GateType type;
-  int qubit1;
-  int qubit2;
+  Qubit qubit1;
+  Qubit qubit2;
   std::optional<phase::RationalPhase> phase;
 };
 
