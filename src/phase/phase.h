@@ -24,7 +24,7 @@ class RationalPhase {
  public:
   RationalPhase(Fraction fraction);
 
-  Fraction getFraction() const;
+  Fraction GetFraction() const;
 
   bool IsClifford() const;
 
@@ -109,8 +109,8 @@ inline void RationalPhase::operator/=(const RationalPhase &other) {
 
 inline std::ostream &operator<<(std::ostream &stream,
                                 const RationalPhase &phase) {
-  return stream << phase.fraction.getNumerator() << "*pi/"
-                << phase.fraction.getDenominator();
+  return stream << phase.fraction.GetNumerator() << "*pi/"
+                << phase.fraction.GetDenominator();
 }
 
 const RationalPhase PI_BY_2{{1, 2}};
@@ -118,7 +118,7 @@ const RationalPhase PI{{1, 2}};
 const RationalPhase ZERO{{0, 1}};
 const RationalPhase MINUS_PI_BY_2{{-1, 2}};
 
-RationalPhase getRationalPhaseFromExpr(qasmtools::ast::Expr &expression);
+RationalPhase GetRationalPhaseFromExpr(qasmtools::ast::Expr &expression);
 
 }  // namespace phase
 }  // namespace qstabr

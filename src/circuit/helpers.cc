@@ -23,8 +23,7 @@ void NormaliseProgram(qasmtools::ast::Program &program) {
   staq::transformations::Inliner::config config = {
       false, std::set<std::string_view>()};
 
-  staq::transformations::Inliner inliner(config);
-  program.accept(inliner);
+  staq::transformations::inline_ast(program, config);
 }
 
 std::unique_ptr<qasmtools::ast::Expr> AddPIByTwoToPhase(
@@ -45,6 +44,13 @@ std::unique_ptr<qasmtools::ast::Expr> AddExprPhases(
     const qasmtools::ast::Expr &lhs, const qasmtools::ast::Expr &rhs) {
   return qasmtools::ast::BExpr::create({}, qasmtools::ast::object::clone(lhs),
                                        qasmtools::ast::BinaryOp::Plus,
+                                       qasmtools::ast::object::clone(rhs));
+}
+
+std::unique_ptr<qasmtools::ast::Expr> SubtractExprPhases(
+    const qasmtools::ast::Expr &lhs, const qasmtools::ast::Expr &rhs) {
+  return qasmtools::ast::BExpr::create({}, qasmtools::ast::object::clone(lhs),
+                                       qasmtools::ast::BinaryOp::Minus,
                                        qasmtools::ast::object::clone(rhs));
 }
 

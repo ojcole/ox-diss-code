@@ -4,11 +4,7 @@
 #include "staq/qasmtools/parser/parser.hpp"
 
 int main(int argc, char const* argv[]) {
-  qasmtools::parser::Preprocessor preprocessor;
-  preprocessor.add_target_file("qasm_files/clifford.qasm");
-
-  qasmtools::parser::Parser parser(preprocessor);
-  auto ast = parser.parse();
+  auto ast = qasmtools::parser::parse_file("qasm_files/clifford.qasm");
 
   qstabr::circuit::PauliCircuit circuit(std::move(*ast));
 }

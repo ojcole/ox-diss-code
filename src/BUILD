@@ -6,7 +6,12 @@ cc_binary(
         "main.cc",
     ],
     copts = [],
-    data = ["@//qasm_files:clifford.qasm"],
+    data = [
+        "@//qasm_bench/medium:dnn_n8.qasm",
+        "@//qasm_files:clifford.qasm",
+        "@//qasm_files:h2.qasm",
+        "@//qasm_files:test.qasm",
+    ],
     deps = [
         "//circuit:pauli_circuit",
         "//phase",

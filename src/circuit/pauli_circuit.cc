@@ -31,19 +31,19 @@ class GateReader : public qasmtools::ast::Traverse {
     std::optional<phase::RationalPhase> phiPhase;
     std::optional<phase::RationalPhase> lambdaPhase;
     try {
-      const auto phase = phase::getRationalPhaseFromExpr(gate.theta());
+      const auto phase = phase::GetRationalPhaseFromExpr(gate.theta());
       if (phase.IsClifford()) thetaPhase = phase;
     } catch (const phase::PhaseException &exception) {
     }
 
     try {
-      const auto phase = phase::getRationalPhaseFromExpr(gate.phi());
+      const auto phase = phase::GetRationalPhaseFromExpr(gate.phi());
       if (phase.IsClifford()) phiPhase = phase;
     } catch (const phase::PhaseException &exception) {
     }
 
     try {
-      const auto phase = phase::getRationalPhaseFromExpr(gate.lambda());
+      const auto phase = phase::GetRationalPhaseFromExpr(gate.lambda());
       if (phase.IsClifford()) lambdaPhase = phase;
     } catch (const phase::PhaseException &exception) {
     }
@@ -122,13 +122,11 @@ PauliCircuit::PauliCircuit(qasmtools::ast::Program &&program)
   GateReader reader(*this);
   program.accept(reader);
   ProcessGates();
-  auto groups = pauli_graph.GetGroups();
-  for (const auto &group : groups) {
-    std::cout << "Group Boundary" << std::endl;
-    for (const auto &pauli : group) {
-      pauli.Print();
-    }
-  }
+  pauli_graph.Print();
+  std::cout << std::endl;
+  pauli_graph.Runner(tableau);
+  pauli_graph.Print();
+  std::cout << std::endl;
   tableau.Print();
 }
 

@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 
+#include "helpers.h"
+
 namespace qstabr {
 namespace circuit {
 
@@ -65,6 +67,57 @@ bool PauliString::operator==(const PauliString &other) const {
   return true;
 }
 
+std::vector<int> PauliString::GetMatrixForm() const {
+  std::vector<int> mat;
+  mat.resize(string.size() * 2);
+  for (size_t i{}; i < string.size(); i++) {
+    if (string[i] == Z) {
+      mat[i] = 0;
+      mat[i + string.size()] = 1;
+    } else if (string[i] == X) {
+      mat[i] = 1;
+      mat[i + string.size()] = 0;
+    } else if (string[i] == Y) {
+      mat[i] = 1;
+      mat[i + string.size()] = 1;
+    }
+  }
+
+  return mat;
+}
+
+PauliString PauliString::StringDifference(const PauliString &string1,
+                                          const PauliString &string2) {
+  assert(string1.size() == string2.size());
+  std::vector<PauliLetter> newString(string1.size(), I);
+  for (size_t i{}; i < string1.size(); i++) {
+    if (string1[i] == I) {
+      newString[i] = string2[i];
+    } else if (string2[i] == I) {
+      newString[i] = string1[i];
+    } else if (string1[i] == Z) {
+      if (string2[i] == X) {
+        newString[i] = Y;
+      } else if (string2[i] == Y) {
+        newString[i] = X;
+      }
+    } else if (string1[i] == X) {
+      if (string2[i] == Z) {
+        newString[i] = Y;
+      } else if (string2[i] == Y) {
+        newString[i] = Z;
+      }
+    } else if (string1[i] == Y) {
+      if (string2[i] == Z) {
+        newString[i] = X;
+      } else if (string2[i] == X) {
+        newString[i] = Z;
+      }
+    }
+  }
+  return newString;
+}
+
 size_t PauliStringHash::operator()(const PauliString &string) const {
   std::string strRep;
   strRep.resize(string.string.size());
@@ -74,9 +127,9 @@ size_t PauliStringHash::operator()(const PauliString &string) const {
   return std::hash<std::string>()(strRep);
 }
 
-PauliExponential::PauliExponential(const PauliString &string,
-                                   std::unique_ptr<qasmtools::ast::Expr> phase)
-    : string(string), phase(std::move(phase)), negated(false) {}
+PauliExponential::PauliExponential(
+    const PauliString &string, std::unique_ptr<qasmtools::ast::Expr> phaseExpr)
+    : string(string), phaseExpr(std::move(phaseExpr)), negated(false) {}
 
 bool PauliExponential::CommutesWith(const PauliExponential &other) const {
   return string.CommutesWith(other.string);
@@ -94,13 +147,16 @@ void PauliExponential::PushCliffordThrough(
     int secondQubit = qubitManager->GetQubitIndex(gate.GetSecondQubit());
     ApplyCNOT(firstQubit, secondQubit);
   } else {
-    const auto &phase = *gate.GetPhase();
+    const auto &rationalPhase = *gate.GetPhase();
 
     if (type == GateType::XROT) {
       ApplyHadamard(firstQubit);
     }
 
-    int iters = (static_cast<int>(phase / phase::PI_BY_2) + 4) % 4;
+    int iters = (static_cast<int>(rationalPhase.GetFraction() /
+                                  phase::PI_BY_2.GetFraction()) +
+                 4) %
+                4;
     for (int j{}; j < iters; j++) {
       ApplySGate(firstQubit);
     }
@@ -138,6 +194,24 @@ void PauliExponential::ApplySGate(int qubit) {
     if (it->second.negates) Negate();
   }
 }
+
+void PauliExponential::CombineWithPauli(const PauliExponential &other) {
+  if (negated == other.negated) {
+    auto newPhase = AddExprPhases(*phaseExpr, *other.phaseExpr);
+    phaseExpr = std::move(newPhase);
+  } else {
+    auto newPhase = SubtractExprPhases(*phaseExpr, *other.phaseExpr);
+    phaseExpr = std::move(newPhase);
+  }
+}
+
+PauliString PauliExponential::GetString() const { return string; }
+
+std::vector<int> PauliExponential::GetMatrixForm() const {
+  return string.GetMatrixForm();
+}
+
+qasmtools::ast::Expr &PauliExponential::GetExpr() const { return *phaseExpr; }
 
 }  // namespace circuit
 }  // namespace qstabr

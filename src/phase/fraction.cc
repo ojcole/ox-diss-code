@@ -22,8 +22,8 @@ Fraction::Fraction(int numerator, int denominator)
 }
 Fraction::Fraction(int num) : numerator(num), denominator(1) {}
 
-int Fraction::getNumerator() const { return numerator; }
-int Fraction::getDenominator() const { return denominator; }
+int Fraction::GetNumerator() const { return numerator; }
+int Fraction::GetDenominator() const { return denominator; }
 
 void Fraction::Normalise() {
   bool negated = (numerator < 0) != (denominator < 0);

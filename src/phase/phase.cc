@@ -9,17 +9,17 @@ RationalPhase::RationalPhase(Fraction fraction) : fraction(fraction) {
   Normalise();
 }
 
-Fraction RationalPhase::getFraction() const { return fraction; }
+Fraction RationalPhase::GetFraction() const { return fraction; }
 
 bool RationalPhase::IsClifford() const {
-  const int denom = fraction.getDenominator();
+  const int denom = fraction.GetDenominator();
   if (denom < 0) return denom >= -2;
   return denom <= 2;
 }
 
 void RationalPhase::Normalise() {
-  int numerator = fraction.getNumerator();
-  int denominator = fraction.getDenominator();
+  int numerator = fraction.GetNumerator();
+  int denominator = fraction.GetDenominator();
   bool negated = (numerator < 0) != (denominator < 0);
   if (numerator < 0) numerator *= -1;
   if (denominator < 0) denominator *= -1;
@@ -94,17 +94,18 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
         if (lFrac.piPower != rFrac.piPower) {
           throw PhaseException("Different powers of pi for minus");
         }
-        lFrac.fraction -= rFrac.piPower;
+        lFrac.fraction -= rFrac.fraction;
         break;
       case qasmtools::ast::BinaryOp::Plus:
-        if (rFrac.fraction == 0 || lFrac.fraction == 0) {
+        if (rFrac.fraction == 0) break;
+        if (lFrac.fraction == 0) {
           lFrac = rFrac;
           break;
         }
         if (lFrac.piPower != rFrac.piPower) {
           throw PhaseException("Different powers of pi for plus");
         }
-        lFrac.fraction += rFrac.piPower;
+        lFrac.fraction += rFrac.fraction;
         break;
       default:
         throw PhaseException("Unrecognised binary operation");
@@ -148,7 +149,7 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
   std::vector<FractionPI> stack;
 };
 
-RationalPhase getRationalPhaseFromExpr(qasmtools::ast::Expr &expression) {
+RationalPhase GetRationalPhaseFromExpr(qasmtools::ast::Expr &expression) {
   PhaseTraversal traversal;
   expression.accept(traversal);
   return traversal.getPhase();

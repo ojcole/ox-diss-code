@@ -22,6 +22,9 @@ std::unique_ptr<qasmtools::ast::Expr> SubtractPIByTwoFromPhase(
 std::unique_ptr<qasmtools::ast::Expr> AddExprPhases(
     const qasmtools::ast::Expr &lhs, const qasmtools::ast::Expr &rhs);
 
+std::unique_ptr<qasmtools::ast::Expr> SubtractExprPhases(
+    const qasmtools::ast::Expr &lhs, const qasmtools::ast::Expr &rhs);
+
 }  // namespace circuit
 }  // namespace qstabr
 

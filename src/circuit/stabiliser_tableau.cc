@@ -24,9 +24,9 @@ class StabiliserTraversal : public qasmtools::ast::Traverse {
     const auto &offset = arg.offset();
     assert(offset.has_value());
     tableau.ApplyUnitaryGate({arg.var(), *offset},
-                             phase::getRationalPhaseFromExpr(gate.theta()),
-                             phase::getRationalPhaseFromExpr(gate.phi()),
-                             phase::getRationalPhaseFromExpr(gate.lambda()));
+                             phase::GetRationalPhaseFromExpr(gate.theta()),
+                             phase::GetRationalPhaseFromExpr(gate.phi()),
+                             phase::GetRationalPhaseFromExpr(gate.lambda()));
   }
 
   void visit(qasmtools::ast::CNOTGate &gate) override {
@@ -100,7 +100,10 @@ void StabiliserTableau::ApplyXRot(const Qubit &qubit,
 void StabiliserTableau::ApplyZRot(const Qubit &qubit,
                                   const phase::RationalPhase &phase) {
   int qubitIndex = qubitManager->GetQubitIndex(qubit);
-  int iters = (static_cast<int>(phase / phase::PI_BY_2) + 4) % 4;
+  int iters =
+      (static_cast<int>(phase.GetFraction() / phase::PI_BY_2.GetFraction()) +
+       4) %
+      4;
   for (int j{}; j < iters; j++) {
     for (int i{}; i < 2 * numQubits; i++) {
       grid[i][2 * numQubits] ^=
@@ -133,7 +136,7 @@ void StabiliserTableau::ApplyHadamard(const Qubit &qubit) {
   }
 }
 
-void StabiliserTableau::Print() {
+void StabiliserTableau::Print() const {
   for (int i{}; i < 2 * numQubits; i++) {
     for (int j{}; j < 2 * numQubits + 1; j++) {
       std::cout << grid[i][j] << " ";
@@ -161,6 +164,65 @@ void StabiliserTableau::Print() {
     }
     std::cout << std::endl;
   }
+}
+
+namespace {
+
+void AddRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
+             int row1, int row2) {
+  const auto &row1Vec = augMat[row1];
+  auto &row2Vec = augMat[row2];
+  for (size_t i{}; i < row1Vec.size(); i++) {
+    row2Vec[i] ^= row1Vec[i];
+  }
+  vec[row2] ^= vec[row1];
+}
+
+void SwapRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
+              int row1, int row2) {
+  std::iter_swap(augMat.begin() + row1, augMat.begin() + row2);
+  std::iter_swap(vec.begin() + row1, vec.begin() + row2);
+}
+
+}  // namespace
+
+bool StabiliserTableau::CanCreate(const PauliString &string) const {
+  std::vector<std::vector<int>> augMat;
+  std::vector<int> targetMat = string.GetMatrixForm();
+  augMat.resize(2 * numQubits);
+  for (int i{}; i < 2 * numQubits; i++) {
+    augMat[i].resize(numQubits);
+    for (int j{}; j < numQubits; j++) {
+      augMat[i][j] = grid[numQubits + j][i];
+    }
+  }
+
+  int nextPivot{};
+  for (int i{}; i < numQubits; i++) {
+    bool foundRow = false;
+    for (int j{nextPivot}; j < 2 * numQubits; j++) {
+      if (augMat[j][i] == 1) {
+        if (!foundRow) {
+          if (j != nextPivot) {
+            SwapRows(augMat, targetMat, j, nextPivot);
+            j--;
+          }
+          foundRow = true;
+        } else {
+          AddRows(augMat, targetMat, nextPivot, j);
+        }
+      }
+    }
+    if (foundRow) {
+      nextPivot++;
+    }
+  }
+
+  for (int i{nextPivot}; i < 2 * numQubits; i++) {
+    if (targetMat[i] == 1) return false;
+  }
+
+  return true;
 }
 
 }  // namespace circuit

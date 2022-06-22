@@ -1,10 +1,13 @@
 #ifndef CIRCUIT_STABILISER_TABLEAU_H
 #define CIRCUIT_STABILISER_TABLEAU_H
 
+#include <optional>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "helpers.h"
+#include "pauli.h"
 #include "phase/phase.h"
 #include "qubit_manager.h"
 #include "staq/qasmtools/ast/ast.hpp"
@@ -27,7 +30,9 @@ class StabiliserTableau {
   void ApplyHadamard(const Qubit &qubit);
   void ApplyCNOTGate(const Qubit &control, const Qubit &target);
 
-  void Print();
+  bool CanCreate(const PauliString &string) const;
+
+  void Print() const;
 
  private:
   void GenerateTableau(qasmtools::ast::Program &normalisedProgram);

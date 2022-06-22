@@ -33,5 +33,17 @@ cc_test(
         ":phase",
         "@gtest",
         "@gtest//:gtest_main",
+        "@staq//:staq_tools",
+    ],
+)
+
+cc_test(
+    name = "fraction_test",
+    size = "small",
+    srcs = ["fraction_test.cc"],
+    deps = [
+        ":fraction",
+        "@gtest",
+        "@gtest//:gtest_main",
     ],
 )

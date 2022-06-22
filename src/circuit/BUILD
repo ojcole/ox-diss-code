@@ -9,6 +9,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":helpers",
+        ":pauli",
         ":qubit_manager",
         "//phase",
         "@staq",
@@ -61,6 +62,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":pauli",
+        ":stabiliser_tableau",
     ],
 )
 

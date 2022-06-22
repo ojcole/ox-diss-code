@@ -13,8 +13,8 @@ class Fraction {
 
   explicit operator int() const { return numerator / denominator; }
 
-  int getNumerator() const;
-  int getDenominator() const;
+  int GetNumerator() const;
+  int GetDenominator() const;
 
   inline bool operator==(const Fraction &other) const;
   inline bool operator!=(const Fraction &other) const;
