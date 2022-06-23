@@ -1,31 +1,3426 @@
-7
+Loading: 
+Loading: 0 packages loaded
+Analyzing: target //:main (0 packages loaded, 0 targets configured)
+INFO: Analyzed target //:main (0 packages loaded, 0 targets configured).
+INFO: Found 1 target...
+[0 / 2] [Prepa] BazelWorkspaceStatusAction stable-status.txt
+INFO: From Compiling circuit/pauli_circuit.cc:
+circuit/pauli_circuit.cc: In member function 'void qstabr::circuit::PauliCircuit::ProcessGates()':
+circuit/pauli_circuit.cc:162:27: warning: narrowing conversion of '(((qstabr::circuit::PauliCircuit*)this)->qstabr::circuit::PauliCircuit::gates.std::vector<std::variant<qstabr::circuit::CliffordGate, qstabr::circuit::PauliExponential> >::size() - 1)' from 'std::vector<std::variant<qstabr::circuit::CliffordGate, qstabr::circuit::PauliExponential> >::size_type' {aka 'long unsigned int'} to 'int' [-Wnarrowing]
+  162 |   for (int i{gates.size() - 1}; i >= startIndex; i--) {
+      |              ~~~~~~~~~~~~~^~~
+circuit/pauli_circuit.cc: In member function 'int qstabr::circuit::PauliCircuit::FirstCliffordGate(int)':
+circuit/pauli_circuit.cc:168:24: warning: comparison of integer expressions of different signedness: 'int' and 'std::vector<std::variant<qstabr::circuit::CliffordGate, qstabr::circuit::PauliExponential> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+  168 |   for (int i{after}; i < gates.size(); i++) {
+      |                      ~~^~~~~~~~~~~~~~
+INFO: From Compiling circuit/pauli_dag.cc:
+circuit/pauli_dag.cc: In member function 'void qstabr::circuit::PauliDAG::AddPauli(qstabr::circuit::PauliExponential&&)':
+circuit/pauli_dag.cc:15:19: warning: comparison of integer expressions of different signedness: 'int' and 'std::unordered_map<int, qstabr::circuit::PauliExponential>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+   15 |   for (int i{}; i < paulis.size(); i++) {
+      |                 ~~^~~~~~~~~~~~~~~
+[9 / 11] Compiling main.cc; 1s linux-sandbox
+[10 / 11] [Prepa] Linking main
+Target //:main up-to-date:
+  bazel-bin/main
+INFO: Elapsed time: 3.674s, Critical Path: 3.62s
+INFO: 7 processes: 1 internal, 6 linux-sandbox.
+INFO: Build completed successfully, 7 total actions
+INFO: Running command line: bazel-bin/main
+INFO: Build completed successfully, 7 total actions
+640
+Negated: 1
+IXIXZIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IZZXIZYY
+pi*0.350140869617462
+1.1
 Negated: 0
-IZX
--pi/4
+IYZIZZYY
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IYZIZZYY
+(pi*0.350140869617462)/2
+0.55
 Negated: 0
-ZZX
-pi/4
+XXZIIYXX
+pi*0.350140869617462
+1.1
 Negated: 0
-ZIX
--pi/4
+ZIZXZIII
+pi*0.350140869617462
+1.1
 Negated: 0
-ZII
-pi/4
+YXIXZYXX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+YXIXZYXX
+(pi*0.350140869617462)/2
+0.55
 Negated: 0
-IZI
-pi/4
+IYZIZZYY
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IYZIZZYY
+(pi*1.10000002384186)/2
+1.72788
 Negated: 0
-IIX
-pi/4
+YXIXZYXX
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+YXIXZYXX
+(pi*1.10000002384186)/2
+1.72788
+Negated: 1
+IXIXZIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+XXZIIYXX
+((pi*3)/4)-(pi/2)
+0.785398
 Negated: 0
-ZZI
--pi/4
+ZZIIZZYY
+pi*0.400000005960464
+1.25664
+Negated: 1
+XIZXZYXX
+-(pi/2)/2
+-0.785398
+Negated: 0
+XIZXZYXX
+(pi/2)/2
+0.785398
+Negated: 1
+ZYIXIZYY
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+YYZIZXZZ
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+ZZIIZZYY
+pi*0.400000005960464
+1.25664
+Negated: 1
+YZZXIXZZ
+-(pi/2)/2
+-0.785398
+Negated: 0
+YZZXIXZZ
+(pi/2)/2
+0.785398
+Negated: 0
+XIZXZYXX
+pi*0.400000005960464
+1.25664
+Negated: 1
+ZZIIZZYY
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZZIIZZYY
+(pi/2)/2
+0.785398
+Negated: 0
+XXZIIYXX
+pi*0.350140869617462
+1.1
+Negated: 1
+YIIIIYXX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZXZIIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+ZXZIIIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXIXZIII
+pi*0.350140869617462
+1.1
+Negated: 0
+XZIIZXZZ
+pi*0.350140869617462
+1.1
+Negated: 1
+XYIXIXZZ
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+XYIXIXZZ
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IIIXIXZI
+pi*0.350140869617462
+1.1
+Negated: 1
+YYIZZXIZ
+pi*0.350140869617462
+1.1
+Negated: 0
+YYIYZIZZ
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+YYIYZIZZ
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+XXXXZIIY
+pi*0.350140869617462
+1.1
+Negated: 0
+IIZIZXZI
+pi*0.350140869617462
+1.1
+Negated: 0
+XXYXIXZY
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+XXYXIXZY
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+YYIYZIZZ
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+YYIYZIZZ
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+XXYXIXZY
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+XXYXIXZY
+(pi*1.10000002384186)/2
+1.72788
+Negated: 1
+IIIXIXZI
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+XXXXZIIY
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+YYZZIIZZ
+pi*0.400000005960464
+1.25664
+Negated: 1
+XXXIZXZY
+-(pi/2)/2
+-0.785398
+Negated: 0
+XXXIZXZY
+(pi/2)/2
+0.785398
+Negated: 1
+YYZYIXIZ
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZZYYZIZX
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+YYZZIIZZ
+pi*0.400000005960464
+1.25664
+Negated: 1
+ZZYZZXIX
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZZYZZXIX
+(pi/2)/2
+0.785398
+Negated: 0
+XXXIZXZY
+pi*0.400000005960464
+1.25664
+Negated: 1
+YYZZIIZZ
+-(pi/2)/2
+-0.785398
+Negated: 0
+YYZZIIZZ
+(pi/2)/2
+0.785398
+Negated: 0
+XXXXZIIY
+pi*0.350140869617462
+1.1
+Negated: 1
+XXYIIIIY
+pi*0.350140869617462
+1.1
+Negated: 0
+IIZXZIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIZXZIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IIIXIXZI
+pi*0.350140869617462
+1.1
+Negated: 0
+ZZXZIIZX
+pi*0.350140869617462
+1.1
+Negated: 1
+ZZXYIXIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+ZZXYIXIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+ZIIIIXIX
+pi*0.350140869617462
+1.1
+Negated: 1
+IZYYIZZX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZZYYIYZI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+ZZYYIYZI
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IYXXXXZI
+pi*0.350140869617462
+1.1
+Negated: 0
+ZIIIZIZX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZYXXYXIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+ZYXXYXIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+ZZYYIYZI
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+ZZYYIYZI
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+ZYXXYXIX
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+ZYXXYXIX
+(pi*1.10000002384186)/2
+1.72788
+Negated: 1
+ZIIIIXIX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IYXXXXZI
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+ZZYYZZII
+pi*0.400000005960464
+1.25664
+Negated: 1
+ZYXXXIZX
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZYXXXIZX
+(pi/2)/2
+0.785398
+Negated: 1
+IZYYZYIX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZXZZYYZI
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+ZZYYZZII
+pi*0.400000005960464
+1.25664
+Negated: 1
+IXZZYZZX
+-(pi/2)/2
+-0.785398
+Negated: 0
+IXZZYZZX
+(pi/2)/2
+0.785398
+Negated: 0
+ZYXXXIZX
+pi*0.400000005960464
+1.25664
+Negated: 1
+ZZYYZZII
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZZYYZZII
+(pi/2)/2
+0.785398
+Negated: 0
+IYXXXXZI
+pi*0.350140869617462
+1.1
+Negated: 1
+IYXXYIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIZXZI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIIZXZI
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+ZIIIIXIX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZXZZXZII
+pi*0.350140869617462
+1.1
+Negated: 1
+IXZZXYIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IXZZXYIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXZIIIIX
+pi*0.350140869617462
+1.1
+Negated: 1
+ZXIZYYIZ
+pi*0.350140869617462
+1.1
+Negated: 0
+ZIZZYYIY
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+ZIZZYYIY
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+ZIIYXXXX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZXZIIIZI
+pi*0.350140869617462
+1.1
+Negated: 0
+IXZYXXYX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IXZYXXYX
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+ZIZZYYIY
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+ZIZZYYIY
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IXZYXXYX
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IXZYXXYX
+(pi*1.10000002384186)/2
+1.72788
+Negated: 1
+IXZIIIIX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+ZIIYXXXX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+IIZZYYZZ
+pi*0.400000005960464
+1.25664
+Negated: 1
+ZXZYXXXI
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZXZYXXXI
+(pi/2)/2
+0.785398
+Negated: 1
+IXIZYYZY
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZIZXZZYY
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+IIZZYYZZ
+pi*0.400000005960464
+1.25664
+Negated: 1
+ZXIXZZYZ
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZXIXZZYZ
+(pi/2)/2
+0.785398
+Negated: 0
+ZXZYXXXI
+pi*0.400000005960464
+1.25664
+Negated: 1
+IIZZYYZZ
+-(pi/2)/2
+-0.785398
+Negated: 0
+IIZZYYZZ
+(pi/2)/2
+0.785398
+Negated: 0
+ZIIYXXXX
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIYXXYI
+pi*0.350140869617462
+1.1
+Negated: 0
+ZIIIIIZX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+ZIIIIIZX
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXZIIIIX
+pi*0.350140869617462
+1.1
+Negated: 0
+IIZXZZXZ
+pi*0.350140869617462
+1.1
+Negated: 1
+IXIXZZXY
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IXIXZZXY
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXIXZIII
+pi*0.350140869617462
+1.1
+Negated: 0
+XZIIZXZZ
+pi*0.350140869617462
+1.1
+Negated: 1
+XYIXIXZZ
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+XYIXIXZZ
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+XXXXZIIY
+pi*0.350140869617462
+1.1
+Negated: 1
+XXYIIIIY
+pi*0.350140869617462
+1.1
+Negated: 0
+IIZXZIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIZXZIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+XYIXIXZZ
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 0
+XYIXIXZZ
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIZXZIII
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IIZXZIII
+(pi*1.10000002384186)/2
+1.72788
+Negated: 1
+IXIXZIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+XXXXZIIY
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+IYYIZXZX
+pi*0.400000005960464
+1.25664
+Negated: 1
+XIXIIIIY
+-(pi/2)/2
+-0.785398
+Negated: 0
+XIXIIIIY
+(pi/2)/2
+0.785398
+Negated: 0
+IZYXIXZX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+XZZXIXZZ
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+IYYIZXZX
+pi*0.400000005960464
+1.25664
+Negated: 0
+XYZIZXZZ
+-(pi/2)/2
+-0.785398
+Negated: 1
+XYZIZXZZ
+(pi/2)/2
+0.785398
+Negated: 0
+XIXIIIIY
+pi*0.400000005960464
+1.25664
+Negated: 1
+IYYIZXZX
+-(pi/2)/2
+-0.785398
+Negated: 0
+IYYIZXZX
+(pi/2)/2
+0.785398
+Negated: 0
+XXXXZIIY
+pi*0.350140869617462
+1.1
+Negated: 1
+IXZIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+XIYXZIIY
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+XIYXZIIY
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXIXZIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IZXIZXZX
+pi*0.350140869617462
+1.1
+Negated: 1
+IYXXIXZX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IYXXIXZX
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IIIXIXZI
+pi*0.350140869617462
+1.1
+Negated: 0
+ZZXZIIZX
+pi*0.350140869617462
+1.1
+Negated: 1
+ZZXYIXIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+ZZXYIXIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IYXXXXZI
+pi*0.350140869617462
+1.1
+Negated: 1
+IYXXYIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIZXZI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIIZXZI
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+ZZXYIXIX
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 0
+ZZXYIXIX
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIIIZXZI
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IIIIZXZI
+(pi*1.10000002384186)/2
+1.72788
+Negated: 1
+IIIXIXZI
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IYXXXXZI
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+ZXIYYIZX
+pi*0.400000005960464
+1.25664
+Negated: 1
+IYXIXIII
+-(pi/2)/2
+-0.785398
+Negated: 0
+IYXIXIII
+(pi/2)/2
+0.785398
+Negated: 0
+ZXIZYXIX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZZXZZXIX
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+ZXIYYIZX
+pi*0.400000005960464
+1.25664
+Negated: 0
+ZZXYZIZX
+-(pi/2)/2
+-0.785398
+Negated: 1
+ZZXYZIZX
+(pi/2)/2
+0.785398
+Negated: 0
+IYXIXIII
+pi*0.400000005960464
+1.25664
+Negated: 1
+ZXIYYIZX
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZXIYYIZX
+(pi/2)/2
+0.785398
+Negated: 0
+IYXXXXZI
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIXZIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IYXIYXZI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IYXIYXZI
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IIIXIXZI
+pi*0.350140869617462
+1.1
+Negated: 0
+ZXIZXIZX
+pi*0.350140869617462
+1.1
+Negated: 1
+ZXIYXXIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+ZXIYXXIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+ZIIIIXIX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZXZZXZII
+pi*0.350140869617462
+1.1
+Negated: 1
+IXZZXYIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IXZZXYIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+ZIIYXXXX
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIYXXYI
+pi*0.350140869617462
+1.1
+Negated: 0
+ZIIIIIZX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+ZIIIIIZX
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXZZXYIX
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 0
+IXZZXYIX
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+ZIIIIIZX
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+ZIIIIIZX
+(pi*1.10000002384186)/2
+1.72788
+Negated: 1
+ZIIIIXIX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+ZIIYXXXX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+ZXZXIYYI
+pi*0.400000005960464
+1.25664
+Negated: 1
+IIIYXIXI
+-(pi/2)/2
+-0.785398
+Negated: 0
+IIIYXIXI
+(pi/2)/2
+0.785398
+Negated: 0
+IXZXIZYX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+IXZZXZZX
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+ZXZXIYYI
+pi*0.400000005960464
+1.25664
+Negated: 0
+ZXZZXYZI
+-(pi/2)/2
+-0.785398
+Negated: 1
+ZXZZXYZI
+(pi/2)/2
+0.785398
+Negated: 0
+IIIYXIXI
+pi*0.400000005960464
+1.25664
+Negated: 1
+ZXZXIYYI
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZXZXIYYI
+(pi/2)/2
+0.785398
+Negated: 0
+ZIIYXXXX
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIIIXZI
+pi*0.350140869617462
+1.1
+Negated: 1
+ZIIYXIYX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+ZIIYXIYX
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+ZIIIIXIX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZXZXIZXI
+pi*0.350140869617462
+1.1
+Negated: 1
+IXZXIYXX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IXZXIYXX
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXZIIIIX
+pi*0.350140869617462
+1.1
+Negated: 0
+IIZXZZXZ
+pi*0.350140869617462
+1.1
+Negated: 1
+IXIXZZXY
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IXIXZZXY
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+XXZIIYXX
+pi*0.350140869617462
+1.1
+Negated: 1
+YIIIIYXX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZXZIIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+ZXZIIIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXIXZZXY
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 0
+IXIXZZXY
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+ZXZIIIII
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+ZXZIIIII
+(pi*1.10000002384186)/2
+1.72788
+Negated: 1
+IXZIIIIX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+XXZIIYXX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+YIZXZXIY
+pi*0.400000005960464
+1.25664
+Negated: 1
+XIIIIYXI
+-(pi/2)/2
+-0.785398
+Negated: 0
+XIIIIYXI
+(pi/2)/2
+0.785398
+Negated: 0
+YXIXZXIZ
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZXIXZZXZ
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+YIZXZXIY
+pi*0.400000005960464
+1.25664
+Negated: 0
+ZIZXZZXY
+-(pi/2)/2
+-0.785398
+Negated: 1
+ZIZXZZXY
+(pi/2)/2
+0.785398
+Negated: 0
+XIIIIYXI
+pi*0.400000005960464
+1.25664
+Negated: 1
+YIZXZXIY
+-(pi/2)/2
+-0.785398
+Negated: 0
+YIZXZXIY
+(pi/2)/2
+0.785398
+Negated: 0
+XXZIIYXX
+pi*0.350140869617462
+1.1
+Negated: 1
+ZIIIIIIX
+pi*0.350140869617462
+1.1
+Negated: 1
+YXZIIYXI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+YXZIIYXI
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXZIIIIX
+pi*0.350140869617462
+1.1
+Negated: 0
+XIZXZXIZ
+pi*0.350140869617462
+1.1
+Negated: 1
+XXIXZXIY
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+XXIXZXIY
+(pi*0.350140869617462)/2
+0.55
+Negated: 1
+IXZIIIIX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+XIYXZIIY
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+XXIXZXIZ
+pi*0.0500000007450581
+0.15708
+Negated: 1
+XXXXZIIZ
+-(pi/2)/2
+-0.785398
+Negated: 0
+XXXXZIIZ
+(pi/2)/2
+0.785398
+Negated: 1
+XIZXZXIY
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 0
+IXYIIXIX
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+IXIXZIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IYXIYXZI
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+IZXXIXZX
+pi*0.0500000007450581
+0.15708
+Negated: 1
+IZXXXXZI
+-(pi/2)/2
+-0.785398
+Negated: 0
+IZXXXXZI
+(pi/2)/2
+0.785398
+Negated: 1
+IYXIZXZX
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 0
+IXIXYIIX
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+IIIXIXZI
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+ZIIYXIYX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+ZXIZXXIX
+pi*0.0500000007450581
+0.15708
+Negated: 1
+ZIIZXXXX
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZIIZXXXX
+(pi/2)/2
+0.785398
+Negated: 1
+ZXIYXIZX
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 0
+IXIXIXYI
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+ZIIIIXIX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+YXZIIYXI
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+IXZXIZXX
+pi*0.0500000007450581
+0.15708
+Negated: 1
+XXZIIZXX
+-(pi/2)/2
+-0.785398
+Negated: 0
+XXZIIZXX
+(pi/2)/2
+0.785398
+Negated: 1
+ZXZXIYXI
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 0
+YIIXIXIX
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+XIZXZXIY
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+XXIXZXIY
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+XXIXZXIZ
+pi*0.0500000007450581
+0.15708
+Negated: 1
+IXZIIIII
+-(pi/2)/2
+-0.785398
+Negated: 0
+IXZIIIII
+(pi/2)/2
+0.785398
+Negated: 0
+IXZIIIIX
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 0
+IIIIIIIX
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+IYXIZXZX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IYXXIXZX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+IZXXIXZX
+pi*0.0500000007450581
+0.15708
+Negated: 1
+IIIXZIII
+-(pi/2)/2
+-0.785398
+Negated: 0
+IIIXZIII
+(pi/2)/2
+0.785398
+Negated: 0
+IXIXZIII
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 0
+IXIIIIII
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+ZXIYXIZX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+ZXIYXXIX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+ZXIZXXIX
+pi*0.0500000007450581
+0.15708
+Negated: 1
+IIIIIXZI
+-(pi/2)/2
+-0.785398
+Negated: 0
+IIIIIXZI
+(pi/2)/2
+0.785398
+Negated: 0
+IIIXIXZI
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 0
+IIIXIIII
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+ZXZXIYXI
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IXZXIYXX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 0
+IXZXIZXX
+pi*0.0500000007450581
+0.15708
+Negated: 1
+ZIIIIIIX
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZIIIIIIX
+(pi/2)/2
+0.785398
+Negated: 0
+ZIIIIXIX
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 0
+IIIIIXII
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+IIIIIIIX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IXIXYIIX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+XXXXYIIY
+pi*0.0500000007450581
+0.15708
+Negated: 1
+IXIXYIII
+-(pi/2)/2
+-0.785398
+Negated: 0
+IXIXYIII
+(pi/2)/2
+0.785398
+Negated: 1
+XXXXYIIZ
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 1
+XIXIIIIZ
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+IXIIIIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IXIXIXYI
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+IYXXXXYI
+pi*0.0500000007450581
+0.15708
+Negated: 1
+IIIXIXYI
+-(pi/2)/2
+-0.785398
+Negated: 0
+IIIXIXYI
+(pi/2)/2
+0.785398
+Negated: 1
+IZXXXXYI
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 1
+IZXIXIII
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+IIIXIIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+YIIXIXIX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+YIIYXXXX
+pi*0.0500000007450581
+0.15708
+Negated: 1
+YIIIIXIX
+-(pi/2)/2
+-0.785398
+Negated: 0
+YIIIIXIX
+(pi/2)/2
+0.785398
+Negated: 1
+YIIZXXXX
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 1
+IIIZXIXI
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+IIIIIXII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IXYIIXIX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+XXYIIYXX
+pi*0.0500000007450581
+0.15708
+Negated: 1
+IXYIIIIX
+-(pi/2)/2
+-0.785398
+Negated: 0
+IXYIIIIX
+(pi/2)/2
+0.785398
+Negated: 1
+XXYIIZXX
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 1
+XIIIIZXI
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+XXXXYIIZ
+(pi/4)-(pi/2)
+-0.785398
+Negated: 0
+XXXXZIIY
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+XXXXYIIY
+pi*0.0500000007450581
+0.15708
+Negated: 0
+IIIIXIIX
+-(pi/2)/2
+-0.785398
+Negated: 1
+IIIIXIIX
+(pi/2)/2
+0.785398
+Negated: 0
+IIIIIIIX
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 1
+IIIIXIII
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+IZXXXXYI
+(pi/4)-(pi/2)
+-0.785398
+Negated: 0
+IYXXXXZI
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+IYXXXXYI
+pi*0.0500000007450581
+0.15708
+Negated: 0
+IXIIIIXI
+-(pi/2)/2
+-0.785398
+Negated: 1
+IXIIIIXI
+(pi/2)/2
+0.785398
+Negated: 0
+IXIIIIII
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 1
+IIIIIIXI
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+YIIZXXXX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 0
+ZIIYXXXX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+YIIYXXXX
+pi*0.0500000007450581
+0.15708
+Negated: 0
+XIIXIIII
+-(pi/2)/2
+-0.785398
+Negated: 1
+XIIXIIII
+(pi/2)/2
+0.785398
+Negated: 0
+IIIXIIII
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 1
+XIIIIIII
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 1
+XXYIIZXX
+(pi/4)-(pi/2)
+-0.785398
+Negated: 0
+XXZIIYXX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+XXYIIYXX
+pi*0.0500000007450581
+0.15708
+Negated: 0
+IIXIIXII
+-(pi/2)/2
+-0.785398
+Negated: 1
+IIXIIXII
+(pi/2)/2
+0.785398
+Negated: 0
+IIIIIXII
+(pi*0.300000011920929)+(pi/2)
+2.51327
+Negated: 1
+IIXIIIII
+(pi*1.79999995231628)+(pi/2)
+7.22566
+Negated: 0
+IIXIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IXYIIIIX
+pi*0.350140869617462
+1.1
+Negated: 0
+IXZIIIIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IXZIIIIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIIIIX
+pi*0.350140869617462
+1.1
+Negated: 1
+XIXIIIIY
+pi*0.350140869617462
+1.1
+Negated: 0
+XIXIIIIZ
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+XIXIIIIZ
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IXZIIIIX
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IXZIIIIX
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+XIXIIIIZ
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+XIXIIIIZ
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIXIIIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IIIIIIIX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+XXZIIIIZ
+pi*0.400000005960464
+1.25664
+Negated: 0
+IIXIIIIX
+-(pi/2)/2
+-0.785398
+Negated: 1
+IIXIIIIX
+(pi/2)/2
+0.785398
+Negated: 1
+XXYIIIIZ
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+XXZIIIIY
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+XXZIIIIZ
+pi*0.400000005960464
+1.25664
+Negated: 1
+XXYIIIIY
+-(pi/2)/2
+-0.785398
+Negated: 0
+XXYIIIIY
+(pi/2)/2
+0.785398
+Negated: 1
+IIXIIIIX
+pi*0.400000005960464
+1.25664
+Negated: 0
+XXZIIIIZ
+-(pi/2)/2
+-0.785398
+Negated: 1
+XXZIIIIZ
+(pi/2)/2
+0.785398
+Negated: 0
+IIIIIIIX
+pi*0.350140869617462
+1.1
+Negated: 0
+XIIIIIIZ
+pi*0.350140869617462
+1.1
+Negated: 0
+XIIIIIIY
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+XIIIIIIY
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIXIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IXZIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IXYIIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IXYIIIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIXIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IXIXYIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IXIXZIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IXIXZIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IXIIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IYXIXIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IZXIXIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IZXIXIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IXIXZIII
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IXIXZIII
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IZXIXIII
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IZXIXIII
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIIIXIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IXIIIIII
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+IZXXZIII
+pi*0.400000005960464
+1.25664
+Negated: 0
+IXIIXIII
+-(pi/2)/2
+-0.785398
+Negated: 1
+IXIIXIII
+(pi/2)/2
+0.785398
+Negated: 1
+IZXXYIII
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+IYXXZIII
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+IZXXZIII
+pi*0.400000005960464
+1.25664
+Negated: 1
+IYXXYIII
+-(pi/2)/2
+-0.785398
+Negated: 0
+IYXXYIII
+(pi/2)/2
+0.785398
+Negated: 1
+IXIIXIII
+pi*0.400000005960464
+1.25664
+Negated: 0
+IZXXZIII
+-(pi/2)/2
+-0.785398
+Negated: 1
+IZXXZIII
+(pi/2)/2
+0.785398
+Negated: 0
+IXIIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IZXIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IYXIIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IYXIIIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIXIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIXZIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIXYIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIXYIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIIIXI
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIXIXYI
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIXIXZI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIXIXZI
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIXIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIYXIXI
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIZXIXI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIZXIXI
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIXIXZI
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IIIXIXZI
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIIZXIXI
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IIIZXIXI
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIIIIIXI
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IIIXIIII
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+IIIZXXZI
+pi*0.400000005960464
+1.25664
+Negated: 0
+IIIXIIXI
+-(pi/2)/2
+-0.785398
+Negated: 1
+IIIXIIXI
+(pi/2)/2
+0.785398
+Negated: 1
+IIIZXXYI
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+IIIYXXZI
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+IIIZXXZI
+pi*0.400000005960464
+1.25664
+Negated: 1
+IIIYXXYI
+-(pi/2)/2
+-0.785398
+Negated: 0
+IIIYXXYI
+(pi/2)/2
+0.785398
+Negated: 1
+IIIXIIXI
+pi*0.400000005960464
+1.25664
+Negated: 0
+IIIZXXZI
+-(pi/2)/2
+-0.785398
+Negated: 1
+IIIZXXZI
+(pi/2)/2
+0.785398
+Negated: 0
+IIIXIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIZXIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIYXIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIYXIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIIIXI
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIXZI
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIXYI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIIIXYI
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+XIIIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+YIIIIXIX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZIIIIXIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+ZIIIIXIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIIXII
+pi*0.350140869617462
+1.1
+Negated: 1
+XIIIIYXI
+pi*0.350140869617462
+1.1
+Negated: 0
+XIIIIZXI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+XIIIIZXI
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+ZIIIIXIX
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+ZIIIIXIX
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+XIIIIZXI
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+XIIIIZXI
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+XIIIIIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IIIIIXII
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+ZIIIIZXX
+pi*0.400000005960464
+1.25664
+Negated: 0
+XIIIIXII
+-(pi/2)/2
+-0.785398
+Negated: 1
+XIIIIXII
+(pi/2)/2
+0.785398
+Negated: 1
+YIIIIZXX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZIIIIYXX
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+ZIIIIZXX
+pi*0.400000005960464
+1.25664
+Negated: 1
+YIIIIYXX
+-(pi/2)/2
+-0.785398
+Negated: 0
+YIIIIYXX
+(pi/2)/2
+0.785398
+Negated: 1
+XIIIIXII
+pi*0.400000005960464
+1.25664
+Negated: 0
+ZIIIIZXX
+-(pi/2)/2
+-0.785398
+Negated: 1
+ZIIIIZXX
+(pi/2)/2
+0.785398
+Negated: 0
+IIIIIXII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIZXI
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIYXI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIIIYXI
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+XIIIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+ZIIIIIIX
+pi*0.350140869617462
+1.1
+Negated: 0
+YIIIIIIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+YIIIIIIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIXIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IXZIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IXYIIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IXYIIIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IXIIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IZXIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IYXIIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IYXIIIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IXYIIIII
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IXYIIIII
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IYXIIIII
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IYXIIIII
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIXIIIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IXIIIIII
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+IYYIIIII
+pi*0.400000005960464
+1.25664
+Negated: 0
+IXXIIIII
+-(pi/2)/2
+-0.785398
+Negated: 1
+IXXIIIII
+(pi/2)/2
+0.785398
+Negated: 0
+IYZIIIII
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 1
+IZYIIIII
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+IYYIIIII
+pi*0.400000005960464
+1.25664
+Negated: 1
+IZZIIIII
+-(pi/2)/2
+-0.785398
+Negated: 0
+IZZIIIII
+(pi/2)/2
+0.785398
+Negated: 1
+IXXIIIII
+pi*0.400000005960464
+1.25664
+Negated: 0
+IYYIIIII
+-(pi/2)/2
+-0.785398
+Negated: 1
+IYYIIIII
+(pi/2)/2
+0.785398
+Negated: 0
+IXIIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IYIIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IZIIIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IZIIIIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIXIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIYIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IIZIIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IIZIIIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIXIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIXZIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIXYIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIXYIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIXIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIZXIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIYXIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIYXIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIXYIII
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IIIXYIII
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIIYXIII
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IIIYXIII
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIIIXIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IIIXIIII
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+IIIYYIII
+pi*0.400000005960464
+1.25664
+Negated: 0
+IIIXXIII
+-(pi/2)/2
+-0.785398
+Negated: 1
+IIIXXIII
+(pi/2)/2
+0.785398
+Negated: 0
+IIIYZIII
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 1
+IIIZYIII
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+IIIYYIII
+pi*0.400000005960464
+1.25664
+Negated: 1
+IIIZZIII
+-(pi/2)/2
+-0.785398
+Negated: 0
+IIIZZIII
+(pi/2)/2
+0.785398
+Negated: 1
+IIIXXIII
+pi*0.400000005960464
+1.25664
+Negated: 0
+IIIYYIII
+-(pi/2)/2
+-0.785398
+Negated: 1
+IIIYYIII
+(pi/2)/2
+0.785398
+Negated: 0
+IIIXIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIYIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIZIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IIIZIIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIXIII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIYIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIIZIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IIIIZIII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIIIXI
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIXZI
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIXYI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIIIXYI
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIIXII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIZXI
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIYXI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+IIIIIYXI
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIIXYI
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IIIIIXYI
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIIIIYXI
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+IIIIIYXI
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+IIIIIIXI
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IIIIIXII
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+IIIIIYYI
+pi*0.400000005960464
+1.25664
+Negated: 0
+IIIIIXXI
+-(pi/2)/2
+-0.785398
+Negated: 1
+IIIIIXXI
+(pi/2)/2
+0.785398
+Negated: 0
+IIIIIYZI
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 1
+IIIIIZYI
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+IIIIIYYI
+pi*0.400000005960464
+1.25664
+Negated: 1
+IIIIIZZI
+-(pi/2)/2
+-0.785398
+Negated: 0
+IIIIIZZI
+(pi/2)/2
+0.785398
+Negated: 1
+IIIIIXXI
+pi*0.400000005960464
+1.25664
+Negated: 0
+IIIIIYYI
+-(pi/2)/2
+-0.785398
+Negated: 1
+IIIIIYYI
+(pi/2)/2
+0.785398
+Negated: 0
+IIIIIXII
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIYII
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIIIZII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IIIIIZII
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIIIXI
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIIYI
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIIIIZI
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IIIIIIZI
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+XIIIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+ZIIIIIIX
+pi*0.350140869617462
+1.1
+Negated: 0
+YIIIIIIX
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+YIIIIIIX
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+IIIIIIIX
+pi*0.350140869617462
+1.1
+Negated: 0
+XIIIIIIZ
+pi*0.350140869617462
+1.1
+Negated: 0
+XIIIIIIY
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 1
+XIIIIIIY
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+YIIIIIIX
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+YIIIIIIX
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+XIIIIIIY
+-(pi*1.10000002384186)/2
+-1.72788
+Negated: 1
+XIIIIIIY
+(pi*1.10000002384186)/2
+1.72788
+Negated: 0
+XIIIIIII
+(pi/4)-(pi/2)
+-0.785398
+Negated: 1
+IIIIIIIX
+((pi*3)/4)-(pi/2)
+0.785398
+Negated: 1
+YIIIIIIY
+pi*0.400000005960464
+1.25664
+Negated: 0
+XIIIIIIX
+-(pi/2)/2
+-0.785398
+Negated: 1
+XIIIIIIX
+(pi/2)/2
+0.785398
+Negated: 0
+ZIIIIIIY
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 1
+YIIIIIIZ
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+YIIIIIIY
+pi*0.400000005960464
+1.25664
+Negated: 1
+ZIIIIIIZ
+-(pi/2)/2
+-0.785398
+Negated: 0
+ZIIIIIIZ
+(pi/2)/2
+0.785398
+Negated: 1
+XIIIIIIX
+pi*0.400000005960464
+1.25664
+Negated: 0
+YIIIIIIY
+-(pi/2)/2
+-0.785398
+Negated: 1
+YIIIIIIY
+(pi/2)/2
+0.785398
+Negated: 0
+IIIIIIIX
+pi*0.350140869617462
+1.1
+Negated: 0
+IIIIIIIY
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIIIIIZ
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+IIIIIIIZ
+(pi*0.350140869617462)/2
+0.55
+Negated: 0
+XIIIIIII
+pi*0.350140869617462
+1.1
+Negated: 0
+YIIIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+ZIIIIIII
+-(pi*0.350140869617462)/2
+-0.55
+Negated: 0
+ZIIIIIII
+(pi*0.350140869617462)/2
+0.55
 
-0
+iteration
+204
+Negated: 1
+IXIXZIII
+(((((((((((pi*0.350140869617462)+((pi/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))+((pi/4)-(pi/2)))+(pi*0.350140869617462))+((pi/4)-(pi/2)))-((pi*0.300000011920929)+(pi/2)))-(-(pi*0.350140869617462)/2))+((pi*0.350140869617462)/2))-(-(pi*1.10000002384186)/2))+((pi*1.10000002384186)/2)
+4.08628
+Negated: 1
+IZZXIZYY
+pi*0.350140869617462
+1.1
+Negated: 0
+IYZIZZYY
+(((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-4.55575
+Negated: 0
+XXZIIYXX
+((((((pi*0.350140869617462)-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(((pi*3)/4)-(pi/2))
+3.6146
+Negated: 0
+ZIZXZIII
+pi*0.350140869617462
+1.1
+Negated: 0
+YXIXZYXX
+(((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-4.55575
+Negated: 0
+ZZIIZZYY
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 1
+XIZXZYXX
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 1
+ZYIXIZYY
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+YYZIZXZZ
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+YZZXIXZZ
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+YIIIIYXX
+(((pi*0.350140869617462)+(pi*0.350140869617462))+(-(pi/2)/2))-((pi/2)/2)
+0.629204
+Negated: 0
+ZXZIIIII
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 0
+XZIIZXZZ
+(pi*0.350140869617462)+(pi*0.350140869617462)
+2.2
+Negated: 1
+XYIXIXZZ
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 1
+IIIXIXZI
+(((((((((((pi*0.350140869617462)+((pi/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))+((pi/4)-(pi/2)))+(pi*0.350140869617462))+((pi/4)-(pi/2)))-((pi*0.300000011920929)+(pi/2)))-(-(pi*0.350140869617462)/2))+((pi*0.350140869617462)/2))-(-(pi*1.10000002384186)/2))+((pi*1.10000002384186)/2)
+4.08628
+Negated: 1
+YYIZZXIZ
+pi*0.350140869617462
+1.1
+Negated: 0
+YYIYZIZZ
+(((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-4.55575
+Negated: 0
+XXXXZIIY
+((((((pi*0.350140869617462)-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(((pi*3)/4)-(pi/2))
+3.6146
+Negated: 0
+IIZIZXZI
+pi*0.350140869617462
+1.1
+Negated: 0
+XXYXIXZY
+(((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-4.55575
+Negated: 0
+YYZZIIZZ
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 1
+XXXIZXZY
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 1
+YYZYIXIZ
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZZYYZIZX
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+ZZYZZXIX
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+XXYIIIIY
+(((pi*0.350140869617462)+(pi*0.350140869617462))+(-(pi/2)/2))-((pi/2)/2)
+0.629204
+Negated: 0
+IIZXZIII
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 0
+ZZXZIIZX
+(pi*0.350140869617462)+(pi*0.350140869617462)
+2.2
+Negated: 1
+ZZXYIXIX
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 1
+ZIIIIXIX
+(((((((((((pi*0.350140869617462)+((pi/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))+((pi/4)-(pi/2)))+(pi*0.350140869617462))+((pi/4)-(pi/2)))-((pi*0.300000011920929)+(pi/2)))-(-(pi*0.350140869617462)/2))+((pi*0.350140869617462)/2))-(-(pi*1.10000002384186)/2))+((pi*1.10000002384186)/2)
+4.08628
+Negated: 1
+IZYYIZZX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZZYYIYZI
+(((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-4.55575
+Negated: 0
+IYXXXXZI
+((((((pi*0.350140869617462)-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(((pi*3)/4)-(pi/2))
+3.6146
+Negated: 0
+ZIIIZIZX
+pi*0.350140869617462
+1.1
+Negated: 0
+ZYXXYXIX
+(((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-4.55575
+Negated: 0
+ZZYYZZII
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 1
+ZYXXXIZX
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 1
+IZYYZYIX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZXZZYYZI
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+IXZZYZZX
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+IYXXYIII
+(((pi*0.350140869617462)+(pi*0.350140869617462))+(-(pi/2)/2))-((pi/2)/2)
+0.629204
+Negated: 0
+IIIIZXZI
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 0
+ZXZZXZII
+(pi*0.350140869617462)+(pi*0.350140869617462)
+2.2
+Negated: 1
+IXZZXYIX
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 1
+IXZIIIIX
+(((((((((((pi*0.350140869617462)+((pi/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))+((pi/4)-(pi/2)))+(pi*0.350140869617462))+((pi/4)-(pi/2)))-((pi*0.300000011920929)+(pi/2)))-(-(pi*0.350140869617462)/2))+((pi*0.350140869617462)/2))-(-(pi*1.10000002384186)/2))+((pi*1.10000002384186)/2)
+4.08628
+Negated: 1
+ZXIZYYIZ
+pi*0.350140869617462
+1.1
+Negated: 0
+ZIZZYYIY
+(((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-4.55575
+Negated: 0
+ZIIYXXXX
+((((((pi*0.350140869617462)-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(((pi*3)/4)-(pi/2))
+3.6146
+Negated: 0
+ZXZIIIZI
+pi*0.350140869617462
+1.1
+Negated: 0
+IXZYXXYX
+(((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-4.55575
+Negated: 0
+IIZZYYZZ
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 1
+ZXZYXXXI
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 1
+IXIZYYZY
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZIZXZZYY
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+ZXIXZZYZ
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+IIIYXXYI
+(((pi*0.350140869617462)+(pi*0.350140869617462))+(-(pi/2)/2))-((pi/2)/2)
+0.629204
+Negated: 0
+ZIIIIIZX
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 0
+IIZXZZXZ
+(pi*0.350140869617462)+(pi*0.350140869617462)
+2.2
+Negated: 1
+IXIXZZXY
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 0
+IYYIZXZX
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 1
+XIXIIIIY
+(((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464))+(pi*0.350140869617462)
+-1.72743
+Negated: 0
+IZYXIXZX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+XZZXIXZZ
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+XYZIZXZZ
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+IXZIIIII
+((((pi*0.350140869617462)+(-(pi/2)/2))-((pi/2)/2))-(pi*0.350140869617462))-(pi*0.350140869617462)
+-2.6708
+Negated: 1
+XIYXZIIY
+((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(((pi*3)/4)-(pi/2))
+-0.314602
+Negated: 0
+IZXIZXZX
+pi*0.350140869617462
+1.1
+Negated: 1
+IYXXIXZX
+((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(((pi*3)/4)-(pi/2))
+-0.314602
+Negated: 0
+ZXIYYIZX
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 1
+IYXIXIII
+(((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464))+(pi*0.350140869617462)
+-1.72743
+Negated: 0
+ZXIZYXIX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZZXZZXIX
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+ZZXYZIZX
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+IIIXZIII
+((((pi*0.350140869617462)+(-(pi/2)/2))-((pi/2)/2))-(pi*0.350140869617462))-(pi*0.350140869617462)
+-2.6708
+Negated: 1
+IYXIYXZI
+((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(((pi*3)/4)-(pi/2))
+-0.314602
+Negated: 0
+ZXIZXIZX
+pi*0.350140869617462
+1.1
+Negated: 1
+ZXIYXXIX
+((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(((pi*3)/4)-(pi/2))
+-0.314602
+Negated: 0
+ZXZXIYYI
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 1
+IIIYXIXI
+(((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464))+(pi*0.350140869617462)
+-1.72743
+Negated: 0
+IXZXIZYX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+IXZZXZZX
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+ZXZZXYZI
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+IIIIIXZI
+((((pi*0.350140869617462)+(-(pi/2)/2))-((pi/2)/2))-(pi*0.350140869617462))-(pi*0.350140869617462)
+-2.6708
+Negated: 1
+ZIIYXIYX
+((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(((pi*3)/4)-(pi/2))
+-0.314602
+Negated: 0
+ZXZXIZXI
+pi*0.350140869617462
+1.1
+Negated: 1
+IXZXIYXX
+((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(((pi*3)/4)-(pi/2))
+-0.314602
+Negated: 0
+YIZXZXIY
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 1
+XIIIIYXI
+(((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464))+(pi*0.350140869617462)
+-1.72743
+Negated: 0
+YXIXZXIZ
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZXIXZZXZ
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+ZIZXZZXY
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+ZIIIIIIX
+((((pi*0.350140869617462)+(-(pi/2)/2))-((pi/2)/2))-(pi*0.350140869617462))-(pi*0.350140869617462)
+-2.6708
+Negated: 1
+YXZIIYXI
+((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(((pi*3)/4)-(pi/2))
+-0.314602
+Negated: 0
+XIZXZXIZ
+pi*0.350140869617462
+1.1
+Negated: 1
+XXIXZXIY
+((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(((pi*3)/4)-(pi/2))
+-0.314602
+Negated: 0
+XXIXZXIZ
+(pi*0.0500000007450581)+(pi*0.0500000007450581)
+0.314159
+Negated: 1
+XXXXZIIZ
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+XIZXZXIY
+((pi*0.300000011920929)+(pi/2))+((pi/4)-(pi/2))
+1.72788
+Negated: 0
+IXYIIXIX
+((pi*1.79999995231628)+(pi/2))-(((pi*3)/4)-(pi/2))
+6.44026
+Negated: 0
+IZXXIXZX
+(pi*0.0500000007450581)+(pi*0.0500000007450581)
+0.314159
+Negated: 1
+IZXXXXZI
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+IYXIZXZX
+((pi*0.300000011920929)+(pi/2))+((pi/4)-(pi/2))
+1.72788
+Negated: 0
+IXIXYIIX
+((pi*1.79999995231628)+(pi/2))-(((pi*3)/4)-(pi/2))
+6.44026
+Negated: 0
+ZXIZXXIX
+(pi*0.0500000007450581)+(pi*0.0500000007450581)
+0.314159
+Negated: 1
+ZIIZXXXX
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+ZXIYXIZX
+((pi*0.300000011920929)+(pi/2))+((pi/4)-(pi/2))
+1.72788
+Negated: 0
+IXIXIXYI
+((pi*1.79999995231628)+(pi/2))-(((pi*3)/4)-(pi/2))
+6.44026
+Negated: 0
+IXZXIZXX
+(pi*0.0500000007450581)+(pi*0.0500000007450581)
+0.314159
+Negated: 1
+XXZIIZXX
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+ZXZXIYXI
+((pi*0.300000011920929)+(pi/2))+((pi/4)-(pi/2))
+1.72788
+Negated: 0
+YIIXIXIX
+((pi*1.79999995231628)+(pi/2))-(((pi*3)/4)-(pi/2))
+6.44026
+Negated: 0
+IIIIIIIX
+(((((((((pi*1.79999995231628)+(pi/2))-((pi/4)-(pi/2)))+((pi*0.300000011920929)+(pi/2)))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462)
+13.3535
+Negated: 0
+IXIIIIII
+(((((((((pi*1.79999995231628)+(pi/2))-((pi/4)-(pi/2)))+((pi*0.300000011920929)+(pi/2)))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462)
+13.3535
+Negated: 0
+IIIXIIII
+(((((((((pi*1.79999995231628)+(pi/2))-((pi/4)-(pi/2)))+((pi*0.300000011920929)+(pi/2)))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462)
+13.3535
+Negated: 0
+IIIIIXII
+(((((((((pi*1.79999995231628)+(pi/2))-((pi/4)-(pi/2)))+((pi*0.300000011920929)+(pi/2)))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462))+(pi*0.350140869617462))-(((pi*3)/4)-(pi/2)))+(pi*0.350140869617462)
+13.3535
+Negated: 1
+XXXXYIIY
+(pi*0.0500000007450581)+(pi*0.0500000007450581)
+0.314159
+Negated: 1
+IXIXYIII
+((-(pi/2)/2)-((pi/2)/2))+(pi*0.350140869617462)
+-0.470796
+Negated: 1
+XXXXYIIZ
+((pi*0.300000011920929)+(pi/2))+((pi/4)-(pi/2))
+1.72788
+Negated: 1
+XIXIIIIZ
+(((((pi*1.79999995231628)+(pi/2))-(-(pi*0.350140869617462)/2))+((pi*0.350140869617462)/2))-(-(pi*1.10000002384186)/2))+((pi*1.10000002384186)/2)
+11.7814
+Negated: 1
+IYXXXXYI
+(pi*0.0500000007450581)+(pi*0.0500000007450581)
+0.314159
+Negated: 1
+IIIXIXYI
+((-(pi/2)/2)-((pi/2)/2))+(pi*0.350140869617462)
+-0.470796
+Negated: 1
+IZXXXXYI
+((pi*0.300000011920929)+(pi/2))+((pi/4)-(pi/2))
+1.72788
+Negated: 1
+IZXIXIII
+(((((pi*1.79999995231628)+(pi/2))-(-(pi*0.350140869617462)/2))+((pi*0.350140869617462)/2))-(-(pi*1.10000002384186)/2))+((pi*1.10000002384186)/2)
+11.7814
+Negated: 1
+YIIYXXXX
+(pi*0.0500000007450581)+(pi*0.0500000007450581)
+0.314159
+Negated: 1
+YIIIIXIX
+((-(pi/2)/2)-((pi/2)/2))+(pi*0.350140869617462)
+-0.470796
+Negated: 1
+YIIZXXXX
+((pi*0.300000011920929)+(pi/2))+((pi/4)-(pi/2))
+1.72788
+Negated: 1
+IIIZXIXI
+(((((pi*1.79999995231628)+(pi/2))-(-(pi*0.350140869617462)/2))+((pi*0.350140869617462)/2))-(-(pi*1.10000002384186)/2))+((pi*1.10000002384186)/2)
+11.7814
+Negated: 1
+XXYIIYXX
+(pi*0.0500000007450581)+(pi*0.0500000007450581)
+0.314159
+Negated: 1
+IXYIIIIX
+((-(pi/2)/2)-((pi/2)/2))+(pi*0.350140869617462)
+-0.470796
+Negated: 1
+XXYIIZXX
+((pi*0.300000011920929)+(pi/2))+((pi/4)-(pi/2))
+1.72788
+Negated: 1
+XIIIIZXI
+(((((pi*1.79999995231628)+(pi/2))-(-(pi*0.350140869617462)/2))+((pi*0.350140869617462)/2))-(-(pi*1.10000002384186)/2))+((pi*1.10000002384186)/2)
+11.7814
+Negated: 0
+IIIIXIIX
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+IIIIXIII
+(((((((pi*1.79999995231628)+(pi/2))-(pi*0.350140869617462))-((pi/4)-(pi/2)))-(pi*0.350140869617462))-(pi*0.350140869617462))-((pi/4)-(pi/2)))-(pi*0.350140869617462)
+4.39646
+Negated: 0
+IXIIIIXI
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+IIIIIIXI
+(((((((pi*1.79999995231628)+(pi/2))-(pi*0.350140869617462))-((pi/4)-(pi/2)))-(pi*0.350140869617462))-(pi*0.350140869617462))-((pi/4)-(pi/2)))-(pi*0.350140869617462)
+4.39646
+Negated: 0
+XIIXIIII
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+XIIIIIII
+(((((((pi*1.79999995231628)+(pi/2))-(pi*0.350140869617462))-((pi/4)-(pi/2)))-(pi*0.350140869617462))-(pi*0.350140869617462))-((pi/4)-(pi/2)))-(pi*0.350140869617462)
+4.39646
+Negated: 0
+IIXIIXII
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 1
+IIXIIIII
+(((((((pi*1.79999995231628)+(pi/2))-(pi*0.350140869617462))-((pi/4)-(pi/2)))-(pi*0.350140869617462))-(pi*0.350140869617462))-((pi/4)-(pi/2)))-(pi*0.350140869617462)
+4.39646
+Negated: 1
+XXZIIIIZ
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 0
+IIXIIIIX
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 1
+XXYIIIIZ
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+XXZIIIIY
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+XIIIIIIZ
+(pi*0.350140869617462)+(pi*0.350140869617462)
+2.2
+Negated: 0
+XIIIIIIY
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 0
+IXYIIIII
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 1
+IZXXZIII
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 0
+IXIIXIII
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 1
+IZXXYIII
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+IYXXZIII
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+IZXIIIII
+(pi*0.350140869617462)+(pi*0.350140869617462)
+2.2
+Negated: 0
+IYXIIIII
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 0
+IIIXYIII
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 1
+IIIZXXZI
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 0
+IIIXIIXI
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 1
+IIIZXXYI
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+IIIYXXZI
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+IIIZXIII
+(pi*0.350140869617462)+(pi*0.350140869617462)
+2.2
+Negated: 0
+IIIYXIII
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 0
+IIIIIXYI
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 1
+ZIIIIZXX
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 0
+XIIIIXII
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 1
+YIIIIZXX
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 0
+ZIIIIYXX
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 0
+IIIIIZXI
+(pi*0.350140869617462)+(pi*0.350140869617462)
+2.2
+Negated: 0
+IIIIIYXI
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 0
+YIIIIIIX
+(((((-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2))+(-(pi*0.350140869617462)/2))-((pi*0.350140869617462)/2))+(-(pi*1.10000002384186)/2))-((pi*1.10000002384186)/2)
+-5.65575
+Negated: 1
+IYYIIIII
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 0
+IXXIIIII
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 0
+IYZIIIII
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 1
+IZYIIIII
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+IZZIIIII
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 0
+IYIIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IZIIIIII
+(-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2)
+-1.1
+Negated: 0
+IIYIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IIZIIIII
+(-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2)
+-1.1
+Negated: 1
+IIIYYIII
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 0
+IIIXXIII
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 0
+IIIYZIII
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 1
+IIIZYIII
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+IIIZZIII
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 0
+IIIYIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIZIIII
+(-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2)
+-1.1
+Negated: 0
+IIIIYIII
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIIZIII
+(-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2)
+-1.1
+Negated: 1
+IIIIIYYI
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 0
+IIIIIXXI
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 0
+IIIIIYZI
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 1
+IIIIIZYI
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+IIIIIZZI
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 0
+IIIIIYII
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIIIZII
+(-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2)
+-1.1
+Negated: 0
+IIIIIIYI
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIIIIZI
+(-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2)
+-1.1
+Negated: 1
+YIIIIIIY
+(((pi*0.400000005960464)+(pi*0.400000005960464))-(-(pi/2)/2))+((pi/2)/2)
+4.08407
+Negated: 0
+XIIIIIIX
+((-(pi/2)/2)-((pi/2)/2))-(pi*0.400000005960464)
+-2.82743
+Negated: 0
+ZIIIIIIY
+(pi*0.649999976158142)+(pi/2)
+3.61283
+Negated: 1
+YIIIIIIZ
+(pi*0.150000005960464)+(pi/2)
+2.04204
+Negated: 1
+ZIIIIIIZ
+(-(pi/2)/2)-((pi/2)/2)
+-1.5708
+Negated: 0
+IIIIIIIY
+pi*0.350140869617462
+1.1
+Negated: 1
+IIIIIIIZ
+(-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2)
+-1.1
+Negated: 0
+YIIIIIII
+pi*0.350140869617462
+1.1
+Negated: 1
+ZIIIIIII
+(-(pi*0.350140869617462)/2)-((pi*0.350140869617462)/2)
+-1.1
 
-1 0 0 0 0 0 0 +XII
-0 1 0 0 0 0 0 +IXI
-0 0 1 0 0 0 0 +IIX
-0 0 0 1 0 0 0 +ZII
-0 0 0 0 1 0 0 +IZI
-0 0 0 0 0 1 0 +IIZ
+0 1 0 1 0 0 0 0 0 0 0 0 1 0 0 0 1 -IXIXZIII
+1 1 0 0 0 1 1 1 0 0 1 0 0 1 0 0 1 -XXZIIYXX
+0 0 0 1 0 1 0 0 0 0 0 0 0 0 1 0 1 -IIIXIXZI
+1 1 1 1 0 0 0 1 0 0 0 0 1 0 0 1 1 -XXXXZIIY
+0 0 0 0 0 1 0 1 1 0 0 0 0 0 0 0 1 -ZIIIIXIX
+0 1 1 1 1 1 0 0 0 1 0 0 0 0 1 0 1 -IYXXXXZI
+0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1 -IXZIIIIX
+0 0 0 1 1 1 1 1 1 0 0 1 0 0 0 0 1 -ZIIYXXXX
+0 1 0 0 0 0 1 1 0 1 1 0 1 1 1 1 0 +IYZIZZYY
+1 1 0 1 0 1 1 1 1 0 0 0 1 1 0 0 1 -YXIXZYXX
+1 1 0 1 0 0 0 0 1 1 0 1 1 0 1 1 0 +YYIYZIZZ
+1 1 1 1 0 1 0 1 0 0 1 0 0 0 1 1 1 -XXYXIXZY
+0 0 1 1 0 1 0 0 1 1 1 1 0 1 1 0 0 +ZZYYIYZI
+0 1 1 1 1 1 0 1 1 1 0 0 1 0 0 0 1 -ZYXXYXIX
+0 0 0 0 1 1 0 1 1 0 1 1 1 1 0 1 0 +ZIZZYYIY
+0 1 0 1 1 1 1 1 0 0 1 1 0 0 1 0 1 -IXZYXXYX

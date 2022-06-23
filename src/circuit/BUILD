@@ -95,3 +95,15 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [":helpers"],
 )
+
+cc_test(
+    name = "stabiliser_tableau_test",
+    size = "small",
+    srcs = ["stabiliser_tableau_test.cc"],
+    deps = [
+        ":qubit_manager",
+        ":stabiliser_tableau",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)

@@ -30,7 +30,7 @@ class StabiliserTableau {
   void ApplyHadamard(const Qubit &qubit);
   void ApplyCNOTGate(const Qubit &control, const Qubit &target);
 
-  bool CanCreate(const PauliString &string) const;
+  std::optional<bool> CanCreate(const PauliString &string) const;
 
   void Print() const;
 

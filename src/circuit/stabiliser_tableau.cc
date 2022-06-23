@@ -186,7 +186,8 @@ void SwapRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
 
 }  // namespace
 
-bool StabiliserTableau::CanCreate(const PauliString &string) const {
+std::optional<bool> StabiliserTableau::CanCreate(
+    const PauliString &string) const {
   std::vector<std::vector<int>> augMat;
   std::vector<int> targetMat = string.GetMatrixForm();
   augMat.resize(2 * numQubits);
@@ -197,32 +198,37 @@ bool StabiliserTableau::CanCreate(const PauliString &string) const {
     }
   }
 
-  int nextPivot{};
   for (int i{}; i < numQubits; i++) {
-    bool foundRow = false;
-    for (int j{nextPivot}; j < 2 * numQubits; j++) {
+    int index = -1;
+    for (int j{i}; j < 2 * numQubits; j++) {
       if (augMat[j][i] == 1) {
-        if (!foundRow) {
-          if (j != nextPivot) {
-            SwapRows(augMat, targetMat, j, nextPivot);
-            j--;
-          }
-          foundRow = true;
-        } else {
-          AddRows(augMat, targetMat, nextPivot, j);
-        }
+        index = j;
+        break;
       }
     }
-    if (foundRow) {
-      nextPivot++;
+    if (index == -1) return std::nullopt;
+    if (index != i) {
+      SwapRows(augMat, targetMat, i, index);
+    }
+    for (int j{}; j < 2 * numQubits; j++) {
+      if (j == i) continue;
+      if (augMat[j][i] == 1) {
+        AddRows(augMat, targetMat, i, j);
+      }
     }
   }
 
-  for (int i{nextPivot}; i < 2 * numQubits; i++) {
-    if (targetMat[i] == 1) return false;
+  for (int i{numQubits}; i < 2 * numQubits; i++) {
+    if (targetMat[i] == 1) return std::nullopt;
   }
 
-  return true;
+  int negated = 0;
+
+  for (int i{}; i < numQubits; i++) {
+    if (targetMat[i] == 1) negated ^= grid[numQubits + i][2 * numQubits];
+  }
+
+  return negated == 1;
 }
 
 }  // namespace circuit

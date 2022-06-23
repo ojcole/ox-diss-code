@@ -19,6 +19,20 @@ enum PauliLetter : char {
   Y = 'Y',
 };
 
+inline std::vector<PauliLetter> operator"" _p(const char *str, size_t len) {
+  std::vector<PauliLetter> letters(len, I);
+  for (size_t i{}; i < len; i++) {
+    if (str[i] == 'Z') {
+      letters[i] = Z;
+    } else if (str[i] == 'X') {
+      letters[i] = X;
+    } else if (str[i] == 'Y') {
+      letters[i] = Y;
+    }
+  }
+  return letters;
+}
+
 class PauliStringHash;
 class PauliExponential;
 

@@ -124,7 +124,7 @@ PauliCircuit::PauliCircuit(qasmtools::ast::Program &&program)
   ProcessGates();
   pauli_graph.Print();
   std::cout << std::endl;
-  pauli_graph.Runner(tableau);
+  pauli_graph.ExhaustiveRunner(tableau);
   pauli_graph.Print();
   std::cout << std::endl;
   tableau.Print();

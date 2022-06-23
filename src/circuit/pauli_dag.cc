@@ -48,9 +48,7 @@ void PauliDAG::DFSTransitiveTraversal(std::unordered_set<int>& visited,
   }
 }
 
-void PauliDAG::MergePair(int a, int b) {
-  paulis.at(b).CombineWithPauli(paulis.at(a));
-
+void PauliDAG::RemovePauli(int a) {
   std::unordered_set<int> children = edges[a];
   std::unordered_set<int> parents = back_edges[a];
 
@@ -71,6 +69,14 @@ void PauliDAG::MergePair(int a, int b) {
   paulis.erase(a);
 }
 
+void PauliDAG::MergePair(int a, int b, bool sign) {
+  if (sign) paulis.at(a).Negate();
+
+  paulis.at(b).CombineWithPauli(paulis.at(a));
+
+  RemovePauli(a);
+}
+
 void PauliDAG::TryMergePair(int a, int b, const StabiliserTableau& tableau) {
   if (edges[a].find(b) != edges[a].end()) return;
   if (edges[b].find(a) != edges[b].end()) return;
@@ -80,8 +86,9 @@ void PauliDAG::TryMergePair(int a, int b, const StabiliserTableau& tableau) {
 
   auto mergeString =
       PauliString::StringDifference(pauliA.GetString(), pauliB.GetString());
+  auto createSign = tableau.CanCreate(mergeString);
 
-  if (!tableau.CanCreate(mergeString)) return;
+  if (!createSign.has_value()) return;
 
   for (auto parent : back_edges[a]) {
     if (!paulis.at(parent).GetString().CommutesWith(mergeString)) return;
@@ -91,7 +98,7 @@ void PauliDAG::TryMergePair(int a, int b, const StabiliserTableau& tableau) {
     if (!paulis.at(parent).GetString().CommutesWith(mergeString)) return;
   }
 
-  MergePair(a, b);
+  MergePair(a, b, *createSign);
 }
 
 void PauliDAG::TryCancel(int a, const StabiliserTableau& tableau) {
@@ -99,30 +106,15 @@ void PauliDAG::TryCancel(int a, const StabiliserTableau& tableau) {
   if (back_edges[a].size() > 0) return;
   if (!tableau.CanCreate(pauli.GetString())) return;
 
-  for (auto child : edges[a]) {
-    RemoveEdge(a, child);
-  }
-
-  paulis.erase(a);
+  RemovePauli(a);
 }
 
 bool PauliDAG::CheckPhase(int a) {
   const auto& pauli = paulis.at(a);
-  try {
-    auto rationalPhase = phase::GetRationalPhaseFromExpr(pauli.GetExpr());
-    if (rationalPhase == phase::Fraction(0)) {
-      for (auto child : edges[a]) {
-        RemoveEdge(a, child);
-      }
-
-      for (auto parent : back_edges[a]) {
-        RemoveEdge(parent, a);
-      }
-
-      paulis.erase(a);
-      return true;
-    }
-  } catch (const phase::PhaseException&) {
+  std::optional<double> value = pauli.GetExpr().constant_eval();
+  if (value == 0) {
+    RemovePauli(a);
+    return true;
   }
   return false;
 }
@@ -141,9 +133,33 @@ void PauliDAG::Runner(const StabiliserTableau& tableau) {
 
   for (auto idx : tsort) {
     if (paulis.find(idx) == paulis.end()) continue;
-    if (CheckPhase(idx)) continue;
+    // if (CheckPhase(idx)) continue;
     TryCancel(idx, tableau);
   }
+}
+
+void PauliDAG::ExhaustiveRunner(const StabiliserTableau& tableau) {
+  size_t size = paulis.size();
+  size_t newSize = size;
+  do {
+    size = newSize;
+    auto tsort = TopologicalSort();
+    for (auto idx : tsort) {
+      if (paulis.find(idx) == paulis.end()) continue;
+      for (auto other : tsort) {
+        if (paulis.find(other) == paulis.end()) continue;
+        if (idx == other) continue;
+        TryMergePair(other, idx, tableau);
+      }
+    }
+    for (auto idx : tsort) {
+      if (paulis.find(idx) == paulis.end()) continue;
+      // if (CheckPhase(idx)) continue;
+      TryCancel(idx, tableau);
+    }
+    newSize = paulis.size();
+    std::cout << "iteration" << std::endl;
+  } while (size > 0 && size < newSize);
 }
 
 std::vector<int> PauliDAG::TopologicalSort() const {

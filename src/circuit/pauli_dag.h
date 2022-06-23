@@ -17,6 +17,7 @@ class PauliDAG {
 
   void AddPauli(PauliExponential &&pauli);
 
+  void ExhaustiveRunner(const StabiliserTableau &tableau);
   void Runner(const StabiliserTableau &tableau);
 
   void Print() const;
@@ -27,10 +28,12 @@ class PauliDAG {
 
   void DFSTransitiveTraversal(std::unordered_set<int> &visited, int current);
 
-  void MergePair(int a, int b);
+  void MergePair(int a, int b, bool sign);
   void TryMergePair(int a, int b, const StabiliserTableau &tableau);
   void TryCancel(int a, const StabiliserTableau &tableau);
   bool CheckPhase(int a);
+
+  void RemovePauli(int a);
 
   std::vector<int> TopologicalSort() const;
 
