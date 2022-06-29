@@ -159,7 +159,7 @@ void PauliCircuit::ProcessGates() {
     nextIndex = FirstCliffordGate(nextIndex + 1);
   }
 
-  for (int i{gates.size() - 1}; i >= startIndex; i--) {
+  for (int i{static_cast<int>(gates.size() - 1)}; i >= startIndex; i--) {
     pauli_graph.AddPauli(std::move(std::get<PauliExponential>(gates[i])));
   }
 }

@@ -135,6 +135,16 @@ bool PauliExponential::CommutesWith(const PauliExponential &other) const {
   return string.CommutesWith(other.string);
 }
 
+bool PauliExponential::CommutesWithPauli(const PauliString &pauliString) const {
+  assert(string.size() == pauliString.size());
+  for (size_t i{}; i < string.size(); i++) {
+    if (string[i] != I && pauliString[i] != I && string[i] != pauliString[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 void PauliExponential::PushCliffordThrough(
     const CliffordGate &gate,
     const std::shared_ptr<QubitManager> &qubitManager) {

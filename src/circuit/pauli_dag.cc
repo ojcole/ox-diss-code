@@ -48,6 +48,21 @@ void PauliDAG::DFSTransitiveTraversal(std::unordered_set<int>& visited,
   }
 }
 
+bool PauliDAG::DFSCanReach(std::unordered_set<int>& visited, int current,
+                           int target) {
+  if (visited.find(current) != visited.end()) return false;
+
+  const auto& children = edges[current];
+  if (children.find(target) != children.end()) return true;
+  visited.insert(current);
+
+  for (auto child : children) {
+    if (DFSCanReach(visited, child, target)) return true;
+  }
+
+  return false;
+}
+
 void PauliDAG::RemovePauli(int a) {
   std::unordered_set<int> children = edges[a];
   std::unordered_set<int> parents = back_edges[a];
@@ -84,6 +99,19 @@ void PauliDAG::TryMergePair(int a, int b, const StabiliserTableau& tableau) {
   const auto& pauliA = paulis.at(a);
   const auto& pauliB = paulis.at(b);
 
+  std::unordered_set<int> set1;
+  std::unordered_set<int> set2;
+
+  std::cout << "Trying to merge " << a << std::endl;
+  pauliA.Print();
+  std::cout << "With " << b << std::endl;
+  pauliB.Print();
+  std::cout << std::endl;
+
+  if (DFSCanReach(set1, a, b) || DFSCanReach(set2, b, a)) return;
+
+  std::cout << "No edge between them" << std::endl << std::endl;
+
   auto mergeString =
       PauliString::StringDifference(pauliA.GetString(), pauliB.GetString());
   auto createSign = tableau.CanCreate(mergeString);
@@ -91,14 +119,16 @@ void PauliDAG::TryMergePair(int a, int b, const StabiliserTableau& tableau) {
   if (!createSign.has_value()) return;
 
   for (auto parent : back_edges[a]) {
-    if (!paulis.at(parent).GetString().CommutesWith(mergeString)) return;
+    if (!paulis.at(parent).CommutesWithPauli(mergeString)) return;
   }
 
   for (auto parent : back_edges[b]) {
-    if (!paulis.at(parent).GetString().CommutesWith(mergeString)) return;
+    if (!paulis.at(parent).CommutesWithPauli(mergeString)) return;
   }
 
   MergePair(a, b, *createSign);
+
+  std::cout << "Success!" << std::endl;
 }
 
 void PauliDAG::TryCancel(int a, const StabiliserTableau& tableau) {

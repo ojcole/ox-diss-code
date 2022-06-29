@@ -74,6 +74,8 @@ class PauliExponential {
 
   bool CommutesWith(const PauliExponential &other) const;
 
+  bool CommutesWithPauli(const PauliString &pauliString) const;
+
   void PushCliffordThrough(const CliffordGate &gate,
                            const std::shared_ptr<QubitManager> &qubitManager);
 

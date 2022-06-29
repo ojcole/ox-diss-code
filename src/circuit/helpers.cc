@@ -1,5 +1,8 @@
 #include "helpers.h"
 
+// Fix issue with staq library not including unordered map
+#include <unordered_map>
+
 #include "staq/transformations/desugar.hpp"
 #include "staq/transformations/inline.hpp"
 

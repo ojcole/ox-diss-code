@@ -27,6 +27,7 @@ class PauliDAG {
   void RemoveEdge(int a, int b);
 
   void DFSTransitiveTraversal(std::unordered_set<int> &visited, int current);
+  bool DFSCanReach(std::unordered_set<int> &visited, int current, int target);
 
   void MergePair(int a, int b, bool sign);
   void TryMergePair(int a, int b, const StabiliserTableau &tableau);
