@@ -26,6 +26,7 @@ class StabiliserTableau {
                         const phase::RationalPhase &phi,
                         const phase::RationalPhase &lambda);
   void ApplyZRot(const Qubit &qubit, const phase::RationalPhase &phase);
+  void ApplyPhase(const Qubit &qubit);
   void ApplyXRot(const Qubit &qubit, const phase::RationalPhase &phase);
   void ApplyHadamard(const Qubit &qubit);
   void ApplyCNOTGate(const Qubit &control, const Qubit &target);
@@ -34,8 +35,34 @@ class StabiliserTableau {
 
   void Print() const;
 
+  void Synthesise(std::ostream &output);
+
  private:
+  void ApplyZRot(int qubit, const phase::RationalPhase &phase);
+  void ApplyPhase(int qubit);
+  void ApplyHadamard(int qubit);
+  void ApplyCNOTGate(int control, int target);
+
   void GenerateTableau(qasmtools::ast::Program &normalisedProgram);
+
+  enum SynthGateType {
+    HAD,
+    PHASE,
+    CNOT,
+  };
+
+  struct SynthGate {
+    SynthGateType type;
+    int qubit1;
+    int qubit2 = -1;
+  };
+
+  using SynthVec = std::vector<SynthGate>;
+
+  void MakeCFullRank(SynthVec &output);
+  void EliminateC(SynthVec &output, int rowOffset, int colOffset);
+  void MMStab(SynthVec &output, int rowOffset, int colOffset);
+  void ClearM(SynthVec &output, int rowOffset, int colOffset);
 
   int numQubits;
   std::vector<std::vector<int>> grid;

@@ -56,10 +56,11 @@ class PauliString {
   static PauliString StringDifference(const PauliString &string1,
                                       const PauliString &string2);
 
- private:
-  PauliLetter &operator[](size_t index) { return string[index]; }
   const PauliLetter &operator[](size_t index) const { return string[index]; }
   size_t size() const { return string.size(); }
+
+ private:
+  PauliLetter &operator[](size_t index) { return string[index]; }
 
   std::vector<PauliLetter> string;
 
@@ -94,6 +95,8 @@ class PauliExponential {
   PauliString GetString() const;
 
   qasmtools::ast::Expr &GetExpr() const;
+
+  void Synthesise(std::ostream &output, const QubitManager &manager);
 
  private:
   void ApplyHadamard(int qubit);

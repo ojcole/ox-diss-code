@@ -18,10 +18,14 @@ class QubitManager {
   QubitManager();
 
   void AddQubits(const std::string &name, int number);
-  int GetQubitIndex(const Qubit &qubit);
+  int GetQubitIndex(const Qubit &qubit) const;
+  const Qubit &GetIndexQubit(int index) const;
+
+  void Synthesise(std::ostream &output);
 
  private:
   int nextQubit = 0;
+  std::vector<Qubit> indices;
   std::unordered_map<std::string, QubitEntry> qubits;
 };
 

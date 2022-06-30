@@ -97,19 +97,41 @@ void StabiliserTableau::ApplyXRot(const Qubit &qubit,
   ApplyHadamard(qubit);
 }
 
-void StabiliserTableau::ApplyZRot(const Qubit &qubit,
+void StabiliserTableau::ApplyZRot(int qubit,
                                   const phase::RationalPhase &phase) {
-  int qubitIndex = qubitManager->GetQubitIndex(qubit);
   int iters =
       (static_cast<int>(phase.GetFraction() / phase::PI_BY_2.GetFraction()) +
        4) %
       4;
   for (int j{}; j < iters; j++) {
     for (int i{}; i < 2 * numQubits; i++) {
-      grid[i][2 * numQubits] ^=
-          grid[i][qubitIndex] * grid[i][qubitIndex + numQubits];
-      grid[i][qubitIndex + numQubits] ^= grid[i][qubitIndex];
+      grid[i][2 * numQubits] ^= grid[i][qubit] * grid[i][qubit + numQubits];
+      grid[i][qubit + numQubits] ^= grid[i][qubit];
     }
+  }
+}
+
+void StabiliserTableau::ApplyZRot(const Qubit &qubit,
+                                  const phase::RationalPhase &phase) {
+  int qubitIndex = qubitManager->GetQubitIndex(qubit);
+  ApplyZRot(qubitIndex, phase);
+}
+
+void StabiliserTableau::ApplyPhase(int qubit) {
+  ApplyZRot(qubit, phase::RationalPhase({1, 2}));
+}
+
+void StabiliserTableau::ApplyPhase(const Qubit &qubit) {
+  ApplyZRot(qubit, phase::RationalPhase({1, 2}));
+}
+
+void StabiliserTableau::ApplyCNOTGate(int control, int target) {
+  for (int i{}; i < 2 * numQubits; i++) {
+    grid[i][2 * numQubits] ^=
+        grid[i][control] * grid[i][target + numQubits] *
+        (grid[i][target] ^ grid[i][control + numQubits] ^ 1);
+    grid[i][target] ^= grid[i][control];
+    grid[i][control + numQubits] ^= grid[i][target + numQubits];
   }
 }
 
@@ -117,22 +139,18 @@ void StabiliserTableau::ApplyCNOTGate(const Qubit &control,
                                       const Qubit &target) {
   int ctrlIndex = qubitManager->GetQubitIndex(control);
   int tgtIndex = qubitManager->GetQubitIndex(target);
-
-  for (int i{}; i < 2 * numQubits; i++) {
-    grid[i][2 * numQubits] ^=
-        grid[i][ctrlIndex] * grid[i][tgtIndex + numQubits] *
-        (grid[i][tgtIndex] ^ grid[i][ctrlIndex + numQubits] ^ 1);
-    grid[i][tgtIndex] ^= grid[i][ctrlIndex];
-    grid[i][ctrlIndex + numQubits] ^= grid[i][tgtIndex + numQubits];
-  }
+  ApplyCNOTGate(ctrlIndex, tgtIndex);
 }
 
 void StabiliserTableau::ApplyHadamard(const Qubit &qubit) {
   int qubitIndex = qubitManager->GetQubitIndex(qubit);
+  ApplyHadamard(qubitIndex);
+}
+
+void StabiliserTableau::ApplyHadamard(int qubit) {
   for (int i{}; i < 2 * numQubits; i++) {
-    grid[i][2 * numQubits] ^=
-        grid[i][qubitIndex] * grid[i][qubitIndex + numQubits];
-    std::swap(grid[i][qubitIndex], grid[i][qubitIndex + numQubits]);
+    grid[i][2 * numQubits] ^= grid[i][qubit] * grid[i][qubit + numQubits];
+    std::swap(grid[i][qubit], grid[i][qubit + numQubits]);
   }
 }
 
@@ -168,14 +186,24 @@ void StabiliserTableau::Print() const {
 
 namespace {
 
-void AddRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
-             int row1, int row2) {
-  const auto &row1Vec = augMat[row1];
-  auto &row2Vec = augMat[row2];
+void AddRows(std::vector<std::vector<int>> &mat, int row1, int row2) {
+  const auto &row1Vec = mat[row1];
+  auto &row2Vec = mat[row2];
   for (size_t i{}; i < row1Vec.size(); i++) {
     row2Vec[i] ^= row1Vec[i];
   }
+}
+
+void AddRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
+             int row1, int row2) {
+  AddRows(augMat, row1, row2);
   vec[row2] ^= vec[row1];
+}
+
+void SwapCols(std::vector<std::vector<int>> &mat, int col1, int col2) {
+  for (size_t i{}; i < mat.size(); i++) {
+    std::swap(mat[i][col1], mat[i][col2]);
+  }
 }
 
 void SwapRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
@@ -229,6 +257,216 @@ std::optional<bool> StabiliserTableau::CanCreate(
   }
 
   return negated == 1;
+}
+
+void StabiliserTableau::MakeCFullRank(SynthVec &output) {
+  // Only care about the stabiliser matrix
+  int nextDepth{};
+  auto gridCopy = grid;
+  Print();
+  std::cout << std::endl;
+  for (int i{}; i < numQubits; i++) {
+    int j{nextDepth};
+    while (j < numQubits && grid[numQubits + j][i] != 1) j++;
+    if (j >= numQubits) continue;
+    if (j != nextDepth) AddRows(grid, numQubits + j, numQubits + nextDepth);
+    for (int j{nextDepth + 1}; j < numQubits; j++) {
+      if (grid[numQubits + j][i] == 1) {
+        AddRows(grid, numQubits + nextDepth, numQubits + j);
+      }
+    }
+    nextDepth++;
+  }
+
+  Print();
+  std::cout << std::endl;
+
+  int k = nextDepth;
+  std::vector<int> cols;
+  std::vector<std::vector<int>> augMat;
+  for (int i{}; i < numQubits - k; i++) {
+    augMat.push_back({});
+  }
+  for (int i{}; i < numQubits; i++) {
+    auto copy = augMat;
+    bool ind = false;
+    for (int j{}; j < numQubits - k; j++) {
+      copy[j].push_back(grid[numQubits + k + j][numQubits + i]);
+      if (copy[j].back() == 1) ind = true;
+    }
+    if (!ind) continue;
+    // Perform elim to check independence
+    for (size_t x{}; x < copy[0].size(); x++) {
+      size_t j{x};
+      while (j < copy.size() && copy[j][x] != 1) j++;
+      if (j >= copy.size()) {
+        ind = false;
+        break;
+      }
+      if (j != x) AddRows(copy, j, x);
+      for (size_t j{x + 1}; j < copy.size(); j++) {
+        if (copy[j][x] == 1) {
+          AddRows(copy, x, j);
+        }
+      }
+    }
+    if (ind) {
+      for (int j{}; j < numQubits - k; j++) {
+        augMat[j].push_back(grid[numQubits + k + j][numQubits + i]);
+      }
+      cols.push_back(i);
+    }
+  }
+
+  grid = gridCopy;
+
+  for (size_t i{}; i < cols.size(); i++) {
+    ApplyHadamard(cols[i]);
+    output.push_back({HAD, cols[i]});
+  }
+
+  Print();
+  std::cout << std::endl;
+}
+
+void StabiliserTableau::EliminateC(SynthVec &output, int rowOffset,
+                                   int colOffset) {
+  for (int i{}; i < numQubits; i++) {
+    int j{i};
+    while (j < numQubits && grid[rowOffset + i][colOffset + j] != 1) j++;
+    if (j != i) {
+      ApplyCNOTGate(j, i);
+      output.push_back({CNOT, j, i});
+    }
+    for (int j{}; j < numQubits; j++) {
+      if (j == i) continue;
+      if (grid[rowOffset + i][colOffset + j] == 1) {
+        ApplyCNOTGate(i, j);
+        output.push_back({CNOT, i, j});
+      }
+    }
+  }
+}
+
+void StabiliserTableau::MMStab(SynthVec &output, int rowOffset, int colOffset) {
+  std::vector<std::vector<int>> M;
+  for (int i{}; i < numQubits; i++) {
+    std::vector<int> row;
+    for (int j{}; j < numQubits; j++) {
+      if (i < j) {
+        row.push_back(0);
+      } else if (i == j) {
+        row.push_back(1);
+      } else {
+        int total = grid[rowOffset + i][colOffset + j];
+        for (int k{}; k < j; k++) {
+          total -= row[k] * M[j][k];
+        }
+        row.push_back(total);
+      }
+    }
+    M.push_back(row);
+  }
+  for (int i{}; i < numQubits; i++) {
+    int lambda = 0;
+    for (int k{}; k < numQubits; k++) {
+      lambda += M[i][k] * M[i][k];
+    }
+    lambda -= grid[rowOffset + i][colOffset + i];
+    std::cout << lambda << std::endl;
+    if (lambda % 2 == 1) {
+      // OUTPUT PHASE
+      ApplyPhase(i);
+      output.push_back({PHASE, i});
+    }
+  }
+  Print();
+  std::cout << std::endl;
+  for (const auto &row : M) {
+    for (const auto &a : row) {
+      std::cout << a << " ";
+    }
+    std::cout << std::endl;
+  }
+  for (int i{}; i < numQubits; i++) {
+    for (int j{i + 1}; j < numQubits; j++) {
+      if (M[j][i] == 1) {
+        ApplyCNOTGate(j, i);
+        output.push_back({CNOT, j, i});
+      }
+    }
+  }
+}
+
+void StabiliserTableau::ClearM(SynthVec &output, int rowOffset, int colOffset) {
+  for (int i{}; i < numQubits; i++) {
+    ApplyPhase(i);
+    output.push_back({PHASE, i});
+  }
+
+  Print();
+  std::cout << std::endl;
+
+  for (int i{}; i < numQubits; i++) {
+    if (grid[rowOffset + i][2 * numQubits] == 1) {
+      ApplyPhase(i);
+      ApplyPhase(i);
+      output.push_back({PHASE, i});
+      output.push_back({PHASE, i});
+    }
+  }
+
+  Print();
+  std::cout << std::endl;
+
+  EliminateC(output, rowOffset, colOffset);
+}
+
+void StabiliserTableau::Synthesise(std::ostream &output) {
+  SynthVec synthesised;
+
+  MakeCFullRank(synthesised);
+
+  EliminateC(synthesised, numQubits, 0);
+  Print();
+  std::cout << std::endl;
+
+  MMStab(synthesised, numQubits, numQubits);
+  Print();
+  std::cout << std::endl;
+
+  ClearM(synthesised, numQubits, 0);
+  Print();
+  std::cout << std::endl;
+
+  for (int i{}; i < numQubits; i++) {
+    ApplyHadamard(i);
+    synthesised.push_back({HAD, i});
+  }
+  Print();
+  std::cout << std::endl;
+
+  MMStab(synthesised, 0, numQubits);
+  Print();
+  std::cout << std::endl;
+
+  ClearM(synthesised, 0, 0);
+  Print();
+  std::cout << std::endl;
+
+  for (auto it = synthesised.rbegin(); it != synthesised.rend(); it++) {
+    auto qubit = qubitManager->GetIndexQubit(it->qubit1);
+    if (it->type == HAD) {
+      output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
+    } else if (it->type == PHASE) {
+      output << "u1(-pi/2) " << qubit.name << "[" << qubit.offset << "];"
+             << std::endl;
+    } else {
+      auto qubit2 = qubitManager->GetIndexQubit(it->qubit2);
+      output << "cx " << qubit.name << "[" << qubit.offset << "], "
+             << qubit2.name << "[" << qubit2.offset << "];" << std::endl;
+    }
+  }
 }
 
 }  // namespace circuit

@@ -2,7 +2,7 @@
     "cmake.configureOnOpen": false,
     "files.exclude": {
         ".vscode": true,
-        "bazel-*": true
+        // "bazel-*": true
     },
     "files.associations": {
         "any": "cpp",

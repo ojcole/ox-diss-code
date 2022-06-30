@@ -30,6 +30,8 @@ class PauliCircuit {
   void AddXRot(const Qubit &qubit, const phase::RationalPhase &phase);
   void AddCNOTGate(const Qubit &control, const Qubit &target);
 
+  void Synthesise(std::ostream &output);
+
  private:
   void ProcessGates();
   int FirstCliffordGate(int after);

@@ -130,6 +130,14 @@ PauliCircuit::PauliCircuit(qasmtools::ast::Program &&program)
   tableau.Print();
 }
 
+void PauliCircuit::Synthesise(std::ostream &output) {
+  output << "OPENQASM 2.0;" << std::endl;
+  output << "include \"qelib1.inc\";" << std::endl;
+  qubitManager->Synthesise(output);
+  tableau.Synthesise(output);
+  pauli_graph.Synthesise(output, *qubitManager);
+}
+
 void PauliCircuit::ProcessGates() {
   int nextIndex = FirstCliffordGate(0);
   int startIndex = 0;

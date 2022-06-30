@@ -22,6 +22,8 @@ class PauliDAG {
 
   void Print() const;
 
+  void Synthesise(std::ostream &output, const QubitManager &qubitManager);
+
  private:
   void AddEdge(int a, int b);
   void RemoveEdge(int a, int b);

@@ -223,5 +223,60 @@ std::vector<int> PauliExponential::GetMatrixForm() const {
 
 qasmtools::ast::Expr &PauliExponential::GetExpr() const { return *phaseExpr; }
 
+namespace {
+
+void SynthesisePhasePoly(std::ostream &output, const QubitManager &manager,
+                         const PauliString &string, double value,
+                         size_t i = 0UL) {
+  if (i >= string.size()) return;
+  if (string[i] == I) {
+    SynthesisePhasePoly(output, manager, string, value, i + 1);
+    return;
+  }
+  size_t next_i{i + 1};
+  for (; next_i <= string.size(); next_i++) {
+    if (string[next_i] != I) break;
+  }
+
+  const auto &qubit = manager.GetIndexQubit(i);
+  if (next_i >= string.size()) {
+    output << "u1(" << value << ") " << qubit.name << "[" << qubit.offset
+           << "];" << std::endl;
+    return;
+  }
+
+  const auto &nextQubit = manager.GetIndexQubit(next_i);
+  output << "cx " << qubit.name << "[" << qubit.offset << "], "
+         << nextQubit.name << "[" << nextQubit.offset << "];" << std::endl;
+  SynthesisePhasePoly(output, manager, string, value, next_i);
+  output << "cx " << qubit.name << "[" << qubit.offset << "], "
+         << nextQubit.name << "[" << nextQubit.offset << "];" << std::endl;
+}
+}  // namespace
+
+void PauliExponential::Synthesise(std::ostream &output,
+                                  const QubitManager &manager) {
+  std::optional<double> value = phaseExpr->constant_eval();
+  if (!value.has_value()) return;
+  for (size_t i{}; i < string.size(); i++) {
+    const auto &qubit = manager.GetIndexQubit(i);
+    if (string[i] == X) {
+      output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
+    } else if (string[i] == Y) {
+      output << "sx " << qubit.name << "[" << qubit.offset << "];" << std::endl;
+    }
+  }
+  SynthesisePhasePoly(output, manager, string, *value);
+  for (size_t i{}; i < string.size(); i++) {
+    const auto &qubit = manager.GetIndexQubit(i);
+    if (string[i] == X) {
+      output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
+    } else if (string[i] == Y) {
+      output << "sxdg " << qubit.name << "[" << qubit.offset << "];"
+             << std::endl;
+    }
+  }
+}
+
 }  // namespace circuit
 }  // namespace qstabr
