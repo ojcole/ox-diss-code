@@ -174,7 +174,7 @@ void PauliDAG::ExhaustiveRunner(const StabiliserTableau& tableau) {
     }
     for (auto idx : tsort) {
       if (paulis.find(idx) == paulis.end()) continue;
-      // if (CheckPhase(idx)) continue;
+      if (CheckPhase(idx)) continue;
       TryCancel(idx, tableau);
     }
     newSize = paulis.size();

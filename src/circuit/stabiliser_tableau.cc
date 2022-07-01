@@ -362,7 +362,7 @@ void StabiliserTableau::MMStab(SynthVec &output, int rowOffset, int colOffset) {
         for (int k{}; k < j; k++) {
           total -= row[k] * M[j][k];
         }
-        row.push_back(total);
+        row.push_back(total & 1);
       }
     }
     M.push_back(row);
@@ -374,7 +374,7 @@ void StabiliserTableau::MMStab(SynthVec &output, int rowOffset, int colOffset) {
     }
     lambda -= grid[rowOffset + i][colOffset + i];
     std::cout << lambda << std::endl;
-    if (lambda % 2 == 1) {
+    if ((lambda & 1) == 1) {
       // OUTPUT PHASE
       ApplyPhase(i);
       output.push_back({PHASE, i});

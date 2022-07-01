@@ -1,14 +1,17 @@
 #include <iostream>
 
+#include "circuit/helpers.h"
 #include "circuit/pauli_circuit.h"
 #include "staq/qasmtools/parser/parser.hpp"
 
 int main(int argc, char const* argv[]) {
-  auto ast = qasmtools::parser::parse_file("qasm_bench/medium/dnn_n8.qasm");
+  // auto ast = qasmtools::parser::parse_file("qasm_bench/medium/dnn_n8.qasm");
   // auto ast = qasmtools::parser::parse_file("qasm_files/h2.qasm");
+  auto ast = qasmtools::parser::parse_file("qasm_files/test.qasm");
   // auto ast =
   //     qasmtools::parser::parse_file("tket_bench/h2/H2_cmplt_JW_ccpvdz.qasm");
 
+  // qstabr::circuit::NormaliseProgram(*ast);
   qstabr::circuit::PauliCircuit circuit(std::move(*ast));
   // auto manager = std::make_shared<qstabr::circuit::QubitManager>();
   // qstabr::circuit::StabiliserTableau tableau(4, manager);
@@ -32,5 +35,6 @@ int main(int argc, char const* argv[]) {
   // tableau.ApplyPhase({"qubit", 1});
 
   std::ofstream stream("test.txt");
+  // ast->pretty_print(stream);
   circuit.Synthesise(stream);
 }

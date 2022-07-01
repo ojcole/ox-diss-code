@@ -1,0 +1,20 @@
+Loading: 
+Loading: 0 packages loaded
+Analyzing: target //:main (0 packages loaded, 0 targets configured)
+INFO: Analyzed target //:main (0 packages loaded, 0 targets configured).
+INFO: Found 1 target...
+[0 / 4] [Prepa] BazelWorkspaceStatusAction stable-status.txt
+[1 / 4] Compiling main.cc; 1s linux-sandbox
+INFO: From Compiling main.cc:
+In file included from main.cc:6:
+bazel-out/k8-fastbuild/bin/external/staq/_virtual_includes/staq/staq/transformations/inline.hpp:277:13: warning: 'void staq::transformations::inline_ast(qasmtools::ast::ASTNode&, const staq::transformations::Inliner::config&)' defined but not used [-Wunused-function]
+  277 | static void inline_ast(ast::ASTNode& node, const Inliner::config& params) {
+      |             ^~~~~~~~~~
+[2 / 4] [Prepa] Linking main
+Target //:main up-to-date:
+  bazel-bin/main
+INFO: Elapsed time: 4.868s, Critical Path: 4.81s
+INFO: 3 processes: 1 internal, 2 linux-sandbox.
+INFO: Build completed successfully, 3 total actions
+INFO: Running command line: bazel-bin/main
+INFO: Build completed successfully, 3 total actions

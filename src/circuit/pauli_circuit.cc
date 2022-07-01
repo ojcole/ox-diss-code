@@ -61,9 +61,9 @@ class GateReader : public qasmtools::ast::Traverse {
                  *lambdaPhase == phase::PI_BY_2) {
         circuit.AddXRot(qubit, *thetaPhase);
       } else {
-        circuit.AddZRot(qubit, *phiPhase + phase::PI_BY_2);
-        circuit.AddXRot(qubit, *thetaPhase);
         circuit.AddZRot(qubit, *lambdaPhase - phase::PI_BY_2);
+        circuit.AddXRot(qubit, *thetaPhase);
+        circuit.AddZRot(qubit, *phiPhase + phase::PI_BY_2);
       }
     } else {
       if (thetaPhase.has_value() && *thetaPhase == phase::ZERO) {
@@ -77,10 +77,10 @@ class GateReader : public qasmtools::ast::Traverse {
           circuit.AddZPauliExp(qubit, AddExprPhases(gate.phi(), gate.lambda()));
         }
       } else {
-        if (phiPhase.has_value()) {
-          circuit.AddZRot(qubit, *phiPhase + phase::PI_BY_2);
+        if (lambdaPhase.has_value()) {
+          circuit.AddZRot(qubit, *lambdaPhase - phase::PI_BY_2);
         } else {
-          circuit.AddZPauliExp(qubit, AddPIByTwoToPhase(gate.phi()));
+          circuit.AddZPauliExp(qubit, SubtractPIByTwoFromPhase(gate.lambda()));
         }
 
         if (thetaPhase.has_value()) {
@@ -90,10 +90,10 @@ class GateReader : public qasmtools::ast::Traverse {
                                qasmtools::ast::object::clone(gate.theta()));
         }
 
-        if (lambdaPhase.has_value()) {
-          circuit.AddZRot(qubit, *lambdaPhase - phase::PI_BY_2);
+        if (phiPhase.has_value()) {
+          circuit.AddZRot(qubit, *phiPhase + phase::PI_BY_2);
         } else {
-          circuit.AddZPauliExp(qubit, SubtractPIByTwoFromPhase(gate.lambda()));
+          circuit.AddZPauliExp(qubit, AddPIByTwoToPhase(gate.phi()));
         }
       }
     }
@@ -121,6 +121,22 @@ PauliCircuit::PauliCircuit(qasmtools::ast::Program &&program)
   NormaliseProgram(program);
   GateReader reader(*this);
   program.accept(reader);
+  for (const auto &gate : gates) {
+    if (std::holds_alternative<CliffordGate>(gate)) {
+      auto clifford = std::get<CliffordGate>(gate);
+      std::cout << clifford.GetGateType() << std::endl;
+      if (clifford.GetPhase().has_value()) {
+        std::cout << clifford.GetPhase()->GetFraction() << std::endl;
+      }
+      std::cout << clifford.GetFirstQubit().offset << std::endl;
+      std::cout << std::endl;
+    } else {
+      auto &pauli = std::get<PauliExponential>(gate);
+      pauli.Print();
+      std::cout << std::endl;
+    }
+  }
+  std::cout << std::endl << std::endl;
   ProcessGates();
   pauli_graph.Print();
   std::cout << std::endl;

@@ -7,7 +7,7 @@ cc_binary(
     ],
     copts = [],
     data = [
-        "@//qasm_bench/medium:dnn_n8.qasm",
+        "@//qasm_bench/medium",
         "@//qasm_files:clifford.qasm",
         "@//qasm_files:h2.qasm",
         "@//qasm_files:test.qasm",

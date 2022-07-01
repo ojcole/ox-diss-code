@@ -20,7 +20,7 @@ const std::map<PauliLetter, SingleQubitMapping> hadamardMapping{
     {I, {I, false}}, {X, {Z, false}}, {Z, {X, false}}, {Y, {Y, true}}};
 
 const std::map<PauliLetter, SingleQubitMapping> sgateMapping{
-    {I, {I, false}}, {X, {Y, true}}, {Z, {Z, false}}, {Y, {X, false}}};
+    {I, {I, false}}, {X, {Y, false}}, {Z, {Z, false}}, {Y, {X, true}}};
 
 struct MultiQubitMapping {
   PauliLetter imageFirst;
@@ -258,22 +258,32 @@ void PauliExponential::Synthesise(std::ostream &output,
                                   const QubitManager &manager) {
   std::optional<double> value = phaseExpr->constant_eval();
   if (!value.has_value()) return;
+  double val = *value;
+  if (negated) val *= -1;
   for (size_t i{}; i < string.size(); i++) {
     const auto &qubit = manager.GetIndexQubit(i);
     if (string[i] == X) {
       output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
     } else if (string[i] == Y) {
-      output << "sx " << qubit.name << "[" << qubit.offset << "];" << std::endl;
+      // output << "sx " << qubit.name << "[" << qubit.offset << "];" <<
+      // std::endl;
+      output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
+      output << "s " << qubit.name << "[" << qubit.offset << "];" << std::endl;
+      output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
     }
   }
-  SynthesisePhasePoly(output, manager, string, *value);
+  SynthesisePhasePoly(output, manager, string, val);
   for (size_t i{}; i < string.size(); i++) {
     const auto &qubit = manager.GetIndexQubit(i);
     if (string[i] == X) {
       output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
     } else if (string[i] == Y) {
-      output << "sxdg " << qubit.name << "[" << qubit.offset << "];"
+      // output << "sxdg " << qubit.name << "[" << qubit.offset << "];"
+      //        << std::endl;
+      output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
+      output << "sdg " << qubit.name << "[" << qubit.offset << "];"
              << std::endl;
+      output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
     }
   }
 }
