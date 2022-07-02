@@ -1,5 +1,4 @@
-// Quantum code for the specified SAT problem.
-
+OPENQASM 2.0;
 include "qelib1.inc";
 
 // Declare all needed (qu)bits

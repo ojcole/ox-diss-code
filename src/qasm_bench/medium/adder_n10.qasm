@@ -17,7 +17,6 @@ qreg cin[1];
 qreg a[4];
 qreg b[4];
 qreg cout[1];
-creg ans[5];
 // set input states
 x a[0]; // a = 0001
 x b;    // b = 1111

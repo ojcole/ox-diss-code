@@ -63,6 +63,7 @@ class StabiliserTableau {
   void EliminateC(SynthVec &output, int rowOffset, int colOffset);
   void MMStab(SynthVec &output, int rowOffset, int colOffset);
   void ClearM(SynthVec &output, int rowOffset, int colOffset);
+  void CancelGates(SynthVec &gates);
 
   int numQubits;
   std::vector<std::vector<int>> grid;

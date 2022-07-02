@@ -8,14 +8,28 @@ cc_binary(
     copts = [],
     data = [
         "@//qasm_bench/medium",
-        "@//qasm_files:clifford.qasm",
-        "@//qasm_files:h2.qasm",
-        "@//qasm_files:test.qasm",
+        "@//qasm_files",
         "@//tket_bench/h2",
+        "@//tket_bench/h4",
     ],
     deps = [
         "//circuit:pauli_circuit",
         "//phase",
+        "@staq",
+        "@staq//:staq_tools",
+    ],
+)
+
+cc_binary(
+    name = "pyzxify",
+    srcs = ["pyzxify.cc"],
+    data = [
+        "@//qasm_bench/medium",
+        "@//qasm_files",
+        "@//tket_bench/h2",
+    ],
+    deps = [
+        "//circuit:helpers",
         "@staq",
         "@staq//:staq_tools",
     ],

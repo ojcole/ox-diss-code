@@ -18,7 +18,7 @@ class GateReader : public qasmtools::ast::Traverse {
   GateReader(PauliCircuit &circuit) : circuit(circuit) {}
 
   void visit(qasmtools::ast::RegisterDecl &reg) override {
-    circuit.AddQubits(reg.id(), reg.size());
+    if (reg.is_quantum()) circuit.AddQubits(reg.id(), reg.size());
   }
 
   void visit(qasmtools::ast::UGate &gate) override {

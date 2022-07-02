@@ -240,8 +240,9 @@ void SynthesisePhasePoly(std::ostream &output, const QubitManager &manager,
 
   const auto &qubit = manager.GetIndexQubit(i);
   if (next_i >= string.size()) {
-    output << "u1(" << value << ") " << qubit.name << "[" << qubit.offset
-           << "];" << std::endl;
+    std::streamsize ss = output.precision();
+    output << "u1(" << std::setprecision(15) << value << std::setprecision(ss)
+           << ") " << qubit.name << "[" << qubit.offset << "];" << std::endl;
     return;
   }
 
