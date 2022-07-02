@@ -24,7 +24,9 @@ cc_binary(
     name = "pyzxify",
     srcs = ["pyzxify.cc"],
     data = [
+        "@//qasm_bench/large",
         "@//qasm_bench/medium",
+        "@//qasm_bench/small",
         "@//qasm_files",
         "@//tket_bench/h2",
     ],
