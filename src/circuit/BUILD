@@ -9,7 +9,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":helpers",
-        ":pauli",
+        ":pauli_exponential",
         ":qubit_manager",
         "//phase",
         "@staq",
@@ -23,7 +23,7 @@ cc_library(
     hdrs = ["clifford_gate.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":helpers",
+        ":qubit",
         "//phase",
     ],
 )
@@ -34,6 +34,9 @@ cc_library(
     hdrs = ["helpers.h"],
     visibility = ["//visibility:public"],
     deps = [
+        ":clifford_gate",
+        ":single_qubit_unitary",
+        ":z_gate",
         "@staq",
         "@staq//:staq_tools",
     ],
@@ -47,8 +50,8 @@ cc_library(
     deps = [
         ":clifford_gate",
         ":helpers",
-        ":pauli",
         ":pauli_dag",
+        ":pauli_exponential",
         ":stabiliser_tableau",
         "//phase",
         "@staq//:staq_tools",
@@ -61,7 +64,7 @@ cc_library(
     hdrs = ["pauli_dag.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":pauli",
+        ":pauli_exponential",
         ":stabiliser_tableau",
     ],
 )
@@ -72,17 +75,26 @@ cc_library(
     hdrs = ["pauli_graph.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":pauli",
+        ":pauli_exponential",
     ],
 )
 
 cc_library(
-    name = "pauli",
-    srcs = ["pauli.cc"],
-    hdrs = ["pauli.h"],
+    name = "pauli_string",
+    srcs = ["pauli_string.cc"],
+    hdrs = ["pauli_string.h"],
+    visibility = ["//visibility:public"],
+    deps = [],
+)
+
+cc_library(
+    name = "pauli_exponential",
+    srcs = ["pauli_exponential.cc"],
+    hdrs = ["pauli_exponential.h"],
     visibility = ["//visibility:public"],
     deps = [
         ":clifford_gate",
+        ":helpers",
         ":qubit_manager",
         "@staq//:staq_tools",
     ],
@@ -93,7 +105,35 @@ cc_library(
     srcs = ["qubit_manager.cc"],
     hdrs = ["qubit_manager.h"],
     visibility = ["//visibility:public"],
-    deps = [":helpers"],
+    deps = [":qubit"],
+)
+
+cc_library(
+    name = "qubit",
+    srcs = [],
+    hdrs = ["qubit.h"],
+    visibility = ["//visibility:public"],
+    deps = [],
+)
+
+cc_library(
+    name = "z_gate",
+    srcs = ["z_gate.cc"],
+    hdrs = ["z_gate.h"],
+    visibility = ["//visibility:public"],
+    deps = [":qubit"],
+)
+
+cc_library(
+    name = "single_qubit_unitary",
+    srcs = ["single_qubit_unitary.cc"],
+    hdrs = ["single_qubit_unitary.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":pauli_string",
+        ":qubit",
+        "//phase",
+    ],
 )
 
 cc_test(

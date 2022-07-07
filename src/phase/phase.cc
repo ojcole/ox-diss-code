@@ -43,7 +43,7 @@ void RationalPhase::Normalise() {
     }
   }
 
-  if (negated) {
+  if (negated && !(numerator == 1 && denominator == 1)) {
     numerator *= -1;
   }
   fraction = {numerator, denominator};
@@ -87,7 +87,7 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
       case qasmtools::ast::BinaryOp::Minus:
         if (rFrac.fraction == 0) break;
         if (lFrac.fraction == 0) {
-          lFrac.fraction = rFrac.fraction * -1;
+          lFrac.fraction = rFrac.fraction * Fraction(-1);
           lFrac.piPower = rFrac.piPower;
           break;
         }
@@ -142,7 +142,7 @@ class PhaseTraversal : public qasmtools::ast::Traverse {
     if (fraction.piPower != 1 && fraction.fraction != 0) {
       throw PhaseException("Invalid pi power");
     }
-    return fraction.fraction;
+    return RationalPhase(fraction.fraction);
   }
 
  private:
@@ -153,6 +153,32 @@ RationalPhase GetRationalPhaseFromExpr(qasmtools::ast::Expr &expression) {
   PhaseTraversal traversal;
   expression.accept(traversal);
   return traversal.getPhase();
+}
+
+std::unique_ptr<qasmtools::ast::Expr> RationalPhase::ToExpr() const {
+  if (fraction == 0) return qasmtools::ast::IntExpr::create({}, 0);
+  std::unique_ptr<qasmtools::ast::Expr> base;
+  {
+    auto pi = qasmtools::ast::PiExpr::create({});
+    if (fraction.GetNumerator() == 1) {
+      base = std::move(pi);
+    } else if (fraction.GetNumerator() == -1) {
+      base = qasmtools::ast::UExpr::create({}, qasmtools::ast::UnaryOp::Neg,
+                                           std::move(pi));
+    } else {
+      auto num = qasmtools::ast::IntExpr::create({}, fraction.GetNumerator());
+      base = qasmtools::ast::BExpr::create(
+          {}, std::move(num), qasmtools::ast::BinaryOp::Times, std::move(pi));
+    }
+  }
+
+  if (fraction.GetDenominator() != 1) {
+    auto num = qasmtools::ast::IntExpr::create({}, fraction.GetDenominator());
+    base = qasmtools::ast::BExpr::create(
+        {}, std::move(base), qasmtools::ast::BinaryOp::Divide, std::move(num));
+  }
+
+  return std::move(base);
 }
 
 }  // namespace phase

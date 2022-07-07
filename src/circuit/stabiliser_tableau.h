@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "helpers.h"
-#include "pauli.h"
+#include "pauli_exponential.h"
 #include "phase/phase.h"
 #include "qubit_manager.h"
 #include "staq/qasmtools/ast/ast.hpp"
@@ -35,7 +35,7 @@ class StabiliserTableau {
 
   void Print() const;
 
-  void Synthesise(std::ostream &output);
+  void Synthesise(std::vector<SimpleGate> &gates);
 
  private:
   void ApplyZRot(int qubit, const phase::RationalPhase &phase);

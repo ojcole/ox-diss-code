@@ -7,7 +7,9 @@ cc_binary(
     ],
     copts = [],
     data = [
+        "@//qasm_bench/large",
         "@//qasm_bench/medium",
+        "@//qasm_bench/small",
         "@//qasm_files",
         "@//tket_bench/h2",
         "@//tket_bench/h4",
@@ -35,4 +37,10 @@ cc_binary(
         "@staq",
         "@staq//:staq_tools",
     ],
+)
+
+cc_binary(
+    name = "test",
+    srcs = ["test.cc"],
+    deps = ["//phase"],
 )

@@ -263,8 +263,6 @@ void StabiliserTableau::MakeCFullRank(SynthVec &output) {
   // Only care about the stabiliser matrix
   int nextDepth{};
   auto gridCopy = grid;
-  Print();
-  std::cout << std::endl;
   for (int i{}; i < numQubits; i++) {
     int j{nextDepth};
     while (j < numQubits && grid[numQubits + j][i] != 1) j++;
@@ -277,9 +275,6 @@ void StabiliserTableau::MakeCFullRank(SynthVec &output) {
     }
     nextDepth++;
   }
-
-  Print();
-  std::cout << std::endl;
 
   int k = nextDepth;
   std::vector<int> cols;
@@ -324,9 +319,6 @@ void StabiliserTableau::MakeCFullRank(SynthVec &output) {
     ApplyHadamard(cols[i]);
     output.push_back({HAD, cols[i]});
   }
-
-  Print();
-  std::cout << std::endl;
 }
 
 void StabiliserTableau::EliminateC(SynthVec &output, int rowOffset,
@@ -373,20 +365,11 @@ void StabiliserTableau::MMStab(SynthVec &output, int rowOffset, int colOffset) {
       lambda += M[i][k] * M[i][k];
     }
     lambda -= grid[rowOffset + i][colOffset + i];
-    std::cout << lambda << std::endl;
     if ((lambda & 1) == 1) {
       // OUTPUT PHASE
       ApplyPhase(i);
       output.push_back({PHASE, i});
     }
-  }
-  Print();
-  std::cout << std::endl;
-  for (const auto &row : M) {
-    for (const auto &a : row) {
-      std::cout << a << " ";
-    }
-    std::cout << std::endl;
   }
   for (int i{}; i < numQubits; i++) {
     for (int j{i + 1}; j < numQubits; j++) {
@@ -404,9 +387,6 @@ void StabiliserTableau::ClearM(SynthVec &output, int rowOffset, int colOffset) {
     output.push_back({PHASE, i});
   }
 
-  Print();
-  std::cout << std::endl;
-
   for (int i{}; i < numQubits; i++) {
     if (grid[rowOffset + i][2 * numQubits] == 1) {
       ApplyPhase(i);
@@ -416,55 +396,36 @@ void StabiliserTableau::ClearM(SynthVec &output, int rowOffset, int colOffset) {
     }
   }
 
-  Print();
-  std::cout << std::endl;
-
   EliminateC(output, rowOffset, colOffset);
 }
 
-void StabiliserTableau::Synthesise(std::ostream &output) {
+void StabiliserTableau::Synthesise(std::vector<SimpleGate> &gates) {
   SynthVec synthesised;
 
   MakeCFullRank(synthesised);
 
   EliminateC(synthesised, numQubits, 0);
-  Print();
-  std::cout << std::endl;
-
   MMStab(synthesised, numQubits, numQubits);
-  Print();
-  std::cout << std::endl;
-
   ClearM(synthesised, numQubits, 0);
-  Print();
-  std::cout << std::endl;
 
   for (int i{}; i < numQubits; i++) {
     ApplyHadamard(i);
     synthesised.push_back({HAD, i});
   }
-  Print();
-  std::cout << std::endl;
 
   MMStab(synthesised, 0, numQubits);
-  Print();
-  std::cout << std::endl;
-
   ClearM(synthesised, 0, 0);
-  Print();
-  std::cout << std::endl;
 
   for (auto it = synthesised.rbegin(); it != synthesised.rend(); it++) {
     auto qubit = qubitManager->GetIndexQubit(it->qubit1);
     if (it->type == HAD) {
-      output << "h " << qubit.name << "[" << qubit.offset << "];" << std::endl;
+      gates.push_back(CliffordGate::CreateHAD(qubit));
     } else if (it->type == PHASE) {
-      output << "u1(-pi/2) " << qubit.name << "[" << qubit.offset << "];"
-             << std::endl;
+      gates.push_back(
+          CliffordGate::CreateZRot(qubit, phase::RationalPhase({-1, 2})));
     } else {
       auto qubit2 = qubitManager->GetIndexQubit(it->qubit2);
-      output << "cx " << qubit.name << "[" << qubit.offset << "], "
-             << qubit2.name << "[" << qubit2.offset << "];" << std::endl;
+      gates.push_back(CliffordGate::CreateCNOT(qubit, qubit2));
     }
   }
 }

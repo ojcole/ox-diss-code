@@ -6,8 +6,8 @@
 
 #include "clifford_gate.h"
 #include "helpers.h"
-#include "pauli.h"
 #include "pauli_dag.h"
+#include "pauli_exponential.h"
 #include "stabiliser_tableau.h"
 #include "staq/qasmtools/ast/program.hpp"
 
@@ -32,10 +32,18 @@ class PauliCircuit {
 
   void Synthesise(std::ostream &output);
 
+  size_t PauliCount() const;
+
+  void Optimise();
+
+  void PrintDAG() const;
+
  private:
   void ProcessGates();
   int FirstCliffordGate(int after);
   void ShiftCliffordGate(int start, int clifford);
+
+  std::vector<SimpleClifford> OptimiseCliffords(std::vector<SimpleGate> &gates);
 
   std::shared_ptr<QubitManager> qubitManager;
 

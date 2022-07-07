@@ -5,36 +5,35 @@
 #include "staq/qasmtools/parser/parser.hpp"
 
 int main(int argc, char const* argv[]) {
-  // auto ast = qasmtools::parser::parse_file("qasm_bench/medium/dnn_n8.qasm");
-  // auto ast = qasmtools::parser::parse_file("qasm_files/h2.qasm");
-  auto ast = qasmtools::parser::parse_file("qasm_bench/medium/qft_n15.qasm");
-  // auto ast =
-  //     qasmtools::parser::parse_file("tket_bench/h2/H2_cmplt_JW_ccpvdz.qasm");
-
-  // qstabr::circuit::NormaliseProgram(*ast);
+  if (argc < 2) {
+    std::cerr << "Requires a file path argument" << std::endl;
+    return 1;
+  }
+  auto ast = qasmtools::parser::parse_file(argv[1]);
   qstabr::circuit::PauliCircuit circuit(std::move(*ast));
-  // auto manager = std::make_shared<qstabr::circuit::QubitManager>();
-  // qstabr::circuit::StabiliserTableau tableau(4, manager);
-  // tableau.AddQubits("qubit", 4);
+  size_t beforeCount = circuit.PauliCount();
+  circuit.Optimise();
+  size_t afterCount = circuit.PauliCount();
 
-  // tableau.ApplyCNOTGate({"qubit", 0}, {"qubit", 1});
-  // tableau.ApplyHadamard({"qubit", 0});
-  // tableau.ApplyHadamard({"qubit", 3});
-  // tableau.ApplyXRot({"qubit", 1}, qstabr::phase::RationalPhase({-1, 2}));
-  // tableau.ApplyXRot({"qubit", 2}, qstabr::phase::RationalPhase({-1, 2}));
-  // tableau.ApplyCNOTGate({"qubit", 2}, {"qubit", 0});
-  // tableau.ApplyCNOTGate({"qubit", 0}, {"qubit", 2});
-  // tableau.ApplyCNOTGate({"qubit", 2}, {"qubit", 0});
-  // tableau.ApplyPhase({"qubit", 0});
-  // tableau.ApplyHadamard({"qubit", 2});
-  // tableau.ApplyHadamard({"qubit", 1});
-  // tableau.ApplyCNOTGate({"qubit", 0}, {"qubit", 1});
-  // tableau.ApplyCNOTGate({"qubit", 1}, {"qubit", 3});
-  // tableau.ApplyCNOTGate({"qubit", 2}, {"qubit", 3});
-  // tableau.ApplyHadamard({"qubit", 3});
-  // tableau.ApplyPhase({"qubit", 1});
+  std::string fileName(argv[1]);
+  std::string group;
+  std::string name;
 
-  std::ofstream stream("test.txt");
-  // ast->pretty_print(stream);
+  int current = 0;
+  int next = fileName.find("/", current);  // find if have any at all
+  while (next != std::string::npos) {
+    if (current == 0) {
+      group = fileName.substr(current, next - current);
+    }
+    current = next + 1;
+    next = fileName.find("/", current);
+  }
+  name = fileName.substr(current, fileName.size() - current);
+
+  std::cout << group << "\t" << name << "\t" << beforeCount << "\t"
+            << afterCount << std::endl;
+
+  circuit.PrintDAG();
+  std::ofstream stream("test.qasm");
   circuit.Synthesise(stream);
 }

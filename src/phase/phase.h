@@ -22,21 +22,27 @@ class PhaseException : public std::exception {
 
 class RationalPhase {
  public:
-  RationalPhase(Fraction fraction);
+  explicit RationalPhase(Fraction fraction);
 
   Fraction GetFraction() const;
 
   bool IsClifford() const;
 
+  std::unique_ptr<qasmtools::ast::Expr> ToExpr() const;
+
   explicit operator int() const { return static_cast<int>(fraction); }
 
   inline bool operator==(const RationalPhase &other) const;
   inline bool operator!=(const RationalPhase &other) const;
+  inline bool operator==(int num) const;
+  inline bool operator!=(int num) const;
 
   inline void operator+=(const RationalPhase &other);
   inline void operator-=(const RationalPhase &other);
-  inline void operator*=(const RationalPhase &other);
-  inline void operator/=(const RationalPhase &other);
+  inline void operator+=(int num);
+  inline void operator-=(int num);
+  inline void operator*=(int num);
+  inline void operator/=(int num);
 
  private:
   Fraction fraction;
@@ -47,10 +53,11 @@ class RationalPhase {
                                         const RationalPhase &phase2);
   friend inline RationalPhase operator-(const RationalPhase &phase1,
                                         const RationalPhase &phase2);
-  friend inline RationalPhase operator*(const RationalPhase &phase1,
-                                        const RationalPhase &phase2);
-  friend inline RationalPhase operator/(const RationalPhase &phase1,
-                                        const RationalPhase &phase2);
+  friend inline RationalPhase operator+(const RationalPhase &phase1, int num);
+  friend inline RationalPhase operator-(const RationalPhase &phase1, int num);
+  friend inline RationalPhase operator*(const RationalPhase &phase1, int num);
+  friend inline RationalPhase operator/(const RationalPhase &phase1, int num);
+
   friend inline std::ostream &operator<<(std::ostream &stream,
                                          const RationalPhase &phase);
 };
@@ -62,30 +69,48 @@ inline bool RationalPhase::operator!=(const RationalPhase &other) const {
   return fraction != other.fraction;
 }
 
+inline bool RationalPhase::operator==(int num) const {
+  return (*this) == RationalPhase(num);
+}
+
+inline bool RationalPhase::operator!=(int num) const {
+  return (*this) != RationalPhase(num);
+}
+
 inline RationalPhase operator+(const RationalPhase &phase1,
                                const RationalPhase &phase2) {
-  RationalPhase newPhase = phase1.fraction + phase2.fraction;
+  RationalPhase newPhase(phase1.fraction + phase2.fraction);
   newPhase.Normalise();
   return newPhase;
 }
 
 inline RationalPhase operator-(const RationalPhase &phase1,
                                const RationalPhase &phase2) {
-  RationalPhase newPhase = phase1.fraction - phase2.fraction;
+  RationalPhase newPhase(phase1.fraction - phase2.fraction);
   newPhase.Normalise();
   return newPhase;
 }
 
-inline RationalPhase operator*(const RationalPhase &phase1,
-                               const RationalPhase &phase2) {
-  RationalPhase newPhase = phase1.fraction * phase2.fraction;
+inline RationalPhase operator+(const RationalPhase &phase1, int num) {
+  RationalPhase newPhase(phase1.fraction + Fraction(num));
   newPhase.Normalise();
   return newPhase;
 }
 
-inline RationalPhase operator/(const RationalPhase &phase1,
-                               const RationalPhase &phase2) {
-  RationalPhase newPhase = phase1.fraction / phase2.fraction;
+inline RationalPhase operator-(const RationalPhase &phase1, int num) {
+  RationalPhase newPhase(phase1.fraction - Fraction(num));
+  newPhase.Normalise();
+  return newPhase;
+}
+
+inline RationalPhase operator*(const RationalPhase &phase1, int num) {
+  RationalPhase newPhase(phase1.fraction * Fraction(num));
+  newPhase.Normalise();
+  return newPhase;
+}
+
+inline RationalPhase operator/(const RationalPhase &phase1, int num) {
+  RationalPhase newPhase(phase1.fraction / Fraction(num));
   newPhase.Normalise();
   return newPhase;
 }
@@ -94,23 +119,43 @@ inline void RationalPhase::operator+=(const RationalPhase &other) {
   fraction += other.fraction;
   Normalise();
 }
+
 inline void RationalPhase::operator-=(const RationalPhase &other) {
   fraction -= other.fraction;
   Normalise();
 }
-inline void RationalPhase::operator*=(const RationalPhase &other) {
-  fraction *= other.fraction;
+
+inline void RationalPhase::operator+=(int num) {
+  fraction += num;
   Normalise();
 }
-inline void RationalPhase::operator/=(const RationalPhase &other) {
-  fraction /= other.fraction;
+
+inline void RationalPhase::operator-=(int num) {
+  fraction -= num;
+  Normalise();
+}
+
+inline void RationalPhase::operator*=(int num) {
+  fraction *= num;
+  Normalise();
+}
+inline void RationalPhase::operator/=(int num) {
+  fraction /= num;
   Normalise();
 }
 
 inline std::ostream &operator<<(std::ostream &stream,
                                 const RationalPhase &phase) {
-  return stream << phase.fraction.GetNumerator() << "*pi/"
-                << phase.fraction.GetDenominator();
+  if (phase == 0) return stream << "0";
+  if (phase.fraction.GetNumerator() < 0) stream << "-";
+  if (std::abs(phase.fraction.GetNumerator()) != 1) {
+    stream << phase.fraction.GetNumerator() << "*";
+  }
+  stream << "pi";
+  if (phase.fraction.GetDenominator() != 1) {
+    stream << "/" << phase.fraction.GetDenominator();
+  }
+  return stream;
 }
 
 const RationalPhase PI_BY_2{{1, 2}};

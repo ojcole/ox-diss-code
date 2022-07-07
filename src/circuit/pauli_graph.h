@@ -5,7 +5,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "pauli.h"
+#include "pauli_exponential.h"
 
 namespace qstabr {
 namespace circuit {

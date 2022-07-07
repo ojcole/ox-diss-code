@@ -1,5 +1,7 @@
 #include "clifford_gate.h"
 
+#include <cassert>
+
 namespace qstabr {
 namespace circuit {
 
@@ -11,6 +13,21 @@ Qubit CliffordGate::GetSecondQubit() const { return qubit2; }
 
 std::optional<phase::RationalPhase> CliffordGate::GetPhase() const {
   return phase;
+}
+
+void CliffordGate::Synthesise(std::ostream &output) const {
+  if (type == CNOT) {
+    output << "cx " << qubit1 << "," << qubit2;
+  } else if (type == HAD) {
+    output << "h " << qubit1;
+  } else if (type == ZROT) {
+    output << "u1(" << *phase << ") " << qubit1;
+  } else {
+    assert(type == XROT);
+    output << "u3(" << *phase << ",0,0) " << qubit1;
+  }
+
+  output << ";" << std::endl;
 }
 
 CliffordGate CliffordGate::CreateCNOT(Qubit control, Qubit target) {

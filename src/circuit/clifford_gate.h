@@ -3,8 +3,8 @@
 
 #include <optional>
 
-#include "helpers.h"
 #include "phase/phase.h"
+#include "qubit.h"
 
 namespace qstabr {
 namespace circuit {
@@ -17,6 +17,8 @@ class CliffordGate {
   Qubit GetFirstQubit() const;
   Qubit GetSecondQubit() const;
   std::optional<phase::RationalPhase> GetPhase() const;
+
+  void Synthesise(std::ostream &output) const;
 
   static CliffordGate CreateCNOT(Qubit control, Qubit target);
   static CliffordGate CreateHAD(Qubit qubit);

@@ -1,13 +1,8 @@
-#ifndef CIRCUIT_PAULI_H_
-#define CIRCUIT_PAULI_H_
+#ifndef CIRCUIT_PAULI_STRING_H_
+#define CIRCUIT_PAULI_STRING_H_
 
-#include <cstddef>
 #include <iostream>
 #include <vector>
-
-#include "clifford_gate.h"
-#include "qubit_manager.h"
-#include "staq/qasmtools/ast/expr.hpp"
 
 namespace qstabr {
 namespace circuit {
@@ -53,6 +48,8 @@ class PauliString {
     std::cout << std::endl;
   }
 
+  std::vector<PauliString> StringDecomps() const;
+
   static PauliString StringDifference(const PauliString &string1,
                                       const PauliString &string2);
 
@@ -66,46 +63,6 @@ class PauliString {
 
   friend class PauliStringHash;
   friend class PauliExponential;
-};
-
-class PauliExponential {
- public:
-  PauliExponential(const PauliString &string,
-                   std::unique_ptr<qasmtools::ast::Expr> phase);
-
-  bool CommutesWith(const PauliExponential &other) const;
-
-  bool CommutesWithPauli(const PauliString &pauliString) const;
-
-  void PushCliffordThrough(const CliffordGate &gate,
-                           const std::shared_ptr<QubitManager> &qubitManager);
-
-  void CombineWithPauli(const PauliExponential &other);
-
-  std::vector<int> GetMatrixForm() const;
-
-  void Print() const {
-    std::cout << "Negated: " << negated << std::endl;
-    string.Print();
-    phaseExpr->pretty_print(std::cout) << std::endl;
-  }
-
-  void Negate();
-
-  PauliString GetString() const;
-
-  qasmtools::ast::Expr &GetExpr() const;
-
-  void Synthesise(std::ostream &output, const QubitManager &manager);
-
- private:
-  void ApplyHadamard(int qubit);
-  void ApplyCNOT(int control, int target);
-  void ApplySGate(int qubit);
-
-  PauliString string;
-  std::unique_ptr<qasmtools::ast::Expr> phaseExpr;
-  bool negated;
 };
 
 class PauliStringHash {

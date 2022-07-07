@@ -1,15 +1,19 @@
 #ifndef CIRCUIT_HELPERS_H_
 #define CIRCUIT_HELPERS_H_
 
+#include <variant>
+
+#include "clifford_gate.h"
+#include "single_qubit_unitary.h"
 #include "staq/qasmtools/ast/program.hpp"
+#include "z_gate.h"
 
 namespace qstabr {
 namespace circuit {
 
-struct Qubit {
-  const std::string name = "";
-  const int offset = -1;
-};
+using SimpleGate = std::variant<CliffordGate, ZGate>;
+
+using SimpleClifford = std::variant<CliffordGate, SingleQubitUnitary>;
 
 void NormaliseProgram(qasmtools::ast::Program &program);
 

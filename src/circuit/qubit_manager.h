@@ -2,8 +2,9 @@
 #define QUBIT_MANAGER_H_
 
 #include <unordered_map>
+#include <vector>
 
-#include "helpers.h"
+#include "qubit.h"
 
 namespace qstabr {
 namespace circuit {
