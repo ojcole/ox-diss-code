@@ -219,6 +219,17 @@ void PauliCircuit::Synthesise(std::ostream &output) {
   std::vector<SimpleGate> gates;
   tableau.Synthesise(gates);
   pauli_graph.Synthesise(gates, *qubitManager);
+  auto cliffords = OptimiseCliffords(gates);
+  for (const auto &clifford : cliffords) {
+    if (std::holds_alternative<CliffordGate>(clifford)) {
+      const auto &cnot = std::get<CliffordGate>(clifford);
+      assert(cnot.GetGateType() == CNOT);
+      cnot.Synthesise(output);
+    } else {
+      auto unitary = std::get<SingleQubitUnitary>(clifford);
+      unitary.Synthesise(output);
+    }
+  }
   for (const auto &gate : gates) {
     if (std::holds_alternative<CliffordGate>(gate)) {
       std::get<CliffordGate>(gate).Synthesise(output);
@@ -226,26 +237,6 @@ void PauliCircuit::Synthesise(std::ostream &output) {
       std::get<ZGate>(gate).Synthesise(output);
     }
   }
-  std::cout << gates.size() << std::endl;
-  auto cliffords = OptimiseCliffords(gates);
-  std::cout << cliffords.size() << " " << gates.size() << std::endl;
-  // for (const auto &clifford : cliffords) {
-  //   if (std::holds_alternative<CliffordGate>(clifford)) {
-  //     const auto &cnot = std::get<CliffordGate>(clifford);
-  //     assert(cnot.GetGateType() == CNOT);
-  //     cnot.Synthesise(output);
-  //   } else {
-  //     auto unitary = std::get<SingleQubitUnitary>(clifford);
-  //     unitary.Synthesise(output);
-  //   }
-  // }
-  // for (const auto &gate : gates) {
-  //   if (std::holds_alternative<CliffordGate>(gate)) {
-  //     std::get<CliffordGate>(gate).Synthesise(output);
-  //   } else {
-  //     std::get<ZGate>(gate).Synthesise(output);
-  //   }
-  // }
 }
 
 size_t PauliCircuit::PauliCount() const { return pauli_graph.Size(); }

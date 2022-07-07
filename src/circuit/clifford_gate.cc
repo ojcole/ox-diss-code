@@ -24,7 +24,7 @@ void CliffordGate::Synthesise(std::ostream &output) const {
     output << "u1(" << *phase << ") " << qubit1;
   } else {
     assert(type == XROT);
-    output << "u3(" << *phase << ",0,0) " << qubit1;
+    output << "u3(" << *phase << ",-pi/2,pi/2) " << qubit1;
   }
 
   output << ";" << std::endl;
