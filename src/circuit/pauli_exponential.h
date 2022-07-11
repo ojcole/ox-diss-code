@@ -24,7 +24,7 @@ class PauliExponential {
   bool CommutesWithPauli(const PauliString &pauliString) const;
 
   void PushCliffordThrough(const CliffordGate &gate,
-                           const std::shared_ptr<QubitManager> &qubitManager);
+                           const QubitManager &qubitManager);
 
   void CombineWithPauli(const PauliExponential &other);
 
@@ -40,11 +40,16 @@ class PauliExponential {
 
   void Negate();
 
+  bool IsNegated() const;
+
   PauliString GetString() const;
 
   qasmtools::ast::Expr &GetExpr() const;
 
   void Synthesise(std::vector<SimpleGate> &gates, const QubitManager &manager);
+
+  std::optional<std::vector<CliffordGate>> GetCliffordRepresentation(
+      const QubitManager &manager);
 
  private:
   void ApplyHadamard(int qubit);

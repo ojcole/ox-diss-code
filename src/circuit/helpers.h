@@ -29,6 +29,13 @@ std::unique_ptr<qasmtools::ast::Expr> AddExprPhases(
 std::unique_ptr<qasmtools::ast::Expr> SubtractExprPhases(
     const qasmtools::ast::Expr &lhs, const qasmtools::ast::Expr &rhs);
 
+bool isPi(double num);
+bool isZero(double num);
+bool isPi2(double num);
+bool isNegPi2(double num);
+
+std::optional<phase::RationalPhase> CliffordPhaseFromDouble(double phase);
+
 }  // namespace circuit
 }  // namespace qstabr
 

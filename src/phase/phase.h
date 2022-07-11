@@ -159,7 +159,7 @@ inline std::ostream &operator<<(std::ostream &stream,
 }
 
 const RationalPhase PI_BY_2{{1, 2}};
-const RationalPhase PI{{1, 2}};
+const RationalPhase PI{1};
 const RationalPhase ZERO{{0, 1}};
 const RationalPhase MINUS_PI_BY_2{{-1, 2}};
 

@@ -10,10 +10,18 @@ int main(int argc, char const* argv[]) {
     return 1;
   }
   auto ast = qasmtools::parser::parse_file(argv[1]);
+  int threads = 1;
+  if (argc >= 4) {
+    try {
+      threads = std::stoi(argv[3]);
+    } catch (std::exception&) {
+    }
+  }
   qstabr::circuit::PauliCircuit circuit(std::move(*ast));
   size_t beforeCount = circuit.PauliCount();
-  circuit.Optimise();
+  circuit.Optimise(threads);
   size_t afterCount = circuit.PauliCount();
+  auto stats = circuit.GetOptStats();
 
   std::string fileName(argv[1]);
   std::string group;
@@ -29,11 +37,16 @@ int main(int argc, char const* argv[]) {
     next = fileName.find("/", current);
   }
   name = fileName.substr(current, fileName.size() - current);
+  std::cout << group << "," << name << "," << beforeCount << "," << afterCount
+            << "," << stats.identityMerges << "," << stats.totalMerges << ","
+            << stats.phaseRemovals << "," << stats.cancellations << ","
+            << stats.cliffordRemovals << std::endl;
 
-  std::cout << group << "\t" << name << "\t" << beforeCount << "\t"
-            << afterCount << std::endl;
-
-  circuit.PrintDAG();
-  std::ofstream stream("test.qasm");
-  circuit.Synthesise(stream);
+  if (argc >= 3) {
+    std::string fileName(argv[2]);
+    std::ofstream stream(fileName);
+    circuit.Synthesise(stream, threads);
+  } else {
+    // circuit.Synthesise(std::cout, threads);
+  }
 }

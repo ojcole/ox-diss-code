@@ -18,6 +18,12 @@ std::unique_ptr<qasmtools::ast::Expr> GetPIByTwo() {
       {}, std::move(pi), qasmtools::ast::BinaryOp::Divide, std::move(two));
 }
 
+const double EPSILON = 1e-6;
+const double PI = 3.14159265359f;
+const double PI2 = 1.57079632679f;
+
+void norm(double &num) { num -= 2 * PI * std::round(num / (2 * PI)); }
+
 }  // namespace
 
 void NormaliseProgram(qasmtools::ast::Program &program) {
@@ -55,6 +61,34 @@ std::unique_ptr<qasmtools::ast::Expr> SubtractExprPhases(
   return qasmtools::ast::BExpr::create({}, qasmtools::ast::object::clone(lhs),
                                        qasmtools::ast::BinaryOp::Minus,
                                        qasmtools::ast::object::clone(rhs));
+}
+
+bool isPi(double num) {
+  norm(num);
+  return std::abs(std::abs(num) - PI) < EPSILON;
+}
+
+bool isZero(double num) {
+  norm(num);
+  return std::abs(num) < EPSILON;
+}
+
+bool isPi2(double num) {
+  norm(num);
+  return std::abs(num - PI2) < EPSILON;
+}
+
+bool isNegPi2(double num) {
+  norm(num);
+  return std::abs(num + PI2) < EPSILON;
+}
+
+std::optional<phase::RationalPhase> CliffordPhaseFromDouble(double phase) {
+  if (isPi(phase)) return phase::RationalPhase(1);
+  if (isZero(phase)) return phase::RationalPhase(0);
+  if (isPi2(phase)) return phase::RationalPhase({1, 2});
+  if (isNegPi2(phase)) return phase::RationalPhase({-1, 2});
+  return std::nullopt;
 }
 
 }  // namespace circuit

@@ -30,6 +30,17 @@ class StabiliserTableau {
   void ApplyXRot(const Qubit &qubit, const phase::RationalPhase &phase);
   void ApplyHadamard(const Qubit &qubit);
   void ApplyCNOTGate(const Qubit &control, const Qubit &target);
+  void ApplyCliffordGate(const CliffordGate &clifford);
+
+  inline bool operator==(const StabiliserTableau &other) {
+    if (numQubits != other.numQubits) return false;
+    for (int i{numQubits}; i < 2 * numQubits; i++) {
+      for (int j{}; j < 2 * numQubits + 1; j++) {
+        if (grid[i][j] != other.grid[i][j]) return false;
+      }
+    }
+    return true;
+  }
 
   std::optional<bool> CanCreate(const PauliString &string) const;
 

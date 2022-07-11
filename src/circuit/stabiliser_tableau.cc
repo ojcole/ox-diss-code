@@ -85,9 +85,9 @@ void StabiliserTableau::ApplyUnitaryGate(const Qubit &qubit,
   auto lambdaTmp(lambda);
   phiTmp += phase::PI_BY_2;
   lambdaTmp -= phase::PI_BY_2;
-  ApplyZRot(qubit, phiTmp);
-  ApplyXRot(qubit, theta);
   ApplyZRot(qubit, lambdaTmp);
+  ApplyXRot(qubit, theta);
+  ApplyZRot(qubit, phiTmp);
 }
 
 void StabiliserTableau::ApplyXRot(const Qubit &qubit,
@@ -151,6 +151,25 @@ void StabiliserTableau::ApplyHadamard(int qubit) {
   for (int i{}; i < 2 * numQubits; i++) {
     grid[i][2 * numQubits] ^= grid[i][qubit] * grid[i][qubit + numQubits];
     std::swap(grid[i][qubit], grid[i][qubit + numQubits]);
+  }
+}
+
+void StabiliserTableau::ApplyCliffordGate(const CliffordGate &clifford) {
+  switch (clifford.GetGateType()) {
+    case GateType::HAD:
+      ApplyHadamard(clifford.GetFirstQubit());
+      break;
+    case GateType::CNOT:
+      ApplyCNOTGate(clifford.GetFirstQubit(), clifford.GetSecondQubit());
+      break;
+    case GateType::XROT:
+      ApplyXRot(clifford.GetFirstQubit(), *clifford.GetPhase());
+      break;
+    case GateType::ZROT:
+      ApplyZRot(clifford.GetFirstQubit(), *clifford.GetPhase());
+      break;
+    default:
+      throw std::runtime_error("Unknown gate type");
   }
 }
 

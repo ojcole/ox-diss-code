@@ -62,10 +62,12 @@ cc_library(
     name = "pauli_dag",
     srcs = ["pauli_dag.cc"],
     hdrs = ["pauli_dag.h"],
+    linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
     deps = [
         ":pauli_exponential",
         ":stabiliser_tableau",
+        "@moodycamel",
     ],
 )
 

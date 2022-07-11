@@ -1,20 +1,67 @@
-Loading: 
-Loading: 0 packages loaded
-Analyzing: target //:main (0 packages loaded, 0 targets configured)
-INFO: Analyzed target //:main (0 packages loaded, 0 targets configured).
-INFO: Found 1 target...
-[0 / 4] [Prepa] BazelWorkspaceStatusAction stable-status.txt
-[1 / 4] Compiling main.cc; 1s linux-sandbox
-INFO: From Compiling main.cc:
-In file included from main.cc:6:
-bazel-out/k8-fastbuild/bin/external/staq/_virtual_includes/staq/staq/transformations/inline.hpp:277:13: warning: 'void staq::transformations::inline_ast(qasmtools::ast::ASTNode&, const staq::transformations::Inliner::config&)' defined but not used [-Wunused-function]
-  277 | static void inline_ast(ast::ASTNode& node, const Inliner::config& params) {
-      |             ^~~~~~~~~~
-[2 / 4] [Prepa] Linking main
-Target //:main up-to-date:
-  bazel-bin/main
-INFO: Elapsed time: 4.868s, Critical Path: 4.81s
-INFO: 3 processes: 1 internal, 2 linux-sandbox.
-INFO: Build completed successfully, 3 total actions
-INFO: Running command line: bazel-bin/main
-INFO: Build completed successfully, 3 total actions
+18
+false
+0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 1 1 0 0 0 0 0 0 0 0 0 1 1 0 +IYYZZIIIIIIIIIZY
+1 1 1 0 1 1 1 0 0 0 0 0 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 +YXYIXXXIIIIIIZIY
+0 1 1 0 1 1 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 1 0 0 0 0 0 0 0 0 0 1 -IYXZYXZIIIIIIIII
+1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 +YYZZZIIIIIIIIIIX
+0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 1 1 0 1 1 0 0 0 0 0 0 0 0 +IIIZZZIZYIIIIIII
+0 1 0 0 1 1 1 0 0 0 0 0 0 1 1 1 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 1 -IXIZYXYIIIIIIXXX
+0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 1 0 1 1 0 0 0 0 0 0 +IIIIZZIZIZYIIIII
+0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 1 0 0 0 0 0 0 0 1 -IIIXYYIZZIIIIIII
+0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 1 1 0 0 0 1 -IIIIIIIZIZIZYIII
+0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 0 0 0 +IIIIIXIZXZZIIIII
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 1 0 1 0 0 1 0 1 -IIIIIIZIIZIZIXZI
+0 0 0 0 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 0 +IIIIIIIXXZXZZIII
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 0 0 0 0 0 1 0 0 0 0 1 0 1 1 1 0 +ZIIIIIZIIIIZIYYZ
+0 0 0 0 0 0 0 0 0 1 1 0 1 1 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 1 0 0 1 -IIIIIIZIIXXZXYII
+0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 1 1 0 +IXZIIIZIIIIIIYYZ
+1 0 0 0 0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 1 -XIIIIIZIIIIXXXXZ
+0 1 1 0 1 1 1 0 0 0 0 0 0 1 1 1 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 1 -IYYZYXXIIIIIIXXX
+1 1 1 0 1 1 1 0 0 0 0 0 0 1 1 0 1 0 1 0 0 0 1 0 0 0 0 0 0 0 0 1 0 +YXYIXXYIIIIIIXXZ
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 1 -IIIZZIZIIIIIIIII
+1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 0 0 0 0 1 1 1 -YYZZZIIIIIIIIIZZ
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 1 0 0 0 0 0 0 0 1 -IIIIZZIZZIIIIIII
+0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 1 0 0 0 0 0 0 0 0 0 1 -IZXZZIZIIIIIIIII
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 0 0 1 -IIIIIIIZIZZIIIII
+0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 1 1 0 0 0 0 0 0 0 0 +IIIYYYIZZIIIIIII
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 1 -IIIIIIIIIZIZZIII
+0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 0 1 1 0 0 0 0 0 1 -IIIIZYIZXZZIIIII
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 1 0 0 0 +IIIIIIZIIIIZIYII
+0 0 0 0 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 1 1 0 0 0 1 -IIIIIIIYXZXZZIII
+1 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 1 1 1 -XIIIIIZIIIIIIYYZ
+0 0 0 0 0 0 0 0 0 1 1 0 1 1 0 0 0 0 0 0 0 0 1 0 0 1 0 1 0 1 0 0 0 +IIIIIIZIIYXZXYII
+0 1 1 0 1 1 1 0 0 0 0 0 0 1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 1 -IXYIXXXIIIIIIXYZ
+1 0 0 0 0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0 +XIIIIIZIIIIYXXXZ
+
+0 1 1 0 1 1 1 0 0 0 0 0 0 1 1 1 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 1 0 +IYYZYXXIIIIIIXXY
+1 1 1 0 1 1 1 0 0 0 0 0 0 1 1 0 0 1 1 0 0 0 1 0 0 0 0 0 0 0 1 1 0 +XYYIXXYIIIIIIXYZ
+0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 0 0 1 0 1 1 1 0 0 1 0 +IZZYZZIIZIZZZIIZ
+1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 1 0 1 0 0 0 0 0 0 0 1 1 0 +YXZZZIZIIIIIIIZZ
+0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 0 0 1 1 1 0 0 0 0 +IIIXYZIZIIZZZIII
+0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 1 -IZYZZIIIIIIIIIII
+0 0 0 1 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 1 -IIIXXZZYZZZIIIII
+0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 1 0 0 1 1 1 0 0 0 1 -IIIYYXZZIIZZZIII
+0 0 0 1 1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 1 0 0 0 0 0 0 0 +IIIXXZZXIYIIIIII
+0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 1 1 0 1 1 0 0 0 1 -IIIIZYIZYZIZZIII
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 1 0 0 +IIIIIIZIIIIIZXZI
+0 0 0 0 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 0 0 0 +IIIIIIIYXZYIIIII
+1 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 1 1 -XIIIIIIIIIIZIYXZ
+0 0 0 0 0 0 0 0 0 1 1 0 1 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 1 0 0 0 +IIIIIIZIIYXIYYII
+0 1 1 0 1 1 1 0 0 0 0 0 0 1 1 0 1 1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 1 -ZYYIXXYIIIIIIXXI
+1 0 0 0 0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 +XIIIIIZIIIIXXXXZ
+0 1 1 0 1 1 1 0 0 0 0 0 0 1 1 1 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 1 -IYYZYXXIIIIIIXXX
+1 1 1 0 1 1 1 0 0 0 0 0 0 1 1 0 1 0 1 0 0 0 1 0 0 0 0 0 0 0 0 1 0 +YXYIXXYIIIIIIXXZ
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 +IIIZZIZIIIIIIIII
+1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 0 0 0 0 1 1 0 +YYZZZIIIIIIIIIZZ
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 1 0 0 0 0 0 0 0 1 -IIIIZZIZZIIIIIII
+0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 +IZXZZIZIIIIIIIII
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 0 0 1 -IIIIIIIZIZZIIIII
+0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 1 1 0 0 0 0 0 0 0 0 +IIIYYYIZZIIIIIII
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 0 +IIIIIIIIIZIZZIII
+0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 0 1 1 0 0 0 0 0 1 -IIIIZYIZXZZIIIII
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 1 0 0 0 +IIIIIIZIIIIZIYII
+0 0 0 0 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 1 1 0 0 0 1 -IIIIIIIYXZXZZIII
+1 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 1 1 1 -XIIIIIZIIIIIIYYZ
+0 0 0 0 0 0 0 0 0 1 1 0 1 1 0 0 0 0 0 0 0 0 1 0 0 1 0 1 0 1 0 0 1 -IIIIIIZIIYXZXYII
+0 1 1 0 1 1 1 0 0 0 0 0 0 1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 +IXYIXXXIIIIIIXYZ
+1 0 0 0 0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 1 1 -XIIIIIZIIIIYXXXZ

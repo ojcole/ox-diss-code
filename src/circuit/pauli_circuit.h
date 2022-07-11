@@ -30,20 +30,25 @@ class PauliCircuit {
   void AddXRot(const Qubit &qubit, const phase::RationalPhase &phase);
   void AddCNOTGate(const Qubit &control, const Qubit &target);
 
-  void Synthesise(std::ostream &output);
+  void Synthesise(std::ostream &output, int threads = 1);
 
   size_t PauliCount() const;
 
-  void Optimise();
+  void Optimise(int threads = 1);
 
   void PrintDAG() const;
+
+  PauliDAG::OptStats GetOptStats() const;
 
  private:
   void ProcessGates();
   int FirstCliffordGate(int after);
   void ShiftCliffordGate(int start, int clifford);
 
-  std::vector<SimpleClifford> OptimiseCliffords(std::vector<SimpleGate> &gates);
+  std::vector<SimpleClifford> OptimiseCliffords(std::vector<SimpleGate> &gates,
+                                                int threads);
+
+  void ReconstructDAG(PauliDAG &dag);
 
   std::shared_ptr<QubitManager> qubitManager;
 

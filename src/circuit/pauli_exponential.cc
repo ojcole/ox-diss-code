@@ -60,16 +60,15 @@ bool PauliExponential::CommutesWithPauli(const PauliString &pauliString) const {
   return true;
 }
 
-void PauliExponential::PushCliffordThrough(
-    const CliffordGate &gate,
-    const std::shared_ptr<QubitManager> &qubitManager) {
+void PauliExponential::PushCliffordThrough(const CliffordGate &gate,
+                                           const QubitManager &qubitManager) {
   const auto type = gate.GetGateType();
-  int firstQubit = qubitManager->GetQubitIndex(gate.GetFirstQubit());
+  int firstQubit = qubitManager.GetQubitIndex(gate.GetFirstQubit());
 
   if (type == GateType::HAD) {
     ApplyHadamard(firstQubit);
   } else if (type == GateType::CNOT) {
-    int secondQubit = qubitManager->GetQubitIndex(gate.GetSecondQubit());
+    int secondQubit = qubitManager.GetQubitIndex(gate.GetSecondQubit());
     ApplyCNOT(firstQubit, secondQubit);
   } else {
     const auto &rationalPhase = *gate.GetPhase();
@@ -93,6 +92,8 @@ void PauliExponential::PushCliffordThrough(
 }
 
 void PauliExponential::Negate() { negated = !negated; }
+
+bool PauliExponential::IsNegated() const { return negated; }
 
 void PauliExponential::ApplyHadamard(int qubit) {
   auto it = hadamardMapping.find(string[qubit]);
@@ -199,6 +200,28 @@ void PauliExponential::Synthesise(std::vector<SimpleGate> &gates,
           CliffordGate::CreateXRot(qubit, phase::RationalPhase({-1, 2})));
     }
   }
+}
+
+std::optional<std::vector<CliffordGate>>
+PauliExponential::GetCliffordRepresentation(const QubitManager &manager) {
+  std::optional<double> value = phaseExpr->constant_eval();
+  if (!value.has_value()) return std::nullopt;
+  if (negated) *value *= -1;
+  std::optional<phase::RationalPhase> phase = CliffordPhaseFromDouble(*value);
+  if (!phase.has_value()) return std::nullopt;
+  std::vector<CliffordGate> cliffordGates;
+  std::vector<SimpleGate> gates;
+  Synthesise(gates, manager);
+  for (const auto &gate : gates) {
+    if (std::holds_alternative<CliffordGate>(gate)) {
+      cliffordGates.push_back(std::get<CliffordGate>(std::move(gate)));
+    } else {
+      assert(std::holds_alternative<ZGate>(gate));
+      auto qubit = std::get<ZGate>(gate).GetQubit();
+      cliffordGates.push_back(CliffordGate::CreateZRot(qubit, *phase));
+    }
+  }
+  return cliffordGates;
 }
 
 }  // namespace circuit

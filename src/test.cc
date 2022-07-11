@@ -4,9 +4,20 @@
 
 using namespace qstabr;
 
+const double EPSILON = 1e-6;
+const double PI = 3.14159265359f;
+const double PI2 = 1.57079632679f;
+
+void norm(double& num) { num -= 2 * PI * std::round(num / (2 * PI)); }
+
+bool isPi(double num) {
+  norm(num);
+  return std::abs(std::abs(num) - PI) < EPSILON;
+}
+
 int main(int argc, char const* argv[]) {
-  phase::RationalPhase phase(1);
-  std::cout << phase << std::endl;
-  std::cout << (phase == phase::RationalPhase(1)) << std::endl;
-  std::cout << (phase != phase::RationalPhase(1)) << std::endl;
+  double x = -3.14159274101257f;
+  std::cout << isPi(x) << std::endl;
+  norm(x);
+  std::cout << x << std::endl;
 }

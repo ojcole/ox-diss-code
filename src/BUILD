@@ -23,6 +23,23 @@ cc_binary(
 )
 
 cc_binary(
+    name = "compare_cliffords",
+    srcs = ["compare_cliffords.cc"],
+    data = [
+        "@//qasm_bench/large",
+        "@//qasm_bench/medium",
+        "@//qasm_bench/small",
+        "@//qasm_files",
+        "@//tket_bench/h2",
+        "@//tket_bench/h4",
+    ],
+    deps = [
+        "//circuit:stabiliser_tableau",
+        "@staq//:staq_tools",
+    ],
+)
+
+cc_binary(
     name = "pyzxify",
     srcs = ["pyzxify.cc"],
     data = [

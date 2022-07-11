@@ -7,6 +7,7 @@
                 "${workspaceFolder}/bazel-bin/external/staq/_virtual_includes/staq",
                 "${workspaceFolder}/bazel-bin/external/staq/_virtual_includes/staq-tools",
                 "${workspaceFolder}/bazel-bin/external/staq/_virtual_includes/staq-tools-int",
+                "${workspaceFolder}/bazel-bin/external/moodycamel/_virtual_includes/moodycamel",
                 "${workspaceFolder}/bazel-bin/external/gtest/_objs"
             ],
             "defines": [],

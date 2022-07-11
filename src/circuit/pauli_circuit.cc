@@ -63,9 +63,13 @@ class GateReader : public qasmtools::ast::Traverse {
                  *lambdaPhase == phase::PI_BY_2) {
         circuit.AddXRot(qubit, *thetaPhase);
       } else {
-        circuit.AddZRot(qubit, *lambdaPhase - phase::PI_BY_2);
+        if (*lambdaPhase != phase::PI_BY_2) {
+          circuit.AddZRot(qubit, *lambdaPhase - phase::PI_BY_2);
+        }
         circuit.AddXRot(qubit, *thetaPhase);
-        circuit.AddZRot(qubit, *phiPhase + phase::PI_BY_2);
+        if (*phiPhase != phase::MINUS_PI_BY_2) {
+          circuit.AddZRot(qubit, *phiPhase + phase::PI_BY_2);
+        }
       }
     } else {
       if (thetaPhase.has_value() && *thetaPhase == phase::ZERO) {
@@ -148,7 +152,7 @@ PauliExponential CreatePauliExp(const phase::RationalPhase &phase,
 }  // namespace
 
 std::vector<SimpleClifford> PauliCircuit::OptimiseCliffords(
-    std::vector<SimpleGate> &gates) {
+    std::vector<SimpleGate> &gates, int threads) {
   std::vector<SimpleGate> newGates;
   std::vector<bool> activeQubits(numQubits, true);
   PauliDAG cliffordDAG;
@@ -206,20 +210,43 @@ std::vector<SimpleClifford> PauliCircuit::OptimiseCliffords(
     cliffordDAG.AddPauli(std::move(*it));
   }
   StabiliserTableau tableau(numQubits, qubitManager);
-  cliffordDAG.ExhaustiveRunner(tableau);
+  bool repeat = false;
+  std::vector<bool> qubitPis(numQubits, false);
+  do {
+    if (threads > 1) {
+      cliffordDAG.ExhaustiveRunnerParallel(tableau, threads);
+    } else {
+      cliffordDAG.ExhaustiveRunner(tableau);
+    }
+    auto cliffords = cliffordDAG.PullOutPis(*qubitManager);
+    repeat = cliffords.size() > 0;
+    for (const auto &clifford : cliffords) {
+      assert(clifford.GetGateType() == XROT || clifford.GetGateType() == ZROT);
+      if (clifford.GetGateType() == XROT) {
+        auto phase = clifford.GetPhase();
+        assert(phase.has_value());
+        assert(*phase == phase::RationalPhase(1));
+        auto qubit = qubitManager->GetQubitIndex(clifford.GetFirstQubit());
+        qubitPis[qubit] = !qubitPis[qubit];
+        tableau.ApplyXRot(clifford.GetFirstQubit(), *phase);
+      }
+      // ZROTs just get ignored by tableau since kappas pop through
+    }
+    if (repeat) ReconstructDAG(cliffordDAG);
+  } while (repeat);
   cliffordDAG.Reduce(tableau);
   gates = std::move(newGates);
-  return cliffordDAG.SynthesiseCliffords(*qubitManager, numQubits);
+  return cliffordDAG.SynthesiseCliffords(*qubitManager, numQubits, qubitPis);
 }
 
-void PauliCircuit::Synthesise(std::ostream &output) {
+void PauliCircuit::Synthesise(std::ostream &output, int threads) {
   output << "OPENQASM 2.0;" << std::endl;
   output << "include \"qelib1.inc\";" << std::endl;
   qubitManager->Synthesise(output);
   std::vector<SimpleGate> gates;
   tableau.Synthesise(gates);
   pauli_graph.Synthesise(gates, *qubitManager);
-  auto cliffords = OptimiseCliffords(gates);
+  auto cliffords = OptimiseCliffords(gates, threads);
   for (const auto &clifford : cliffords) {
     if (std::holds_alternative<CliffordGate>(clifford)) {
       const auto &cnot = std::get<CliffordGate>(clifford);
@@ -241,7 +268,33 @@ void PauliCircuit::Synthesise(std::ostream &output) {
 
 size_t PauliCircuit::PauliCount() const { return pauli_graph.Size(); }
 
-void PauliCircuit::Optimise() { pauli_graph.ExhaustiveRunner(tableau); }
+PauliDAG::OptStats PauliCircuit::GetOptStats() const {
+  return pauli_graph.GetStats();
+}
+
+void PauliCircuit::Optimise(int threads) {
+  bool repeat = false;
+  do {
+    if (threads > 1) {
+      pauli_graph.ExhaustiveRunnerParallel(tableau, threads);
+    } else {
+      pauli_graph.ExhaustiveRunner(tableau);
+    }
+    auto cliffords = pauli_graph.PullOutCliffords(*qubitManager);
+    repeat = cliffords.size() > 0;
+    for (const auto &clifford : cliffords) {
+      tableau.ApplyCliffordGate(clifford);
+    }
+    if (repeat) ReconstructDAG(pauli_graph);
+  } while (repeat);
+}
+
+void PauliCircuit::ReconstructDAG(PauliDAG &dag) {
+  auto paulis = dag.GetPaulis();
+  for (auto it = paulis.rbegin(); it != paulis.rend(); it++) {
+    dag.AddPauli(std::move(*it));
+  }
+}
 
 void PauliCircuit::ProcessGates() {
   int nextIndex = FirstCliffordGate(0);
@@ -249,25 +302,7 @@ void PauliCircuit::ProcessGates() {
   while (nextIndex != -1) {
     ShiftCliffordGate(startIndex, nextIndex);
     const auto &cliffordGate = std::get<CliffordGate>(gates[startIndex]);
-    switch (cliffordGate.GetGateType()) {
-      case GateType::HAD:
-        tableau.ApplyHadamard(cliffordGate.GetFirstQubit());
-        break;
-      case GateType::CNOT:
-        tableau.ApplyCNOTGate(cliffordGate.GetFirstQubit(),
-                              cliffordGate.GetSecondQubit());
-        break;
-      case GateType::XROT:
-        tableau.ApplyXRot(cliffordGate.GetFirstQubit(),
-                          *cliffordGate.GetPhase());
-        break;
-      case GateType::ZROT:
-        tableau.ApplyZRot(cliffordGate.GetFirstQubit(),
-                          *cliffordGate.GetPhase());
-        break;
-      default:
-        throw std::runtime_error("Unknown gate type");
-    }
+    tableau.ApplyCliffordGate(cliffordGate);
     startIndex++;
     nextIndex = FirstCliffordGate(nextIndex + 1);
   }
@@ -290,7 +325,7 @@ void PauliCircuit::ShiftCliffordGate(int start, int clifford) {
     assert(std::holds_alternative<CliffordGate>(gates[i + 1]));
     auto pauli = std::move(std::get<PauliExponential>(gates[i]));
     auto clifford = std::move(std::get<CliffordGate>(gates[i + 1]));
-    pauli.PushCliffordThrough(clifford, qubitManager);
+    pauli.PushCliffordThrough(clifford, *qubitManager);
     gates[i].emplace<CliffordGate>(std::move(clifford));
     gates[i + 1].emplace<PauliExponential>(std::move(pauli));
   }
