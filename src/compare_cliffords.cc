@@ -16,9 +16,9 @@ int main(int argc, char const* argv[]) {
   circuit::StabiliserTableau tableau1(std::move(*ast1));
   circuit::StabiliserTableau tableau2(std::move(*ast2));
 
-  std::cout << std::boolalpha << (tableau1 == tableau2) << std::endl;
-
   tableau1.Print();
   std::cout << std::endl;
   tableau2.Print();
+
+  std::cout << std::boolalpha << (tableau1 == tableau2) << std::endl;
 }

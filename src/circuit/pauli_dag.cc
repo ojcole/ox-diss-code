@@ -58,7 +58,6 @@ std::vector<CliffordGate> PauliDAG::PullOutCliffords(
     auto& pauli = paulis.at(idx);
     auto cliffords = pauli.GetCliffordRepresentation(qubitManager);
     if (!cliffords.has_value()) continue;
-    RemovePauli(idx);
     cliffordRemovals++;
     for (const auto& clifford : *cliffords) {
       for (size_t j{}; j < i; j++) {
@@ -69,6 +68,7 @@ std::vector<CliffordGate> PauliDAG::PullOutCliffords(
       }
       cliffordGates.push_back(clifford);
     }
+    RemovePauli(idx);
   }
   return cliffordGates;
 }
@@ -95,9 +95,6 @@ std::vector<CliffordGate> PauliDAG::PullOutPis(
       }
     }
     if (hasY) continue;
-
-    RemovePauli(idx);
-
     for (size_t j{}; j < i; j++) {
       auto prevIdx = tsort[j];
       if (paulis.find(prevIdx) == paulis.end()) continue;
@@ -124,6 +121,7 @@ std::vector<CliffordGate> PauliDAG::PullOutPis(
           qubitManager.GetIndexQubit(z_index), phase::RationalPhase(1));
       cliffordGates.push_back(clifford);
     }
+    RemovePauli(idx);
   }
   return cliffordGates;
 }
@@ -152,6 +150,15 @@ bool PauliDAG::DFSCanReach(std::unordered_set<int>& visited, int current,
   }
 
   return false;
+}
+
+bool PauliDAG::StringCommutesParents(const PauliString& string,
+                                     int node) const {
+  const auto& parents = back_edges.at(node);
+  for (auto parent : parents) {
+    if (!paulis.at(parent).GetString().CommutesWith(string)) return false;
+  }
+  return true;
 }
 
 void PauliDAG::RemovePauli(int a) {
@@ -191,36 +198,8 @@ void PauliDAG::MergePair(int a, int b, bool sign) {
   const auto& pauliA = paulis.at(a).GetString();
   const auto& pauliB = paulis.at(b).GetString();
 
-  const auto mergeString = PauliString::StringDifference(pauliA, pauliB);
-
-  int iCount{};
-
-  for (size_t i{}; i < pauliA.size(); i++) {
-    if (pauliA[i] == X) {
-      if (mergeString[i] == Z) {
-        iCount--;
-      } else if (mergeString[i] == Y) {
-        iCount++;
-      }
-    } else if (pauliA[i] == Z) {
-      if (mergeString[i] == X) {
-        iCount--;
-        sign = !sign;
-      } else if (mergeString[i] == Y) {
-        iCount++;
-        sign = !sign;
-      }
-    } else if (pauliA[i] == Y) {
-      if (mergeString[i] == Z) {
-        iCount++;
-      } else if (mergeString[i] == X) {
-        iCount++;
-        sign = !sign;
-      }
-    }
-  }
-
-  if (std::abs(iCount) % 4 != 0) sign = !sign;
+  bool mergeSign = PauliString::StringMultiplySign(pauliA, pauliB);
+  if (mergeSign) sign = !sign;
 
   if (sign) paulis.at(a).Negate();
 
@@ -266,15 +245,8 @@ std::optional<bool> PauliDAG::CanMergePair(
 
   if (!createSign.has_value()) return std::nullopt;
 
-  for (auto parent : back_edges.at(a)) {
-    if (!paulis.at(parent).GetString().CommutesWith(mergeString))
-      return std::nullopt;
-  }
-
-  for (auto parent : back_edges.at(b)) {
-    if (!paulis.at(parent).GetString().CommutesWith(mergeString))
-      return std::nullopt;
-  }
+  if (!StringCommutesParents(mergeString, a)) return std::nullopt;
+  if (!StringCommutesParents(mergeString, b)) return std::nullopt;
 
   return createSign;
 }
@@ -393,28 +365,6 @@ void PauliDAG::ExhaustiveRunnerParallel(const StabiliserTableau& tableau,
     }
     newSize = paulis.size();
   } while (newSize > 0 && newSize < size);
-}
-
-void PauliDAG::Reduce(const StabiliserTableau& tableau) {
-  auto tsort = TopologicalSort();
-  for (auto it = tsort.rbegin(); it != tsort.rend(); it++) {
-    auto& pauli = paulis.at(*it);
-    const auto& strings = pauli.GetString().StringDecomps();
-    for (const auto& str : strings) {
-      auto canCreate = tableau.CanCreate(str);
-      if (!canCreate.has_value()) continue;
-      bool canApply = true;
-      for (auto parent : back_edges[*it]) {
-        if (!paulis.at(parent).GetString().CommutesWith(str)) {
-          canApply = false;
-          break;
-        }
-      }
-      if (canApply) {
-        pauli.ApplyString(str, *canCreate);
-      }
-    }
-  }
 }
 
 std::vector<int> PauliDAG::TopologicalSort() const {

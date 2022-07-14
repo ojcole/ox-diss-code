@@ -20,6 +20,7 @@ int main(int argc, char const* argv[]) {
   qstabr::circuit::PauliCircuit circuit(std::move(*ast));
   size_t beforeCount = circuit.PauliCount();
   circuit.Optimise(threads);
+  // circuit.PrintDAG();
   size_t afterCount = circuit.PauliCount();
   auto stats = circuit.GetOptStats();
 
@@ -47,6 +48,6 @@ int main(int argc, char const* argv[]) {
     std::ofstream stream(fileName);
     circuit.Synthesise(stream, threads);
   } else {
-    // circuit.Synthesise(std::cout, threads);
+    circuit.Synthesise(std::cout, threads);
   }
 }

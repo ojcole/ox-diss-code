@@ -35,8 +35,6 @@ class PauliDAG {
       const QubitManager &qubitManager, int numQubits,
       const std::vector<bool> &qubitPis);
 
-  void Reduce(const StabiliserTableau &tableau);
-
   struct OptStats {
     int identityMerges;
     int totalMerges;
@@ -66,6 +64,7 @@ class PauliDAG {
   void DFSTransitiveTraversal(std::unordered_set<int> &visited, int current);
   bool DFSCanReach(std::unordered_set<int> &visited, int current,
                    int target) const;
+  bool StringCommutesParents(const PauliString &string, int node) const;
 
   void MergePair(int a, int b, bool sign);
   void TryMergePair(int a, int b, const StabiliserTableau &tableau);
@@ -73,7 +72,6 @@ class PauliDAG {
                                    const StabiliserTableau &tableau) const;
   void TryCancel(int a, const StabiliserTableau &tableau);
   bool CheckPhase(int a);
-  void Reduce(int a, const StabiliserTableau &tableau);
 
   void RemovePauli(int a);
 

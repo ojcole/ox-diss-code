@@ -20,4 +20,6 @@ int main(int argc, char const* argv[]) {
   std::cout << isPi(x) << std::endl;
   norm(x);
   std::cout << x << std::endl;
+  phase::RationalPhase phase({-1, 2});
+  std::cout << (phase * -1) << std::endl;
 }

@@ -233,6 +233,25 @@ void SwapRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
 
 }  // namespace
 
+PauliString StabiliserTableau::GetString(int index) const {
+  std::vector<PauliLetter> string;
+  for (int i{}; i < numQubits; i++) {
+    if (grid[index + numQubits][i] == 1 &&
+        grid[index + numQubits][i + numQubits] == 1) {
+      string.push_back(Y);
+    } else if (grid[index + numQubits][i] == 0 &&
+               grid[index + numQubits][i + numQubits] == 1) {
+      string.push_back(Z);
+    } else if (grid[index + numQubits][i] == 1 &&
+               grid[index + numQubits][i + numQubits] == 0) {
+      string.push_back(X);
+    } else {
+      string.push_back(I);
+    }
+  }
+  return string;
+}
+
 std::optional<bool> StabiliserTableau::CanCreate(
     const PauliString &string) const {
   std::vector<std::vector<int>> augMat;
@@ -270,6 +289,16 @@ std::optional<bool> StabiliserTableau::CanCreate(
   }
 
   int negated = 0;
+
+  PauliString baseString(std::vector<PauliLetter>(numQubits, I));
+  for (int i{}; i < numQubits; i++) {
+    if (targetMat[i] == 1) {
+      auto str = GetString(i);
+      auto prod = PauliString::StringMultiply(baseString, str);
+      if (prod.first) negated ^= 1;
+      baseString = prod.second;
+    }
+  }
 
   for (int i{}; i < numQubits; i++) {
     if (targetMat[i] == 1) negated ^= grid[numQubits + i][2 * numQubits];

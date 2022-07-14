@@ -56,6 +56,8 @@ class StabiliserTableau {
 
   void GenerateTableau(qasmtools::ast::Program &normalisedProgram);
 
+  PauliString GetString(int index) const;
+
   enum SynthGateType {
     HAD,
     PHASE,

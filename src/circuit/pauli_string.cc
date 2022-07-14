@@ -82,24 +82,54 @@ PauliString PauliString::StringDifference(const PauliString &string1,
   return newString;
 }
 
+std::pair<bool, PauliString> PauliString::StringMultiply(
+    const PauliString &string1, const PauliString &string2) {
+  return {StringMultiplySign(string1, string2),
+          StringDifference(string1, string2)};
+}
+
+bool PauliString::StringMultiplySign(const PauliString &string1,
+                                     const PauliString &string2) {
+  int iCount{};
+  bool sign{false};
+  for (size_t i{}; i < string1.size(); i++) {
+    if (string1[i] == X) {
+      if (string2[i] == Z) {
+        iCount--;
+      } else if (string2[i] == Y) {
+        iCount++;
+      }
+    } else if (string1[i] == Z) {
+      if (string2[i] == X) {
+        iCount--;
+        sign = !sign;
+      } else if (string2[i] == Y) {
+        iCount++;
+        sign = !sign;
+      }
+    } else if (string1[i] == Y) {
+      if (string2[i] == Z) {
+        iCount++;
+      } else if (string2[i] == X) {
+        iCount++;
+        sign = !sign;
+      }
+    }
+  }
+  assert(iCount % 2 == 0);
+  if (iCount % 4 != 0) sign = !sign;
+  return sign;
+}
+
 std::vector<PauliString> PauliString::StringDecomps() const {
   std::vector<PauliString> result;
   std::vector<PauliLetter> newString(string.size(), I);
   for (size_t i{}; i < string.size(); i++) {
     newString[i] = string[i];
-    result.push_back(newString);
+    if (newString[i] != I) result.push_back(newString);
     newString[i] = I;
   }
   return result;
-}
-
-size_t PauliStringHash::operator()(const PauliString &string) const {
-  std::string strRep;
-  strRep.resize(string.string.size());
-  for (size_t i{}; i < string.string.size(); i++) {
-    strRep[i] = string.string[i];
-  }
-  return std::hash<std::string>()(strRep);
 }
 
 }  // namespace circuit

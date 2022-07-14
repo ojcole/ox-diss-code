@@ -19,6 +19,7 @@ const Qubit &QubitManager::GetIndexQubit(int index) const {
 
 void QubitManager::AddQubits(const std::string &name, int number) {
   qubits.insert({name, {number, nextQubit}});
+  synthQubitOrder.push_back(name);
   for (int i{}; i < number; i++) {
     indices.push_back({name, i});
   }
@@ -26,9 +27,8 @@ void QubitManager::AddQubits(const std::string &name, int number) {
 }
 
 void QubitManager::Synthesise(std::ostream &output) {
-  for (const auto &pair : qubits) {
-    output << "qreg " << pair.first << "[" << pair.second.size << "];"
-           << std::endl;
+  for (const auto &name : synthQubitOrder) {
+    output << "qreg " << name << "[" << qubits[name].size << "];" << std::endl;
   }
 }
 

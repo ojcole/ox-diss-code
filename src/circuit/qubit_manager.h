@@ -28,6 +28,7 @@ class QubitManager {
   int nextQubit = 0;
   std::vector<Qubit> indices;
   std::unordered_map<std::string, QubitEntry> qubits;
+  std::vector<std::string> synthQubitOrder;
 };
 
 }  // namespace circuit

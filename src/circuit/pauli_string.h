@@ -53,6 +53,12 @@ class PauliString {
   static PauliString StringDifference(const PauliString &string1,
                                       const PauliString &string2);
 
+  static std::pair<bool, PauliString> StringMultiply(
+      const PauliString &string1, const PauliString &string2);
+
+  static bool StringMultiplySign(const PauliString &string1,
+                                 const PauliString &string2);
+
   const PauliLetter &operator[](size_t index) const { return string[index]; }
   size_t size() const { return string.size(); }
 
@@ -61,12 +67,7 @@ class PauliString {
 
   std::vector<PauliLetter> string;
 
-  friend class PauliStringHash;
   friend class PauliExponential;
-};
-
-class PauliStringHash {
-  size_t operator()(const PauliString &string) const;
 };
 
 }  // namespace circuit
