@@ -64,7 +64,7 @@ class PauliDAG {
   void DFSTransitiveTraversal(std::unordered_set<int> &visited, int current);
   bool DFSCanReach(std::unordered_set<int> &visited, int current,
                    int target) const;
-  bool StringCommutesParents(const PauliString &string, int node) const;
+  bool StringCommutesParents(int a, int b) const;
 
   void MergePair(int a, int b, bool sign);
   void TryMergePair(int a, int b, const StabiliserTableau &tableau);

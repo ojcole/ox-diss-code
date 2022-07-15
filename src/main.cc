@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 
 #include "circuit/helpers.h"
@@ -17,12 +18,6 @@ int main(int argc, char const* argv[]) {
     } catch (std::exception&) {
     }
   }
-  qstabr::circuit::PauliCircuit circuit(std::move(*ast));
-  size_t beforeCount = circuit.PauliCount();
-  circuit.Optimise(threads);
-  // circuit.PrintDAG();
-  size_t afterCount = circuit.PauliCount();
-  auto stats = circuit.GetOptStats();
 
   std::string fileName(argv[1]);
   std::string group;
@@ -38,10 +33,14 @@ int main(int argc, char const* argv[]) {
     next = fileName.find("/", current);
   }
   name = fileName.substr(current, fileName.size() - current);
-  std::cout << group << "," << name << "," << beforeCount << "," << afterCount
-            << "," << stats.identityMerges << "," << stats.totalMerges << ","
-            << stats.phaseRemovals << "," << stats.cancellations << ","
-            << stats.cliffordRemovals << std::endl;
+
+  auto start = std::chrono::high_resolution_clock::now();
+
+  qstabr::circuit::PauliCircuit circuit(std::move(*ast));
+  size_t beforeCount = circuit.PauliCount();
+  circuit.Optimise(threads);
+  size_t afterCount = circuit.PauliCount();
+  auto stats = circuit.GetOptStats();
 
   if (argc >= 3) {
     std::string fileName(argv[2]);
@@ -50,4 +49,17 @@ int main(int argc, char const* argv[]) {
   } else {
     circuit.Synthesise(std::cout, threads);
   }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = end - start;
+  auto totalMillis =
+      std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+  auto seconds = totalMillis / 1000;
+  auto millis = totalMillis % 1000;
+
+  std::cout << group << "," << name << "," << beforeCount << "," << afterCount
+            << "," << stats.identityMerges << "," << stats.totalMerges << ","
+            << stats.phaseRemovals << "," << stats.cancellations << ","
+            << stats.cliffordRemovals << "," << seconds << "." << millis
+            << std::endl;
 }

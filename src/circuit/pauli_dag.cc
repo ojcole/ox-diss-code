@@ -152,13 +152,8 @@ bool PauliDAG::DFSCanReach(std::unordered_set<int>& visited, int current,
   return false;
 }
 
-bool PauliDAG::StringCommutesParents(const PauliString& string,
-                                     int node) const {
-  const auto& parents = back_edges.at(node);
-  for (auto parent : parents) {
-    if (!paulis.at(parent).GetString().CommutesWith(string)) return false;
-  }
-  return true;
+bool PauliDAG::StringCommutesParents(int a, int b) const {
+  return back_edges.at(a) == back_edges.at(b);
 }
 
 void PauliDAG::RemovePauli(int a) {
@@ -228,27 +223,16 @@ std::optional<bool> PauliDAG::CanMergePair(
   if (paulis.find(a) == paulis.end() || paulis.find(b) == paulis.end()) {
     return std::nullopt;
   }
-  if (edges.at(a).find(b) != edges.at(a).end()) return std::nullopt;
-  if (edges.at(b).find(a) != edges.at(b).end()) return std::nullopt;
+
+  if (!StringCommutesParents(a, b)) return std::nullopt;
 
   const auto& pauliA = paulis.at(a);
   const auto& pauliB = paulis.at(b);
 
-  std::unordered_set<int> set1;
-  std::unordered_set<int> set2;
-
-  if (DFSCanReach(set1, a, b) || DFSCanReach(set2, b, a)) return std::nullopt;
-
   auto mergeString =
       PauliString::StringDifference(pauliA.GetString(), pauliB.GetString());
-  auto createSign = tableau.CanCreate(mergeString);
 
-  if (!createSign.has_value()) return std::nullopt;
-
-  if (!StringCommutesParents(mergeString, a)) return std::nullopt;
-  if (!StringCommutesParents(mergeString, b)) return std::nullopt;
-
-  return createSign;
+  return tableau.CanCreate(mergeString);
 }
 
 void PauliDAG::TryMergePair(int a, int b, const StabiliserTableau& tableau) {

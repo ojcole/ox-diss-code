@@ -296,18 +296,21 @@ void PauliCircuit::ReconstructDAG(PauliDAG &dag) {
 }
 
 void PauliCircuit::ProcessGates() {
-  int nextIndex = FirstCliffordGate(0);
-  int startIndex = 0;
-  while (nextIndex != -1) {
-    ShiftCliffordGate(startIndex, nextIndex);
-    const auto &cliffordGate = std::get<CliffordGate>(gates[startIndex]);
-    tableau.ApplyCliffordGate(cliffordGate);
-    startIndex++;
-    nextIndex = FirstCliffordGate(nextIndex + 1);
+  std::vector<int> cliffords;
+  for (int i = static_cast<int>(gates.size() - 1); i >= 0; i--) {
+    if (std::holds_alternative<CliffordGate>(gates[i])) {
+      cliffords.push_back(i);
+    } else {
+      auto &pauli = std::get<PauliExponential>(gates[i]);
+      for (auto it = cliffords.rbegin(); it != cliffords.rend(); it++) {
+        const auto &cliffordGate = std::get<CliffordGate>(gates[*it]);
+        pauli.PushCliffordThrough(cliffordGate, *qubitManager);
+      }
+      pauli_graph.AddPauli(std::move(pauli));
+    }
   }
-
-  for (int i{static_cast<int>(gates.size() - 1)}; i >= startIndex; i--) {
-    pauli_graph.AddPauli(std::move(std::get<PauliExponential>(gates[i])));
+  for (auto it = cliffords.rbegin(); it != cliffords.rend(); it++) {
+    tableau.ApplyCliffordGate(std::get<CliffordGate>(gates[*it]));
   }
 }
 

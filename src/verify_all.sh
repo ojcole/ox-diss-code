@@ -23,9 +23,3 @@ do
   ./bazel-bin/main $file tmp.qasm 12
   ./verify.py $file tmp.qasm
 done
-
-find . -type f -wholename "./tket_bench/h2/*cmplt*ccpvdz.qasm" -print0 | while read -d $'\0' file
-do
-  ./bazel-bin/main $file tmp.qasm 12
-  ./verify.py $file tmp.qasm
-done
