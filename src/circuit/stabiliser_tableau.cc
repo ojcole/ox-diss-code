@@ -81,6 +81,14 @@ void StabiliserTableau::ApplyUnitaryGate(const Qubit &qubit,
                                          const phase::RationalPhase &theta,
                                          const phase::RationalPhase &phi,
                                          const phase::RationalPhase &lambda) {
+  const auto qubitIndex = qubitManager->GetQubitIndex(qubit);
+  ApplyUnitaryGate(qubitIndex, theta, phi, lambda);
+}
+
+void StabiliserTableau::ApplyUnitaryGate(int qubit,
+                                         const phase::RationalPhase &theta,
+                                         const phase::RationalPhase &phi,
+                                         const phase::RationalPhase &lambda) {
   auto phiTmp(phi);
   auto lambdaTmp(lambda);
   phiTmp += phase::PI_BY_2;
@@ -91,6 +99,12 @@ void StabiliserTableau::ApplyUnitaryGate(const Qubit &qubit,
 }
 
 void StabiliserTableau::ApplyXRot(const Qubit &qubit,
+                                  const phase::RationalPhase &phase) {
+  const auto qubitIndex = qubitManager->GetQubitIndex(qubit);
+  ApplyXRot(qubitIndex, phase);
+}
+
+void StabiliserTableau::ApplyXRot(int qubit,
                                   const phase::RationalPhase &phase) {
   ApplyHadamard(qubit);
   ApplyZRot(qubit, phase);
@@ -122,7 +136,8 @@ void StabiliserTableau::ApplyPhase(int qubit) {
 }
 
 void StabiliserTableau::ApplyPhase(const Qubit &qubit) {
-  ApplyZRot(qubit, phase::RationalPhase({1, 2}));
+  int qubitIndex = qubitManager->GetQubitIndex(qubit);
+  ApplyPhase(qubitIndex);
 }
 
 void StabiliserTableau::ApplyCNOTGate(int control, int target) {
@@ -217,12 +232,6 @@ void AddRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
              int row1, int row2) {
   AddRows(augMat, row1, row2);
   vec[row2] ^= vec[row1];
-}
-
-void SwapCols(std::vector<std::vector<int>> &mat, int col1, int col2) {
-  for (size_t i{}; i < mat.size(); i++) {
-    std::swap(mat[i][col1], mat[i][col2]);
-  }
 }
 
 void SwapRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
@@ -465,14 +474,14 @@ void StabiliserTableau::Synthesise(std::vector<SimpleGate> &gates) {
   ClearM(synthesised, 0, 0);
 
   for (auto it = synthesised.rbegin(); it != synthesised.rend(); it++) {
-    auto qubit = qubitManager->GetIndexQubit(it->qubit1);
+    auto qubit = it->qubit1;
     if (it->type == HAD) {
       gates.push_back(CliffordGate::CreateHAD(qubit));
     } else if (it->type == PHASE) {
       gates.push_back(
           CliffordGate::CreateZRot(qubit, phase::RationalPhase({-1, 2})));
     } else {
-      auto qubit2 = qubitManager->GetIndexQubit(it->qubit2);
+      auto qubit2 = it->qubit2;
       gates.push_back(CliffordGate::CreateCNOT(qubit, qubit2));
     }
   }

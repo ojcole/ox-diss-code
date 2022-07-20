@@ -1,60 +1,19 @@
-.,teleportation_n3.qasm,1,1,0,0,0,0,0
-True
-.,grover_n2.qasm,0,0,0,0,0,0,0
-True
-.,lpn_n5.qasm,0,0,0,0,0,0,0
-True
-.,wstate_n3.qasm,10,10,0,0,0,0,0
-True
-.,shor_n5.qasm,23,0,0,13,4,3,3
-True
-.,quantumwalks_n2.qasm,15,13,0,1,0,1,0
-True
-.,dnn_n2.qasm,146,64,76,76,0,0,6
-True
-.,qec_en_n5.qasm,1,1,0,0,0,0,0
-True
-.,basis_trotter_n4.qasm,1158,59,752,905,17,1,176
-False
-.,qrng_n4.qasm,0,0,0,0,0,0,0
-True
-.,toffoli_n3.qasm,7,0,0,5,0,1,1
-True
-.,qec_sm_n5.qasm,0,0,0,0,0,0,0
-False
-.,qaoa_n3.qasm,9,5,3,4,0,0,0
-True
-.,basis_change_n3.qasm,22,0,0,11,5,6,0
-True
-.,cat_state_n4.qasm,0,0,0,0,0,0,0
-True
-.,error_correctiond3_n5.qasm,0,0,0,0,0,0,0
-True
-.,variational_n4.qasm,48,11,21,33,0,1,3
-True
-.,adder_n4.qasm,8,0,0,6,0,1,1
-False
-.,basis_test_n4.qasm,92,0,53,77,12,3,0
-True
-.,bell_n4.qasm,11,5,3,4,0,0,2
-True
-.,pea_n5.qasm,48,0,28,40,0,4,4
-False
-.,iswap_n2.qasm,0,0,0,0,0,0,0
-True
-.,vqe_uccsd_n4.qasm,40,14,25,25,0,1,0
-True
-.,inverseqft_n4.qasm,3,2,1,1,0,0,0
-True
-.,hs4_n4.qasm,0,0,0,0,0,0,0
-True
-.,linearsolver_n3.qasm,2,2,0,0,0,0,0
-True
-.,qft_n4.qasm,18,1,0,14,1,1,1
-True
-.,deutsch_n2.qasm,0,0,0,0,0,0,0
-True
-.,fredkin_n3.qasm,7,0,0,5,0,1,1
-False
-.,ipea_n2.qasm,38,1,28,36,0,1,0
-True
+Loading: 
+Loading: 0 packages loaded
+Analyzing: target //:main (1 packages loaded, 0 targets configured)
+INFO: Analyzed target //:main (47 packages loaded, 347 targets configured).
+INFO: Found 1 target...
+[0 / 1] [Prepa] BazelWorkspaceStatusAction stable-status.txt
+[80 / 86] Compiling circuit/helpers.cc; 1s linux-sandbox ... (5 actions running)
+INFO: From Compiling circuit/helpers.cc:
+In file included from circuit/helpers.cc:7:
+bazel-out/k8-fastbuild/bin/external/staq/_virtual_includes/staq/staq/transformations/inline.hpp:272:13: warning: 'void staq::transformations::inline_ast(qasmtools::ast::ASTNode&)' defined but not used [-Wunused-function]
+  272 | static void inline_ast(ast::ASTNode& node) {
+      |             ^~~~~~~~~~
+[84 / 86] Compiling main.cc; 3s linux-sandbox
+Target //:main up-to-date:
+  bazel-bin/main
+INFO: Elapsed time: 4.096s, Critical Path: 3.93s
+INFO: 86 processes: 72 internal, 14 linux-sandbox.
+INFO: Build completed successfully, 86 total actions
+INFO: Build completed successfully, 86 total actions

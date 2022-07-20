@@ -22,14 +22,29 @@ class StabiliserTableau {
   StabiliserTableau(qasmtools::ast::Program &&program);
 
   void AddQubits(const std::string &name, int number);
+
   void ApplyUnitaryGate(const Qubit &qubit, const phase::RationalPhase &theta,
                         const phase::RationalPhase &phi,
                         const phase::RationalPhase &lambda);
+  void ApplyUnitaryGate(int qubit, const phase::RationalPhase &theta,
+                        const phase::RationalPhase &phi,
+                        const phase::RationalPhase &lambda);
+
   void ApplyZRot(const Qubit &qubit, const phase::RationalPhase &phase);
+  void ApplyZRot(int qubit, const phase::RationalPhase &phase);
+
   void ApplyPhase(const Qubit &qubit);
+  void ApplyPhase(int qubit);
+
   void ApplyXRot(const Qubit &qubit, const phase::RationalPhase &phase);
+  void ApplyXRot(int qubit, const phase::RationalPhase &phase);
+
   void ApplyHadamard(const Qubit &qubit);
+  void ApplyHadamard(int qubit);
+
   void ApplyCNOTGate(const Qubit &control, const Qubit &target);
+  void ApplyCNOTGate(int control, int target);
+
   void ApplyCliffordGate(const CliffordGate &clifford);
 
   inline bool operator==(const StabiliserTableau &other) {
@@ -49,11 +64,6 @@ class StabiliserTableau {
   void Synthesise(std::vector<SimpleGate> &gates);
 
  private:
-  void ApplyZRot(int qubit, const phase::RationalPhase &phase);
-  void ApplyPhase(int qubit);
-  void ApplyHadamard(int qubit);
-  void ApplyCNOTGate(int control, int target);
-
   void GenerateTableau(qasmtools::ast::Program &normalisedProgram);
 
   PauliString GetString(int index) const;

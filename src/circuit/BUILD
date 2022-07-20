@@ -23,7 +23,7 @@ cc_library(
     hdrs = ["clifford_gate.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":qubit",
+        ":qubit_manager",
         "//phase",
     ],
 )
@@ -123,7 +123,9 @@ cc_library(
     srcs = ["z_gate.cc"],
     hdrs = ["z_gate.h"],
     visibility = ["//visibility:public"],
-    deps = [":qubit"],
+    deps = [
+        ":qubit_manager",
+    ],
 )
 
 cc_library(
@@ -133,7 +135,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":pauli_string",
-        ":qubit",
+        ":qubit_manager",
         "//phase",
     ],
 )

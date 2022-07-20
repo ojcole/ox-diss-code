@@ -29,11 +29,11 @@ class PauliDAG {
   size_t Size() const;
 
   void Synthesise(std::vector<SimpleGate> &gates,
-                  const QubitManager &qubitManager);
+                  const QubitManager &qubitManager) const;
 
   std::vector<SimpleClifford> SynthesiseCliffords(
       const QubitManager &qubitManager, int numQubits,
-      const std::vector<bool> &qubitPis);
+      const std::vector<bool> &qubitPis) const;
 
   struct OptStats {
     int identityMerges;
@@ -52,18 +52,11 @@ class PauliDAG {
   std::vector<PauliExponential> GetPaulis();
 
  private:
-  struct Config {
-    const StabiliserTableau &tableau;
-    moodycamel::ConcurrentQueue<int> &queue;
-    const std::vector<int> &tsort;
-  };
+  std::vector<std::vector<int>> SimpleGroupings();
 
   void AddEdge(int a, int b);
   void RemoveEdge(int a, int b);
 
-  void DFSTransitiveTraversal(std::unordered_set<int> &visited, int current);
-  bool DFSCanReach(std::unordered_set<int> &visited, int current,
-                   int target) const;
   bool StringCommutesParents(int a, int b) const;
 
   void MergePair(int a, int b, bool sign);
@@ -75,9 +68,23 @@ class PauliDAG {
 
   void RemovePauli(int a);
 
+  void RemovePauliEdges(int a);
+
   std::vector<int> TopologicalSort() const;
 
+  struct Config {
+    const StabiliserTableau &tableau;
+    moodycamel::ConcurrentQueue<size_t> &queue;
+    const std::vector<int> &tsort;
+  };
+  struct Merge {
+    int pauli1;
+    int pauli2;
+    bool sign;
+  };
+  using MergeVec = std::vector<Merge>;
   friend void ExhaustiveRunnerParallelWorker(std::shared_ptr<Config> config,
+                                             std::shared_ptr<MergeVec> merges,
                                              PauliDAG *dag);
 
   int nextIndex{};

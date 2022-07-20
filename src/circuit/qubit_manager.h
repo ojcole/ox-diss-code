@@ -10,6 +10,7 @@ namespace qstabr {
 namespace circuit {
 
 class QubitManager {
+ private:
   struct QubitEntry {
     int size;
     int firstQubit;
@@ -22,7 +23,7 @@ class QubitManager {
   int GetQubitIndex(const Qubit &qubit) const;
   const Qubit &GetIndexQubit(int index) const;
 
-  void Synthesise(std::ostream &output);
+  void Synthesise(std::ostream &output) const;
 
  private:
   int nextQubit = 0;

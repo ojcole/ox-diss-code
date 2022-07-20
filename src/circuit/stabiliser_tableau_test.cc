@@ -46,7 +46,7 @@ TEST(CanCreate, AcceptsValid) {
     circuit::StabiliserTableau tableau(4, manager);
     tableau.ApplyCNOTGate(MkQubit(0), MkQubit(1));
     tableau.ApplyHadamard(MkQubit(0));
-    tableau.ApplyZRot(MkQubit(0), phase::Fraction{-1, 2});
+    tableau.ApplyZRot(MkQubit(0), phase::RationalPhase({-1, 2}));
     tableau.ApplyCNOTGate(MkQubit(1), MkQubit(3));
     tableau.ApplyHadamard(MkQubit(2));
     tableau.ApplyCNOTGate(MkQubit(2), MkQubit(1));
@@ -115,7 +115,7 @@ TEST(CanCreate, RejectsInvalid) {
     circuit::StabiliserTableau tableau(4, manager);
     tableau.ApplyCNOTGate(MkQubit(0), MkQubit(1));
     tableau.ApplyHadamard(MkQubit(0));
-    tableau.ApplyZRot(MkQubit(0), phase::Fraction{-1, 2});
+    tableau.ApplyZRot(MkQubit(0), phase::RationalPhase({-1, 2}));
     tableau.ApplyCNOTGate(MkQubit(1), MkQubit(3));
     tableau.ApplyHadamard(MkQubit(2));
     tableau.ApplyCNOTGate(MkQubit(2), MkQubit(1));

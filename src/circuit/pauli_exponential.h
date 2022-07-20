@@ -46,7 +46,8 @@ class PauliExponential {
 
   qasmtools::ast::Expr &GetExpr() const;
 
-  void Synthesise(std::vector<SimpleGate> &gates, const QubitManager &manager);
+  void Synthesise(std::vector<SimpleGate> &gates,
+                  const QubitManager &manager) const;
 
   std::optional<std::vector<CliffordGate>> GetCliffordRepresentation(
       const QubitManager &manager);

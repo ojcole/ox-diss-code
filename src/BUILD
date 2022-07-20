@@ -11,6 +11,7 @@ cc_binary(
         "@//qasm_bench/medium",
         "@//qasm_bench/small",
         "@//qasm_files",
+        "@//tket_bench/c2h4",
         "@//tket_bench/h2",
         "@//tket_bench/h4",
     ],

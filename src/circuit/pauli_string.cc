@@ -54,7 +54,7 @@ PauliString PauliString::StringDifference(const PauliString &string1,
                                           const PauliString &string2) {
   assert(string1.size() == string2.size());
   std::vector<PauliLetter> newString(string1.size(), I);
-  for (size_t i{}; i < string1.size(); i++) {
+  for (int i{}; i < string1.size(); i++) {
     if (string1[i] == I) {
       newString[i] = string2[i];
     } else if (string2[i] == I) {
@@ -92,7 +92,7 @@ bool PauliString::StringMultiplySign(const PauliString &string1,
                                      const PauliString &string2) {
   int iCount{};
   bool sign{false};
-  for (size_t i{}; i < string1.size(); i++) {
+  for (int i{}; i < string1.size(); i++) {
     if (string1[i] == X) {
       if (string2[i] == Z) {
         iCount--;

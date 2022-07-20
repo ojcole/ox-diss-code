@@ -42,13 +42,11 @@ class PauliCircuit {
 
  private:
   void ProcessGates();
-  int FirstCliffordGate(int after);
-  void ShiftCliffordGate(int start, int clifford);
 
   std::vector<SimpleClifford> OptimiseCliffords(std::vector<SimpleGate> &gates,
-                                                int threads);
+                                                int threads) const;
 
-  void ReconstructDAG(PauliDAG &dag);
+  void ReconstructDAG(PauliDAG &dag) const;
 
   std::shared_ptr<QubitManager> qubitManager;
 

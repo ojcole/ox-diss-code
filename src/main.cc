@@ -24,7 +24,7 @@ int main(int argc, char const* argv[]) {
   std::string name;
 
   int current = 0;
-  int next = fileName.find("/", current);  // find if have any at all
+  size_t next = fileName.find("/", current);  // find if have any at all
   while (next != std::string::npos) {
     if (current == 0) {
       group = fileName.substr(current, next - current);

@@ -3,22 +3,22 @@
 
 #include <optional>
 
-#include "qubit.h"
+#include "qubit_manager.h"
 
 namespace qstabr {
 namespace circuit {
 
 class ZGate {
  public:
-  ZGate(Qubit qubit, double angle);
+  ZGate(int qubit, double angle);
 
-  Qubit GetQubit() const;
+  int GetQubit() const;
   double GetAngle() const;
 
-  void Synthesise(std::ostream &output) const;
+  void Synthesise(std::ostream &output, const QubitManager &manager) const;
 
  private:
-  Qubit qubit;
+  int qubit;
   double angle;
 };
 

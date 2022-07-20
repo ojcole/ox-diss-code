@@ -13,9 +13,9 @@ PauliDAG::PauliDAG() {}
 
 void PauliDAG::AddPauli(PauliExponential&& newPauli) {
   int index = nextIndex;
-  for (int i{}; i < paulis.size(); i++) {
-    if (!newPauli.CommutesWith(paulis.at(i))) {
-      AddEdge(index, i);
+  for (const auto& pair : paulis) {
+    if (!newPauli.CommutesWith(pair.second)) {
+      AddEdge(index, pair.first);
     }
   }
   edges[index];
@@ -100,25 +100,25 @@ std::vector<CliffordGate> PauliDAG::PullOutPis(
       if (paulis.find(prevIdx) == paulis.end()) continue;
       auto& prevPauli = paulis.at(prevIdx);
       for (auto x_index : x_indices) {
-        auto clifford = CliffordGate::CreateXRot(
-            qubitManager.GetIndexQubit(x_index), phase::RationalPhase(1));
+        auto clifford =
+            CliffordGate::CreateXRot(x_index, phase::RationalPhase(1));
         prevPauli.PushCliffordThrough(clifford, qubitManager);
       }
       for (auto z_index : z_indices) {
-        auto clifford = CliffordGate::CreateZRot(
-            qubitManager.GetIndexQubit(z_index), phase::RationalPhase(1));
+        auto clifford =
+            CliffordGate::CreateZRot(z_index, phase::RationalPhase(1));
         prevPauli.PushCliffordThrough(clifford, qubitManager);
       }
     }
 
     for (auto x_index : x_indices) {
-      auto clifford = CliffordGate::CreateXRot(
-          qubitManager.GetIndexQubit(x_index), phase::RationalPhase(1));
+      auto clifford =
+          CliffordGate::CreateXRot(x_index, phase::RationalPhase(1));
       cliffordGates.push_back(clifford);
     }
     for (auto z_index : z_indices) {
-      auto clifford = CliffordGate::CreateZRot(
-          qubitManager.GetIndexQubit(z_index), phase::RationalPhase(1));
+      auto clifford =
+          CliffordGate::CreateZRot(z_index, phase::RationalPhase(1));
       cliffordGates.push_back(clifford);
     }
     RemovePauli(idx);
@@ -126,37 +126,19 @@ std::vector<CliffordGate> PauliDAG::PullOutPis(
   return cliffordGates;
 }
 
-void PauliDAG::DFSTransitiveTraversal(std::unordered_set<int>& visited,
-                                      int current) {
-  const auto& children = edges[current];
-  for (auto child : children) {
-    if (visited.find(child) == visited.end()) {
-      visited.insert(child);
-      DFSTransitiveTraversal(visited, child);
-    }
-  }
-}
-
-bool PauliDAG::DFSCanReach(std::unordered_set<int>& visited, int current,
-                           int target) const {
-  if (visited.find(current) != visited.end()) return false;
-
-  const auto& children = edges.at(current);
-  if (children.find(target) != children.end()) return true;
-  visited.insert(current);
-
-  for (auto child : children) {
-    if (DFSCanReach(visited, child, target)) return true;
-  }
-
-  return false;
-}
-
 bool PauliDAG::StringCommutesParents(int a, int b) const {
   return back_edges.at(a) == back_edges.at(b);
 }
 
 void PauliDAG::RemovePauli(int a) {
+  RemovePauliEdges(a);
+
+  paulis.erase(a);
+  edges.erase(a);
+  back_edges.erase(a);
+}
+
+void PauliDAG::RemovePauliEdges(int a) {
   std::unordered_set<int> children = edges[a];
   std::unordered_set<int> parents = back_edges[a];
 
@@ -167,11 +149,6 @@ void PauliDAG::RemovePauli(int a) {
   for (auto child : children) {
     RemoveEdge(a, child);
   }
-
-  paulis.erase(a);
-
-  edges.erase(a);
-  back_edges.erase(a);
 }
 
 void PauliDAG::MergePair(int a, int b, bool sign) {
@@ -180,7 +157,7 @@ void PauliDAG::MergePair(int a, int b, bool sign) {
     const auto& pauliB = paulis.at(b).GetString();
 
     int aCount{}, bCount{};
-    for (size_t i{}; i < pauliA.size(); i++) {
+    for (int i{}; i < pauliA.size(); i++) {
       if (pauliA[i] != I) aCount++;
       if (pauliB[i] != I) bCount++;
     }
@@ -286,36 +263,32 @@ void PauliDAG::ExhaustiveRunner(const StabiliserTableau& tableau) {
 }
 
 void ExhaustiveRunnerParallelWorker(std::shared_ptr<PauliDAG::Config> config,
+                                    std::shared_ptr<PauliDAG::MergeVec> merges,
                                     PauliDAG* dag) {
-  const size_t batchSize = 10;
-  std::vector<int> indices;
-  indices.resize(batchSize);
   const StabiliserTableau& tableau = config->tableau;
-  moodycamel::ConcurrentQueue<int>& queue = config->queue;
+  moodycamel::ConcurrentQueue<size_t>& queue = config->queue;
   const std::vector<int>& tsort = config->tsort;
+
+  std::unordered_set<size_t> merged;
+
+  const size_t batchSize = 20;
+  std::vector<size_t> indices;
+  indices.resize(batchSize);
   size_t count;
+
   while ((count = queue.try_dequeue_bulk(indices.begin(), batchSize)) != 0) {
     for (size_t i{}; i < count; i++) {
-      auto idx = indices[i];
-      for (auto other : tsort) {
-        if (idx == other) continue;
-        if (dag->paulis.find(idx) == dag->paulis.end()) break;
-        if (dag->paulis.find(other) == dag->paulis.end()) continue;
+      size_t index = indices[i];
+      if (merged.find(index) != merged.end()) continue;
+      auto idx = tsort[index];
+      for (size_t j = index + 1; j < tsort.size(); j++) {
+        int other = tsort[j];
         bool sign;
-        {
-          std::shared_lock lock(dag->rw_lock);
-          auto createSign = dag->CanMergePair(other, idx, tableau);
-          if (!createSign.has_value()) continue;
-          sign = *createSign;
-        }
-        {
-          std::unique_lock lock(dag->rw_lock);
-          if (dag->paulis.find(idx) == dag->paulis.end() ||
-              dag->paulis.find(other) == dag->paulis.end()) {
-            continue;
-          }
-          dag->MergePair(other, idx, sign);
-        }
+        auto createSign = dag->CanMergePair(other, idx, tableau);
+        if (!createSign.has_value()) continue;
+        sign = *createSign;
+        merges->push_back({pauli1 : other, pauli2 : idx, sign : sign});
+        merged.insert(j);
       }
     }
   }
@@ -330,17 +303,30 @@ void PauliDAG::ExhaustiveRunnerParallel(const StabiliserTableau& tableau,
     std::vector<std::thread> threads;
     threads.reserve(threadCount);
     auto tsort = TopologicalSort();
-    moodycamel::ConcurrentQueue<int> queue(tsort.size());
-    for (auto idx : tsort) {
-      queue.enqueue(idx);
+    moodycamel::ConcurrentQueue<size_t> queue(tsort.size());
+    for (size_t i{}; i < tsort.size(); i++) {
+      queue.enqueue(i);
     }
+    std::vector<std::shared_ptr<MergeVec>> allMerges;
     auto config = std::make_shared<Config>(Config({tableau, queue, tsort}));
     for (int i{}; i < threadCount; i++) {
-      std::thread thread(ExhaustiveRunnerParallelWorker, config, this);
+      auto merges = std::make_shared<MergeVec>();
+      allMerges.push_back(merges);
+      std::thread thread(ExhaustiveRunnerParallelWorker, config, merges, this);
       threads.push_back(std::move(thread));
     }
     for (int i{}; i < threadCount; i++) {
       threads[i].join();
+    }
+    for (int i{}; i < threadCount; i++) {
+      const auto& merges = *allMerges[i];
+      for (const auto& merge : merges) {
+        if (paulis.find(merge.pauli1) == paulis.end() ||
+            paulis.find(merge.pauli2) == paulis.end()) {
+          continue;
+        }
+        MergePair(merge.pauli1, merge.pauli2, merge.sign);
+      }
     }
     for (auto idx : tsort) {
       if (paulis.find(idx) == paulis.end()) continue;
@@ -378,7 +364,7 @@ void ResetBlocker(std::vector<PauliLetter>& blockers, int qubit,
                   const QubitManager& qubitManager) {
   blockers[qubit] = I;
   int size = result.size();
-  result.push_back(SingleQubitUnitary(qubitManager.GetIndexQubit(qubit)));
+  result.push_back(SingleQubitUnitary(qubit));
   if (unitaries[qubit] == qubit) {
     std::get<SingleQubitUnitary>(result[unitaries[qubit]]).ClearAlpha();
   }
@@ -387,13 +373,13 @@ void ResetBlocker(std::vector<PauliLetter>& blockers, int qubit,
 
 std::vector<SimpleClifford> PauliDAG::SynthesiseCliffords(
     const QubitManager& qubitManager, int numQubits,
-    const std::vector<bool>& qubitPis) {
+    const std::vector<bool>& qubitPis) const {
   std::vector<SimpleClifford> result;
   result.reserve(numQubits);
   std::vector<int> unitaries;
   unitaries.reserve(numQubits);
   for (int i{}; i < numQubits; i++) {
-    SingleQubitUnitary unitary(qubitManager.GetIndexQubit(i));
+    SingleQubitUnitary unitary(i);
     if (qubitPis[i]) {
       unitary.AddXPhase(phase::RationalPhase(1));
     }
@@ -449,9 +435,7 @@ std::vector<SimpleClifford> PauliDAG::SynthesiseCliffords(
       std::get<SingleQubitUnitary>(result[unitaries[x_qubit]]).AddXPhase(phase);
       std::get<SingleQubitUnitary>(result[unitaries[z_qubit]]).AddZPhase(phase);
       if (phase != 1) {
-        result.push_back(
-            CliffordGate::CreateCNOT(qubitManager.GetIndexQubit(z_qubit),
-                                     qubitManager.GetIndexQubit(x_qubit)));
+        result.push_back(CliffordGate::CreateCNOT(z_qubit, x_qubit));
         if (blockers[x_qubit] != I && blockers[x_qubit] != X) {
           ResetBlocker(blockers, x_qubit, result, unitaries, qubitManager);
         } else {
@@ -474,11 +458,50 @@ std::vector<SimpleClifford> PauliDAG::SynthesiseCliffords(
 }
 
 void PauliDAG::Synthesise(std::vector<SimpleGate>& gates,
-                          const QubitManager& qubitManager) {
+                          const QubitManager& qubitManager) const {
+  // auto groupings = SimpleGroupings();
   auto tsort = TopologicalSort();
   for (const auto& pauli : tsort) {
     paulis.at(pauli).Synthesise(gates, qubitManager);
   }
+}
+
+// A pair of qubits i,j is compatible iff there exists {A, B} s.t.
+//  for all gadgets l,
+//      gadget l on qubit i \in {I, A} iff gadget l on qubit j \in {I, B}
+
+std::vector<std::vector<int>> PauliDAG::SimpleGroupings() {
+  std::unordered_set<int> remaining;
+  for (const auto& pauli : paulis) {
+    remaining.insert(pauli.first);
+  }
+
+  std::vector<std::vector<int>> result;
+
+  while (!remaining.empty()) {
+    std::vector<int> currentGroup;
+    for (const auto index : remaining) {
+      const auto& parents = back_edges.at(index);
+      bool has_parent = false;
+      for (const auto parent : parents) {
+        if (remaining.find(parent) != remaining.end()) {
+          has_parent = true;
+          break;
+        }
+      }
+      if (!has_parent) {
+        currentGroup.push_back(index);
+      }
+    }
+
+    for (const auto idx : currentGroup) {
+      remaining.erase(idx);
+    }
+
+    result.push_back(currentGroup);
+  }
+
+  return result;
 }
 
 }  // namespace circuit

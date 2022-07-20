@@ -26,9 +26,11 @@ void QubitManager::AddQubits(const std::string &name, int number) {
   nextQubit += number;
 }
 
-void QubitManager::Synthesise(std::ostream &output) {
+void QubitManager::Synthesise(std::ostream &output) const {
   for (const auto &name : synthQubitOrder) {
-    output << "qreg " << name << "[" << qubits[name].size << "];" << std::endl;
+    assert(qubits.find(name) != qubits.end());
+    output << "qreg " << name << "[" << qubits.at(name).size << "];"
+           << std::endl;
   }
 }
 

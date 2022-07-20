@@ -3,27 +3,27 @@
 
 #include "pauli_string.h"
 #include "phase/phase.h"
-#include "qubit.h"
+#include "qubit_manager.h"
 
 namespace qstabr {
 namespace circuit {
 
 class SingleQubitUnitary {
  public:
-  SingleQubitUnitary(const Qubit &qubit);
+  SingleQubitUnitary(int qubit);
 
   void AddZPhase(const phase::RationalPhase &phase);
   void AddXPhase(const phase::RationalPhase &phase);
   void ClearAlpha();
   bool CommutesPast(const PauliLetter letter);
-  const Qubit &GetQubit() const;
+  int GetQubit() const;
 
-  void Synthesise(std::ostream &output);
+  void Synthesise(std::ostream &output, const QubitManager &manager) const;
 
- private:
   void Simplify();
 
-  Qubit qubit;
+ private:
+  int qubit;
   phase::RationalPhase alpha;
   phase::RationalPhase beta;
   phase::RationalPhase gamma;

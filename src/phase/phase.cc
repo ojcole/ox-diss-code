@@ -178,7 +178,7 @@ std::unique_ptr<qasmtools::ast::Expr> RationalPhase::ToExpr() const {
         {}, std::move(base), qasmtools::ast::BinaryOp::Divide, std::move(num));
   }
 
-  return std::move(base);
+  return base;
 }
 
 }  // namespace phase

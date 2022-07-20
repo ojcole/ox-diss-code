@@ -3,7 +3,7 @@
 namespace qstabr {
 namespace circuit {
 
-SingleQubitUnitary::SingleQubitUnitary(const Qubit &qubit)
+SingleQubitUnitary::SingleQubitUnitary(int qubit)
     : qubit(qubit), alpha(0), beta(0), gamma(0) {}
 
 void SingleQubitUnitary::AddZPhase(const phase::RationalPhase &phase) {
@@ -61,13 +61,14 @@ void SingleQubitUnitary::Simplify() {
   }
 }
 
-const Qubit &SingleQubitUnitary::GetQubit() const { return qubit; }
+int SingleQubitUnitary::GetQubit() const { return qubit; }
 
-void SingleQubitUnitary::Synthesise(std::ostream &output) {
-  Simplify();
+void SingleQubitUnitary::Synthesise(std::ostream &output,
+                                    const QubitManager &manager) const {
   if (alpha == 0 && beta == 0 && gamma == 0) return;
+  const auto &q = manager.GetIndexQubit(qubit);
   output << "u3(" << beta << "," << (gamma - phase::PI_BY_2) << ","
-         << (alpha + phase::PI_BY_2) << ") " << qubit << ";" << std::endl;
+         << (alpha + phase::PI_BY_2) << ") " << q << ";" << std::endl;
 }
 
 }  // namespace circuit

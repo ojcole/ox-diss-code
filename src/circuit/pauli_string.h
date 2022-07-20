@@ -60,7 +60,7 @@ class PauliString {
                                  const PauliString &string2);
 
   const PauliLetter &operator[](size_t index) const { return string[index]; }
-  size_t size() const { return string.size(); }
+  int size() const { return static_cast<int>(string.size()); }
 
  private:
   PauliLetter &operator[](size_t index) { return string[index]; }
