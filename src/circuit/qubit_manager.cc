@@ -7,6 +7,8 @@ namespace circuit {
 
 QubitManager::QubitManager() {}
 
+int QubitManager::GetNumQubits() const { return nextQubit; }
+
 int QubitManager::GetQubitIndex(const Qubit &qubit) const {
   auto it = qubits.find(qubit.name);
   assert(it != qubits.end());

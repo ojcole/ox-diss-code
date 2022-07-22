@@ -29,10 +29,10 @@ class PauliDAG {
   size_t Size() const;
 
   void Synthesise(std::vector<SimpleGate> &gates,
-                  const QubitManager &qubitManager) const;
+                  const QubitManager &qubitManager);
 
   std::vector<SimpleClifford> SynthesiseCliffords(
-      const QubitManager &qubitManager, int numQubits,
+      const QubitManager &qubitManager,
       const std::vector<bool> &qubitPis) const;
 
   struct OptStats {
@@ -86,6 +86,29 @@ class PauliDAG {
   friend void ExhaustiveRunnerParallelWorker(std::shared_ptr<Config> config,
                                              std::shared_ptr<MergeVec> merges,
                                              PauliDAG *dag);
+  int NonDiagonalQubits(std::vector<int> &group,
+                        const QubitManager &qubitManager);
+  void ConjugateForDiag(std::vector<int> &group,
+                        const QubitManager &qubitManager, int qubit,
+                        PauliLetter letter, std::vector<CliffordGate> &conj);
+  void DiagonaliseTrivial(std::vector<int> &group,
+                          const QubitManager &qubitManager,
+                          std::list<int> &qubits,
+                          std::vector<CliffordGate> &conj);
+  bool DiagonaliseCompatibleCheck(std::vector<int> &group,
+                                  const QubitManager &qubitManager,
+                                  std::list<int> &qubits,
+                                  std::vector<CliffordGate> &conj);
+  bool DiagonaliseCompatible(std::vector<int> &group,
+                             const QubitManager &qubitManager,
+                             std::list<int> &qubits,
+                             std::vector<CliffordGate> &conj);
+  void DiagonaliseMinWeight(std::vector<int> &group,
+                            const QubitManager &qubitManager,
+                            std::list<int> &qubits,
+                            std::vector<CliffordGate> &conj);
+  std::vector<CliffordGate> DiagonaliseGroup(std::vector<int> &group,
+                                             const QubitManager &qubitManager);
 
   int nextIndex{};
   std::unordered_map<int, PauliExponential> paulis;

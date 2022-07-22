@@ -1,6 +1,7 @@
 #ifndef CIRCUIT_PAULI_STRING_H_
 #define CIRCUIT_PAULI_STRING_H_
 
+#include <array>
 #include <iostream>
 #include <vector>
 
@@ -13,6 +14,8 @@ enum PauliLetter : char {
   X = 'X',
   Y = 'Y',
 };
+
+constexpr std::array<PauliLetter, 3> ACTIVE_LETTERS{Z, X, Y};
 
 inline std::vector<PauliLetter> operator"" _p(const char *str, size_t len) {
   std::vector<PauliLetter> letters(len, I);
@@ -61,6 +64,8 @@ class PauliString {
 
   const PauliLetter &operator[](size_t index) const { return string[index]; }
   int size() const { return static_cast<int>(string.size()); }
+
+  std::vector<int> Weight() const;
 
  private:
   PauliLetter &operator[](size_t index) { return string[index]; }

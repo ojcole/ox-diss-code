@@ -38,6 +38,7 @@ int main(int argc, char const* argv[]) {
 
   qstabr::circuit::PauliCircuit circuit(std::move(*ast));
   size_t beforeCount = circuit.PauliCount();
+  // circuit.PrintDAG();
   circuit.Optimise(threads);
   size_t afterCount = circuit.PauliCount();
   auto stats = circuit.GetOptStats();

@@ -132,5 +132,13 @@ std::vector<PauliString> PauliString::StringDecomps() const {
   return result;
 }
 
+std::vector<int> PauliString::Weight() const {
+  std::vector<int> weights;
+  for (size_t i{}; i < string.size(); i++) {
+    if (string[i] != I) weights.push_back(i);
+  }
+  return weights;
+}
+
 }  // namespace circuit
 }  // namespace qstabr

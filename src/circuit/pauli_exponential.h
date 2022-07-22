@@ -28,7 +28,11 @@ class PauliExponential {
 
   void CombineWithPauli(const PauliExponential &other);
 
-  void ApplyString(const PauliString &pauliString, bool sign);
+  bool DiagAtQubit(int qubit) const;
+
+  void DiagonaliseQubit(int qubit);
+
+  void ReduceToZ(int qubit);
 
   std::vector<int> GetMatrixForm() const;
 

@@ -19,6 +19,7 @@ class QubitManager {
  public:
   QubitManager();
 
+  int GetNumQubits() const;
   void AddQubits(const std::string &name, int number);
   int GetQubitIndex(const Qubit &qubit) const;
   const Qubit &GetIndexQubit(int index) const;

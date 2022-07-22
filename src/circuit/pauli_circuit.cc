@@ -234,7 +234,7 @@ std::vector<SimpleClifford> PauliCircuit::OptimiseCliffords(
     if (repeat) ReconstructDAG(cliffordDAG);
   } while (repeat);
   gates = std::move(newGates);
-  return cliffordDAG.SynthesiseCliffords(*qubitManager, numQubits, qubitPis);
+  return cliffordDAG.SynthesiseCliffords(*qubitManager, qubitPis);
 }
 
 void PauliCircuit::Synthesise(std::ostream &output, int threads) {

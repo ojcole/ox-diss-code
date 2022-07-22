@@ -33,6 +33,12 @@ void CliffordGate::Synthesise(std::ostream &output,
   output << ";" << std::endl;
 }
 
+CliffordGate CliffordGate::Dagger() const {
+  auto copy = *this;
+  if (copy.type == ZROT || copy.type == XROT) *copy.phase *= -1;
+  return copy;
+}
+
 CliffordGate CliffordGate::CreateCNOT(int control, int target) {
   return CliffordGate(CNOT, control, target);
 }

@@ -131,11 +131,18 @@ void PauliExponential::CombineWithPauli(const PauliExponential &other) {
   }
 }
 
-void PauliExponential::ApplyString(const PauliString &pauliString, bool sign) {
-  string = PauliString::StringDifference(string, pauliString);
-  if (sign) {
-    Negate();
-  }
+bool PauliExponential::DiagAtQubit(int qubit) const {
+  return string[qubit] == I || string[qubit] == Z;
+}
+
+void PauliExponential::DiagonaliseQubit(int qubit) {
+  if (string[qubit] != I) string[qubit] = Z;
+}
+
+void PauliExponential::ReduceToZ(int qubit) {
+  std::vector<PauliLetter> newString(string.size(), I);
+  newString[qubit] = Z;
+  string = newString;
 }
 
 PauliString PauliExponential::GetString() const { return string; }
@@ -183,8 +190,7 @@ void PauliExponential::Synthesise(std::vector<SimpleGate> &gates,
     if (string[i] == X) {
       gates.push_back(CliffordGate::CreateHAD(i));
     } else if (string[i] == Y) {
-      gates.push_back(
-          CliffordGate::CreateXRot(i, phase::RationalPhase({1, 2})));
+      gates.push_back(CliffordGate::CreateXRot(i, phase::PI_BY_2));
     }
   }
   SynthesisePhasePoly(gates, manager, string, val);
@@ -192,8 +198,7 @@ void PauliExponential::Synthesise(std::vector<SimpleGate> &gates,
     if (string[i] == X) {
       gates.push_back(CliffordGate::CreateHAD(i));
     } else if (string[i] == Y) {
-      gates.push_back(
-          CliffordGate::CreateXRot(i, phase::RationalPhase({-1, 2})));
+      gates.push_back(CliffordGate::CreateXRot(i, phase::MINUS_PI_BY_2));
     }
   }
 }

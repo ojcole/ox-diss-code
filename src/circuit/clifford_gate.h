@@ -18,6 +18,8 @@ class CliffordGate {
   int GetSecondQubit() const;
   std::optional<phase::RationalPhase> GetPhase() const;
 
+  CliffordGate Dagger() const;
+
   void Synthesise(std::ostream &output, const QubitManager &manager) const;
 
   static CliffordGate CreateCNOT(int control, int target);

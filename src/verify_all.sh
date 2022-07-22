@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+bazel build main
+
 find . -type f -wholename "./qasm_bench/small/*.qasm" -print0 | while read -d $'\0' file
 do
   ./bazel-bin/main $file tmp.qasm 12
