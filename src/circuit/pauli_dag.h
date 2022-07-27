@@ -17,7 +17,7 @@ namespace circuit {
 
 class PauliDAG {
  public:
-  PauliDAG();
+  PauliDAG(int numQubits);
 
   void AddPauli(PauliExponential &&pauli);
 
@@ -29,10 +29,9 @@ class PauliDAG {
   size_t Size() const;
 
   void Synthesise(std::vector<SimpleGate> &gates,
-                  const QubitManager &qubitManager);
+                  std::vector<PauliString> stabilisers = {});
 
   std::vector<SimpleClifford> SynthesiseCliffords(
-      const QubitManager &qubitManager,
       const std::vector<bool> &qubitPis) const;
 
   struct OptStats {
@@ -45,13 +44,15 @@ class PauliDAG {
 
   OptStats GetStats() const;
 
-  std::vector<CliffordGate> PullOutCliffords(const QubitManager &qubitManager);
-  std::vector<CliffordGate> PullOutPis(const QubitManager &qubitManager);
+  std::vector<CliffordGate> PullOutCliffords();
+  std::vector<CliffordGate> PullOutPis();
 
   // Destructive
   std::vector<PauliExponential> GetPaulis();
 
  private:
+  void ReduceGroup(std::vector<int> &group,
+                   std::vector<PauliString> &stabilisers);
   std::vector<std::vector<int>> SimpleGroupings();
 
   void AddEdge(int a, int b);
@@ -86,29 +87,21 @@ class PauliDAG {
   friend void ExhaustiveRunnerParallelWorker(std::shared_ptr<Config> config,
                                              std::shared_ptr<MergeVec> merges,
                                              PauliDAG *dag);
-  int NonDiagonalQubits(std::vector<int> &group,
-                        const QubitManager &qubitManager);
-  void ConjugateForDiag(std::vector<int> &group,
-                        const QubitManager &qubitManager, int qubit,
-                        PauliLetter letter, std::vector<CliffordGate> &conj);
-  void DiagonaliseTrivial(std::vector<int> &group,
-                          const QubitManager &qubitManager,
-                          std::list<int> &qubits,
+  int NonDiagonalQubits(std::vector<int> &group);
+  void ConjugateForDiag(std::vector<int> &group, int qubit, PauliLetter letter,
+                        std::vector<CliffordGate> &conj);
+  void DiagonaliseTrivial(std::vector<int> &group, std::list<int> &qubits,
                           std::vector<CliffordGate> &conj);
   bool DiagonaliseCompatibleCheck(std::vector<int> &group,
-                                  const QubitManager &qubitManager,
                                   std::list<int> &qubits,
                                   std::vector<CliffordGate> &conj);
-  bool DiagonaliseCompatible(std::vector<int> &group,
-                             const QubitManager &qubitManager,
-                             std::list<int> &qubits,
+  bool DiagonaliseCompatible(std::vector<int> &group, std::list<int> &qubits,
                              std::vector<CliffordGate> &conj);
-  void DiagonaliseMinWeight(std::vector<int> &group,
-                            const QubitManager &qubitManager,
-                            std::list<int> &qubits,
+  void DiagonaliseMinWeight(std::vector<int> &group, std::list<int> &qubits,
                             std::vector<CliffordGate> &conj);
-  std::vector<CliffordGate> DiagonaliseGroup(std::vector<int> &group,
-                                             const QubitManager &qubitManager);
+  std::vector<CliffordGate> DiagonaliseGroup(std::vector<int> &group);
+
+  int numQubits;
 
   int nextIndex{};
   std::unordered_map<int, PauliExponential> paulis;

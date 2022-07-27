@@ -63,6 +63,8 @@ class StabiliserTableau {
 
   void Synthesise(std::vector<SimpleGate> &gates);
 
+  std::vector<PauliString> GetStabilisers() const;
+
  private:
   void GenerateTableau(qasmtools::ast::Program &normalisedProgram);
 

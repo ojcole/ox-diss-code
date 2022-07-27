@@ -29,3 +29,11 @@ http_archive(
     strip_prefix = "concurrentqueue-1.0.3",
     urls = ["https://github.com/cameron314/concurrentqueue/archive/refs/tags/v1.0.3.tar.gz"],
 )
+
+http_archive(
+    name = "nlohmann_json",
+    build_file = "@//external_build:nlohmann_json.BUILD",
+    sha256 = "5daca6ca216495edf89d167f808d1d03c4a4d929cef7da5e10f135ae1540c7e4",
+    strip_prefix = "json-3.10.5",
+    urls = ["https://github.com/nlohmann/json/archive/refs/tags/v3.10.5.tar.gz"],
+)

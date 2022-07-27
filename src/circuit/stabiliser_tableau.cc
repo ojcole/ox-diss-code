@@ -258,7 +258,7 @@ PauliString StabiliserTableau::GetString(int index) const {
       string.push_back(I);
     }
   }
-  return string;
+  return {string, grid[index + numQubits][2 * numQubits] == 1};
 }
 
 std::optional<bool> StabiliserTableau::CanCreate(
@@ -314,6 +314,14 @@ std::optional<bool> StabiliserTableau::CanCreate(
   }
 
   return negated == 1;
+}
+
+std::vector<PauliString> StabiliserTableau::GetStabilisers() const {
+  std::vector<PauliString> stabilisers;
+  for (int i{}; i < numQubits; i++) {
+    stabilisers.push_back(GetString(i));
+  }
+  return stabilisers;
 }
 
 void StabiliserTableau::MakeCFullRank(SynthVec &output) {

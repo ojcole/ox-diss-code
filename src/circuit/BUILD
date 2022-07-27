@@ -65,6 +65,8 @@ cc_library(
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
     deps = [
+        ":diagonaliser",
+        ":gray_synther",
         ":pauli_exponential",
         ":stabiliser_tableau",
         "@moodycamel",
@@ -137,6 +139,29 @@ cc_library(
         ":pauli_string",
         ":qubit_manager",
         "//phase",
+    ],
+)
+
+cc_library(
+    name = "diagonaliser",
+    srcs = ["diagonaliser.cc"],
+    hdrs = ["diagonaliser.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":pauli_exponential",
+        ":qubit_manager",
+    ],
+)
+
+cc_library(
+    name = "gray_synther",
+    srcs = ["gray_synther.cc"],
+    hdrs = ["gray_synther.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":helpers",
+        ":pauli_exponential",
+        "@staq",
     ],
 )
 

@@ -75,7 +75,8 @@
         "variant": "cpp",
         "csignal": "cpp",
         "future": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "cassert": "cpp"
     },
     "editor.tabSize": 2
 }

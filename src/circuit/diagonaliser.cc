@@ -20,31 +20,14 @@ CliffordGate GetConj(PauliLetter letter, int qubit) {
 }  // namespace
 
 Diagonaliser::Diagonaliser(std::unordered_map<int, PauliExponential>& paulis,
-                           std::shared_ptr<QubitManager> qubitManager)
-    : paulis(paulis),
-      qubitManager(std::move(qubitManager)),
-      numQubits(qubitManager->GetNumQubits()) {}
+                           int numQubits)
+    : paulis(paulis), numQubits(numQubits) {}
 
 void Diagonaliser::ResetState(const std::vector<int>& group) {
   this->group = group;
   qubits.clear();
   diagonalQubits.clear();
   conj.clear();
-  for (int i{}; i < qubitManager->GetNumQubits(); i++) {
-    bool diag = true;
-    for (const auto pauliIndex : group) {
-      const auto& pauli = paulis.at(pauliIndex);
-      if (!pauli.DiagAtQubit(i)) {
-        diag = false;
-        break;
-      }
-    }
-    if (diag) {
-      diagonalQubits.insert(i);
-    } else {
-      qubits.push_back(i);
-    }
-  }
 }
 
 bool Diagonaliser::DiagonaliseTrivial(int qubit) {
@@ -53,6 +36,7 @@ bool Diagonaliser::DiagonaliseTrivial(int qubit) {
 
   for (auto pauliIndex : group) {
     const auto& pauliString = paulis.at(pauliIndex).GetString();
+    if (pauliString[qubit] == I) continue;
     if (pauliString[qubit] != letter) {
       if (letter != I) {
         success = false;
@@ -75,6 +59,21 @@ bool Diagonaliser::DiagonaliseTrivial(int qubit) {
   return true;
 }
 
+void Diagonaliser::Print() {
+  for (const auto pauli : group) {
+    paulis.at(pauli).Print();
+  }
+  for (const auto qubit : qubits) {
+    std::cout << qubit << " ";
+  }
+  std::cout << std::endl;
+  for (const auto qubit : diagonalQubits) {
+    std::cout << qubit << " ";
+  }
+  std::cout << std::endl;
+  std::cout << std::endl;
+}
+
 // A pair of qubits i,j is compatible iff there exists {A, B} s.t.
 //  for all gadgets l,
 //      gadget l on qubit i \in {I, A} iff gadget l on qubit j \in {I, B}
@@ -87,12 +86,13 @@ void Diagonaliser::ConjugateForDiag(int qubit, PauliLetter letter) {
   auto gate = letter == X ? CliffordGate::CreateHAD(qubit)
                           : CliffordGate::CreateXRot(qubit, phase::PI_BY_2);
   for (const auto pauliIndex : group) {
-    paulis.at(pauliIndex).PushCliffordThrough(gate, *qubitManager);
+    paulis.at(pauliIndex).PushCliffordThrough(gate);
   }
   conj.push_back(std::move(gate));
 }
 
-void Diagonaliser::DiagonaliseCompatible() {
+bool Diagonaliser::DiagonaliseCompatible() {
+  bool success = false;
   for (auto first_letter : ACTIVE_LETTERS) {
     for (auto second_letter : ACTIVE_LETTERS) {
       auto it = qubits.begin();
@@ -116,11 +116,12 @@ void Diagonaliser::DiagonaliseCompatible() {
             }
           }
           if (all) {
+            success = true;
             ConjugateForDiag(i, first_letter);
             ConjugateForDiag(j, second_letter);
             auto gate = CliffordGate::CreateCNOT(i, j);
             for (const auto pauliIndex : group) {
-              paulis.at(pauliIndex).PushCliffordThrough(gate, *qubitManager);
+              paulis.at(pauliIndex).PushCliffordThrough(gate);
             }
             conj.push_back(std::move(gate));
             diagonalQubits.insert(*j_it);
@@ -139,6 +140,7 @@ void Diagonaliser::DiagonaliseCompatible() {
       }
     }
   }
+  return success;
 }
 
 bool Diagonaliser::VerifyMinWeight(const std::vector<int>& weightings,
@@ -165,14 +167,14 @@ std::vector<int> Diagonaliser::DiagonaliseMinWeight() {
   assert(minPauli != -1);
   std::vector<SimpleGate> gates;
   auto& pauli = paulis.at(minPauli);
-  pauli.Synthesise(gates, *qubitManager);
+  pauli.Synthesise(gates);
   assert(gates.size() > 1);
   for (size_t i{}; i < gates.size() / 2; i++) {
     assert(std::holds_alternative<CliffordGate>(gates[i]));
     auto& gate = std::get<CliffordGate>(gates[i]);
     for (const auto pauliIndex : group) {
       if (pauliIndex == minPauli) continue;
-      paulis.at(pauliIndex).PushCliffordThrough(gate, *qubitManager);
+      paulis.at(pauliIndex).PushCliffordThrough(gate);
     }
     conj.push_back(std::move(gate));
   }
@@ -194,9 +196,8 @@ std::vector<CliffordGate> Diagonaliser::Diagonalise(
     }
   }
 
-  DiagonaliseCompatible();
-
   while (!qubits.empty()) {
+    if (DiagonaliseCompatible()) continue;
     auto altered = DiagonaliseMinWeight();
     for (const auto qubit : altered) {
       if (!DiagonaliseTrivial(qubit)) {
@@ -211,9 +212,7 @@ std::vector<CliffordGate> Diagonaliser::Diagonalise(
         }
       }
     }
-    DiagonaliseCompatible();
   }
-
   return std::move(conj);
 }
 

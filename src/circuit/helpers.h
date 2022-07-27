@@ -29,6 +29,9 @@ std::unique_ptr<qasmtools::ast::Expr> AddExprPhases(
 std::unique_ptr<qasmtools::ast::Expr> SubtractExprPhases(
     const qasmtools::ast::Expr &lhs, const qasmtools::ast::Expr &rhs);
 
+std::unique_ptr<qasmtools::ast::Expr> NegateExprPhase(
+    const qasmtools::ast::Expr &expr);
+
 bool isPi(double num);
 bool isZero(double num);
 bool isPi2(double num);

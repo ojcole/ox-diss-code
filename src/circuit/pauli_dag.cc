@@ -1,15 +1,18 @@
 #include "pauli_dag.h"
 
 #include <cassert>
+#include <random>
 #include <thread>
 
+#include "diagonaliser.h"
+#include "gray_synther.h"
 #include "phase/phase.h"
 #include "single_qubit_unitary.h"
 
 namespace qstabr {
 namespace circuit {
 
-PauliDAG::PauliDAG() {}
+PauliDAG::PauliDAG(int numQubits) : numQubits(numQubits) {}
 
 void PauliDAG::AddPauli(PauliExponential&& newPauli) {
   int index = nextIndex;
@@ -49,14 +52,13 @@ std::vector<PauliExponential> PauliDAG::GetPaulis() {
   return pauliVector;
 }
 
-std::vector<CliffordGate> PauliDAG::PullOutCliffords(
-    const QubitManager& qubitManager) {
+std::vector<CliffordGate> PauliDAG::PullOutCliffords() {
   auto tsort = TopologicalSort();
   std::vector<CliffordGate> cliffordGates;
   for (size_t i{}; i < tsort.size(); i++) {
     auto idx = tsort[i];
     auto& pauli = paulis.at(idx);
-    auto cliffords = pauli.GetCliffordRepresentation(qubitManager);
+    auto cliffords = pauli.GetCliffordRepresentation();
     if (!cliffords.has_value()) continue;
     cliffordRemovals++;
     for (const auto& clifford : *cliffords) {
@@ -64,7 +66,7 @@ std::vector<CliffordGate> PauliDAG::PullOutCliffords(
         auto prevIdx = tsort[j];
         if (paulis.find(prevIdx) == paulis.end()) continue;
         auto& prevPauli = paulis.at(prevIdx);
-        prevPauli.PushCliffordThrough(clifford, qubitManager);
+        prevPauli.PushCliffordThrough(clifford);
       }
       cliffordGates.push_back(clifford);
     }
@@ -73,8 +75,7 @@ std::vector<CliffordGate> PauliDAG::PullOutCliffords(
   return cliffordGates;
 }
 
-std::vector<CliffordGate> PauliDAG::PullOutPis(
-    const QubitManager& qubitManager) {
+std::vector<CliffordGate> PauliDAG::PullOutPis() {
   auto tsort = TopologicalSort();
   std::vector<CliffordGate> cliffordGates;
   for (size_t i{}; i < tsort.size(); i++) {
@@ -102,12 +103,12 @@ std::vector<CliffordGate> PauliDAG::PullOutPis(
       for (auto x_index : x_indices) {
         auto clifford =
             CliffordGate::CreateXRot(x_index, phase::RationalPhase(1));
-        prevPauli.PushCliffordThrough(clifford, qubitManager);
+        prevPauli.PushCliffordThrough(clifford);
       }
       for (auto z_index : z_indices) {
         auto clifford =
             CliffordGate::CreateZRot(z_index, phase::RationalPhase(1));
-        prevPauli.PushCliffordThrough(clifford, qubitManager);
+        prevPauli.PushCliffordThrough(clifford);
       }
     }
 
@@ -360,8 +361,7 @@ size_t PauliDAG::Size() const { return paulis.size(); }
 
 void ResetBlocker(std::vector<PauliLetter>& blockers, int qubit,
                   std::vector<SimpleClifford>& result,
-                  std::vector<int>& unitaries,
-                  const QubitManager& qubitManager) {
+                  std::vector<int>& unitaries) {
   blockers[qubit] = I;
   int size = result.size();
   result.push_back(SingleQubitUnitary(qubit));
@@ -372,8 +372,7 @@ void ResetBlocker(std::vector<PauliLetter>& blockers, int qubit,
 }
 
 std::vector<SimpleClifford> PauliDAG::SynthesiseCliffords(
-    const QubitManager& qubitManager, const std::vector<bool>& qubitPis) const {
-  int numQubits = qubitManager.GetNumQubits();
+    const std::vector<bool>& qubitPis) const {
   std::vector<SimpleClifford> result;
   result.reserve(numQubits);
   std::vector<int> unitaries;
@@ -409,14 +408,14 @@ std::vector<SimpleClifford> PauliDAG::SynthesiseCliffords(
     if (z_qubit == -1) {
       assert(x_qubit != -1);
       if (blockers[x_qubit] == Z || blockers[x_qubit] == Y) {
-        ResetBlocker(blockers, x_qubit, result, unitaries, qubitManager);
+        ResetBlocker(blockers, x_qubit, result, unitaries);
       }
       assert(std::holds_alternative<SingleQubitUnitary>(
           result[unitaries[x_qubit]]));
       std::get<SingleQubitUnitary>(result[unitaries[x_qubit]]).AddXPhase(phase);
     } else if (x_qubit == -1) {
       if (blockers[z_qubit] == X || blockers[z_qubit] == Y) {
-        ResetBlocker(blockers, z_qubit, result, unitaries, qubitManager);
+        ResetBlocker(blockers, z_qubit, result, unitaries);
       }
       assert(std::holds_alternative<SingleQubitUnitary>(
           result[unitaries[z_qubit]]));
@@ -427,22 +426,22 @@ std::vector<SimpleClifford> PauliDAG::SynthesiseCliffords(
       assert(std::holds_alternative<SingleQubitUnitary>(
           result[unitaries[x_qubit]]));
       if (blockers[z_qubit] == X || blockers[z_qubit] == Y) {
-        ResetBlocker(blockers, z_qubit, result, unitaries, qubitManager);
+        ResetBlocker(blockers, z_qubit, result, unitaries);
       }
       if (blockers[x_qubit] == Z || blockers[x_qubit] == Y) {
-        ResetBlocker(blockers, x_qubit, result, unitaries, qubitManager);
+        ResetBlocker(blockers, x_qubit, result, unitaries);
       }
       std::get<SingleQubitUnitary>(result[unitaries[x_qubit]]).AddXPhase(phase);
       std::get<SingleQubitUnitary>(result[unitaries[z_qubit]]).AddZPhase(phase);
       if (phase != 1) {
         result.push_back(CliffordGate::CreateCNOT(z_qubit, x_qubit));
         if (blockers[x_qubit] != I && blockers[x_qubit] != X) {
-          ResetBlocker(blockers, x_qubit, result, unitaries, qubitManager);
+          ResetBlocker(blockers, x_qubit, result, unitaries);
         } else {
           blockers[x_qubit] = X;
         }
         if (blockers[z_qubit] != I && blockers[z_qubit] != Z) {
-          ResetBlocker(blockers, z_qubit, result, unitaries, qubitManager);
+          ResetBlocker(blockers, z_qubit, result, unitaries);
         } else {
           blockers[z_qubit] = Z;
         }
@@ -458,204 +457,82 @@ std::vector<SimpleClifford> PauliDAG::SynthesiseCliffords(
 }
 
 void PauliDAG::Synthesise(std::vector<SimpleGate>& gates,
-                          const QubitManager& qubitManager) {
+                          std::vector<PauliString> stabilisers) {
   auto groupings = SimpleGroupings();
+  Diagonaliser diagonaliser(paulis, numQubits);
+  GraySynther graySynther(paulis, numQubits);
   for (auto& group : groupings) {
-    auto cliffords = DiagonaliseGroup(group, qubitManager);
+    ReduceGroup(group, stabilisers);
+    auto cliffords = diagonaliser.Diagonalise(group);
     for (const auto& clifford : cliffords) {
       gates.push_back(clifford);
     }
-    // REPLACE WITH GRAY SYNTH
-    for (const auto pauliIndex : group) {
-      paulis.at(pauliIndex).Synthesise(gates, qubitManager);
-    }
+    graySynther.GraySynth(gates, group);
     for (auto it = cliffords.rbegin(); it != cliffords.rend(); it++) {
       gates.push_back(it->Dagger());
     }
   }
 }
 
-namespace {
+void PauliDAG::ReduceGroup(std::vector<int>& group,
+                           std::vector<PauliString>& stabilisers) {
+  if (stabilisers.size() == 0) return;
 
-CliffordGate GetConj(PauliLetter letter, int qubit) {
-  assert(letter != I && letter != Z);
-  if (letter == X) {
-    return CliffordGate::CreateHAD(qubit);
-  }
-  assert(letter == Y);
-  return CliffordGate::CreateXRot(qubit, phase::PI_BY_2);
-}
-
-}  // namespace
-
-void PauliDAG::DiagonaliseTrivial(std::vector<int>& group,
-                                  const QubitManager& qubitManager,
-                                  std::list<int>& qubits,
-                                  std::vector<CliffordGate>& conj) {
-  int numQubits = qubitManager.GetNumQubits();
-  for (int i{}; i < numQubits; i++) {
-    PauliLetter letter = I;
-    for (auto pauliIndex : group) {
-      const auto& pauliString = paulis.at(pauliIndex).GetString();
-      if (pauliString[i] != letter) {
-        if (letter != I) {
-          letter = I;
-          break;
-        } else {
-          letter = pauliString[i];
-        }
-      }
-    }
-    if (letter != Z && letter != I) {
-      for (auto pauliIndex : group) {
-        paulis.at(pauliIndex).DiagonaliseQubit(i);
-      }
-      conj.push_back(GetConj(letter, i));
-    }
-  }
-}
-
-// A pair of qubits i,j is compatible iff there exists {A, B} s.t.
-//  for all gadgets l,
-//      gadget l on qubit i \in {I, A} iff gadget l on qubit j \in {I, B}
-
-// const std::unordered_map<PauliLetter, PauliLetter>
-// DIAG_BY_CNOT{{I, Z}, {X, Y}, {Y, X}, {Z, {I, Z}}};
-
-int PauliDAG::NonDiagonalQubits(std::vector<int>& group,
-                                const QubitManager& qubitManager) {
-  int nonDiagonal = 0;
-  int numQubits = qubitManager.GetNumQubits();
-  for (int i{}; i < numQubits; i++) {
-    for (const auto pauliIndex : group) {
-      if (!paulis.at(pauliIndex).DiagAtQubit(i)) {
-        nonDiagonal++;
-        break;
-      }
-    }
-  }
-  return nonDiagonal;
-}
-
-void PauliDAG::ConjugateForDiag(std::vector<int>& group,
-                                const QubitManager& qubitManager, int qubit,
-                                PauliLetter letter,
-                                std::vector<CliffordGate>& conj) {
-  if (letter != X && letter != Y) return;
-  auto gate = letter == X ? CliffordGate::CreateHAD(qubit)
-                          : CliffordGate::CreateXRot(qubit, phase::PI_BY_2);
+  // Reduce stabilisers to only those that commute with all of group
   for (const auto pauliIndex : group) {
-    paulis.at(pauliIndex).PushCliffordThrough(gate, qubitManager);
+    std::vector<size_t> antiCommutingStabilisers;
+    const auto& pauliString = paulis.at(pauliIndex).GetString();
+    for (size_t i{}; i < stabilisers.size(); i++) {
+      if (!stabilisers[i].CommutesWith(pauliString)) {
+        antiCommutingStabilisers.push_back(i);
+      }
+    }
+    if (antiCommutingStabilisers.size() == 0) continue;
+    for (size_t i{1}; i < antiCommutingStabilisers.size(); i++) {
+      stabilisers[antiCommutingStabilisers[i]] *=
+          stabilisers[antiCommutingStabilisers[0]];
+    }
+    std::swap(stabilisers[antiCommutingStabilisers[0]],
+              stabilisers[stabilisers.size() - 1]);
+    stabilisers.pop_back();
+    if (stabilisers.size() == 0) return;
   }
-  conj.push_back(std::move(gate));
-}
 
-bool PauliDAG::DiagonaliseCompatible(std::vector<int>& group,
-                                     const QubitManager& qubitManager,
-                                     std::list<int>& qubits,
-                                     std::vector<CliffordGate>& conj) {
-  int numQubits = qubitManager.GetNumQubits();
-  for (auto first_letter : ACTIVE_LETTERS) {
-    for (auto second_letter : ACTIVE_LETTERS) {
-      for (auto it = qubits.begin(); it != qubits.end(); it++) {
-        int i = *it;
-        for (int j{i + 1}; j < numQubits; j++) {
-          bool all = true;
-          int qubit1Count{};
-          int qubit2Count{};
-          bool qubit1Diag = true;
-          bool qubit2Diag = true;
-          for (const auto pauliIndex : group) {
-            const auto& pauliString = paulis.at(pauliIndex).GetString();
-            auto i_let = pauliString[i];
-            auto j_let = pauliString[j];
+  std::random_device rd;
+  std::mt19937 rng(rd());
+  std::uniform_int_distribution<size_t> distribution(0, stabilisers.size() - 1);
 
-            if (i_let != I && i_let != Z) qubit1Diag = false;
-            if (i_let != I) qubit1Count++;
-
-            if (j_let != I && j_let != Z) qubit2Diag = false;
-            if (j_let != I) qubit2Count++;
-
-            if ((i_let == first_letter || i_let == I) !=
-                (j_let == second_letter || j_let == I)) {
-              all = false;
-              break;
-            }
+  for (const auto pauliIndex : group) {
+    auto& pauli = paulis.at(pauliIndex);
+    const auto& pauliString = pauli.GetString();
+    int currentSize = 0;
+    int newSize = pauliString.Weight().size();
+    int currentZSize = 0;
+    int newZSize = pauliString.NonZWeight();
+    while (currentSize != newSize || currentZSize != newZSize) {
+      currentSize = newSize;
+      currentZSize = newZSize;
+      for (size_t j{1}; j <= (stabilisers.size() + 1) / 2; j++) {
+        for (size_t i{}; i < std::max(2 * stabilisers.size(), 20UL); i++) {
+          auto initialString = stabilisers[distribution(rng)];
+          for (size_t k{1}; k < j; k++) {
+            initialString *= stabilisers[distribution(rng)];
           }
-          if (qubit1Diag && qubit2Diag) continue;
-          if (all) {
-            int control = i;
-            int target = j;
-            if (qubit2Diag || qubit1Count < qubit2Count) {
-              std::swap(control, target);
-            }
-            ConjugateForDiag(group, qubitManager, i, first_letter, conj);
-            ConjugateForDiag(group, qubitManager, j, second_letter, conj);
-            auto gate = CliffordGate::CreateCNOT(control, target);
-            for (const auto pauliIndex : group) {
-              paulis.at(pauliIndex).PushCliffordThrough(gate, qubitManager);
-            }
-            conj.push_back(std::move(gate));
-            return true;
+          pauli.ApplyPauliStabiliser(initialString);
+          size_t newWeight = pauliString.Weight().size();
+          size_t newNonZWeight = pauliString.NonZWeight();
+          if (newWeight < newSize ||
+              (newWeight == newSize && newNonZWeight < newZSize)) {
+            newSize = newWeight;
+            newZSize = newNonZWeight;
+            std::cout << "Reduced string!" << std::endl;
+          } else {
+            pauli.ApplyPauliStabiliser(initialString);
           }
         }
       }
     }
   }
-  return false;
-}
-
-void PauliDAG::DiagonaliseMinWeight(std::vector<int>& group,
-                                    const QubitManager& qubitManager,
-                                    std::list<int>& qubits,
-                                    std::vector<CliffordGate>& conj) {
-  int weight = qubitManager.GetNumQubits() + 1;
-  int minPauli = -1;
-  for (const auto pauliIndex : group) {
-    int currentWeight = paulis.at(pauliIndex).GetString().Weight().size();
-    if (currentWeight < weight) {
-      weight = currentWeight;
-      minPauli = pauliIndex;
-    }
-  }
-  assert(minPauli != -1);
-  std::vector<SimpleGate> gates;
-  auto& pauli = paulis.at(minPauli);
-  pauli.Synthesise(gates, qubitManager);
-  for (size_t i{}; i < gates.size() / 2; i++) {
-    assert(std::holds_alternative<CliffordGate>(gates[i]));
-    auto& gate = std::get<CliffordGate>(gates[i]);
-    for (const auto pauliIndex : group) {
-      if (pauliIndex == minPauli) continue;
-      paulis.at(pauliIndex).PushCliffordThrough(gate, qubitManager);
-    }
-    conj.push_back(std::move(gate));
-  }
-  assert(std::holds_alternative<ZGate>(gates[gates.size() / 2]));
-  auto gate = std::get<ZGate>(gates[gates.size() / 2]);
-  int remainingQubit = gate.GetQubit();
-  pauli.ReduceToZ(remainingQubit);
-}
-
-std::vector<CliffordGate> PauliDAG::DiagonaliseGroup(
-    std::vector<int>& group, const QubitManager& qubitManager) {
-  std::list<int> qubits;
-  int numQubits = qubitManager.GetNumQubits();
-  for (int i{}; i < numQubits; i++) {
-    for (const auto pauliIndex : group) {
-      if (!paulis.at(pauliIndex).DiagAtQubit(i)) {
-        qubits.push_back(i);
-      }
-    }
-  }
-
-  std::vector<CliffordGate> conj;
-  while (!qubits.empty()) {
-    DiagonaliseTrivial(group, qubitManager, qubits, conj);
-    if (DiagonaliseCompatible(group, qubitManager, qubits, conj)) continue;
-    DiagonaliseMinWeight(group, qubitManager, qubits, conj);
-  }
-  return conj;
 }
 
 std::vector<std::vector<int>> PauliDAG::SimpleGroupings() {

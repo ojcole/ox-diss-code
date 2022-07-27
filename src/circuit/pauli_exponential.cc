@@ -44,24 +44,13 @@ const std::map<std::pair<PauliLetter, PauliLetter>, MultiQubitMapping>
 
 PauliExponential::PauliExponential(
     const PauliString &string, std::unique_ptr<qasmtools::ast::Expr> phaseExpr)
-    : string(string), phaseExpr(std::move(phaseExpr)), negated(false) {}
+    : string(string), phaseExpr(std::move(phaseExpr)) {}
 
 bool PauliExponential::CommutesWith(const PauliExponential &other) const {
   return string.CommutesWith(other.string);
 }
 
-bool PauliExponential::CommutesWithPauli(const PauliString &pauliString) const {
-  assert(string.size() == pauliString.size());
-  for (int i{}; i < string.size(); i++) {
-    if (string[i] != I && pauliString[i] != I && string[i] != pauliString[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-void PauliExponential::PushCliffordThrough(const CliffordGate &gate,
-                                           const QubitManager &qubitManager) {
+void PauliExponential::PushCliffordThrough(const CliffordGate &gate) {
   const auto type = gate.GetGateType();
   int firstQubit = gate.GetFirstQubit();
 
@@ -91,9 +80,9 @@ void PauliExponential::PushCliffordThrough(const CliffordGate &gate,
   }
 }
 
-void PauliExponential::Negate() { negated = !negated; }
+void PauliExponential::Negate() { string.Negate(); }
 
-bool PauliExponential::IsNegated() const { return negated; }
+bool PauliExponential::IsNegated() const { return string.IsNegated(); }
 
 void PauliExponential::ApplyHadamard(int qubit) {
   auto it = hadamardMapping.find(string[qubit]);
@@ -122,13 +111,17 @@ void PauliExponential::ApplySGate(int qubit) {
 }
 
 void PauliExponential::CombineWithPauli(const PauliExponential &other) {
-  if (negated == other.negated) {
+  if (IsNegated() == other.IsNegated()) {
     auto newPhase = AddExprPhases(*phaseExpr, *other.phaseExpr);
     phaseExpr = std::move(newPhase);
   } else {
     auto newPhase = SubtractExprPhases(*phaseExpr, *other.phaseExpr);
     phaseExpr = std::move(newPhase);
   }
+}
+
+void PauliExponential::ApplyPauliStabiliser(const PauliString &other) {
+  string *= other;
 }
 
 bool PauliExponential::DiagAtQubit(int qubit) const {
@@ -139,13 +132,25 @@ void PauliExponential::DiagonaliseQubit(int qubit) {
   if (string[qubit] != I) string[qubit] = Z;
 }
 
+staq::synthesis::phase_term PauliExponential::ToPhaseTerm() {
+  std::vector<bool> qubits(string.size(), false);
+  auto weights = string.Weight();
+  for (const auto qubit : weights) {
+    qubits[qubit] = true;
+  }
+  if (IsNegated()) {
+    phaseExpr = NegateExprPhase(*phaseExpr);
+  }
+  return {qubits, std::move(phaseExpr)};
+}
+
 void PauliExponential::ReduceToZ(int qubit) {
   std::vector<PauliLetter> newString(string.size(), I);
   newString[qubit] = Z;
-  string = newString;
+  string = {newString, IsNegated()};
 }
 
-PauliString PauliExponential::GetString() const { return string; }
+const PauliString &PauliExponential::GetString() const { return string; }
 
 std::vector<int> PauliExponential::GetMatrixForm() const {
   return string.GetMatrixForm();
@@ -156,11 +161,10 @@ qasmtools::ast::Expr &PauliExponential::GetExpr() const { return *phaseExpr; }
 namespace {
 
 void SynthesisePhasePoly(std::vector<SimpleGate> &gates,
-                         const QubitManager &manager, const PauliString &string,
-                         double value, int i = 0) {
+                         const PauliString &string, double value, int i = 0) {
   if (i >= string.size()) return;
   if (string[i] == I) {
-    SynthesisePhasePoly(gates, manager, string, value, i + 1);
+    SynthesisePhasePoly(gates, string, value, i + 1);
     return;
   }
   int next_i{i + 1};
@@ -174,18 +178,17 @@ void SynthesisePhasePoly(std::vector<SimpleGate> &gates,
   }
 
   gates.push_back(CliffordGate::CreateCNOT(i, next_i));
-  SynthesisePhasePoly(gates, manager, string, value, next_i);
+  SynthesisePhasePoly(gates, string, value, next_i);
   gates.push_back(CliffordGate::CreateCNOT(i, next_i));
 }
 
 }  // namespace
 
-void PauliExponential::Synthesise(std::vector<SimpleGate> &gates,
-                                  const QubitManager &manager) const {
+void PauliExponential::Synthesise(std::vector<SimpleGate> &gates) const {
   std::optional<double> value = phaseExpr->constant_eval();
   if (!value.has_value()) return;
   double val = *value;
-  if (negated) val *= -1;
+  if (IsNegated()) val *= -1;
   for (int i{}; i < string.size(); i++) {
     if (string[i] == X) {
       gates.push_back(CliffordGate::CreateHAD(i));
@@ -193,7 +196,7 @@ void PauliExponential::Synthesise(std::vector<SimpleGate> &gates,
       gates.push_back(CliffordGate::CreateXRot(i, phase::PI_BY_2));
     }
   }
-  SynthesisePhasePoly(gates, manager, string, val);
+  SynthesisePhasePoly(gates, string, val);
   for (int i{}; i < string.size(); i++) {
     if (string[i] == X) {
       gates.push_back(CliffordGate::CreateHAD(i));
@@ -204,15 +207,15 @@ void PauliExponential::Synthesise(std::vector<SimpleGate> &gates,
 }
 
 std::optional<std::vector<CliffordGate>>
-PauliExponential::GetCliffordRepresentation(const QubitManager &manager) {
+PauliExponential::GetCliffordRepresentation() {
   std::optional<double> value = phaseExpr->constant_eval();
   if (!value.has_value()) return std::nullopt;
-  if (negated) *value *= -1;
+  if (IsNegated()) *value *= -1;
   std::optional<phase::RationalPhase> phase = CliffordPhaseFromDouble(*value);
   if (!phase.has_value()) return std::nullopt;
   std::vector<CliffordGate> cliffordGates;
   std::vector<SimpleGate> gates;
-  Synthesise(gates, manager);
+  Synthesise(gates);
   for (const auto &gate : gates) {
     if (std::holds_alternative<CliffordGate>(gate)) {
       cliffordGates.push_back(std::get<CliffordGate>(std::move(gate)));

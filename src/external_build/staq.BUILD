@@ -26,6 +26,19 @@ cc_library(
 )
 
 cc_library(
+    name = "staq_int",
+    srcs = [],
+    hdrs = glob(
+        [
+            "include/**/*.hpp",
+        ],
+    ),
+    strip_include_prefix = "include",
+    visibility = ["//visibility:private"],
+    deps = [":staq_tools_int"],
+)
+
+cc_library(
     name = "staq",
     srcs = [],
     hdrs = glob(
@@ -36,5 +49,9 @@ cc_library(
     include_prefix = "staq",
     strip_include_prefix = "include",
     visibility = ["//visibility:public"],
-    deps = [":staq_tools_int"],
+    deps = [
+        ":staq_int",
+        ":staq_tools_int",
+        "@nlohmann_json",
+    ],
 )

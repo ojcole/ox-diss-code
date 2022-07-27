@@ -6,8 +6,8 @@
 namespace qstabr {
 namespace circuit {
 
-PauliString::PauliString(const std::vector<PauliLetter> &string)
-    : string(string) {}
+PauliString::PauliString(const std::vector<PauliLetter> &string, bool negated)
+    : string(string), negated(negated) {}
 
 bool PauliString::CommutesWith(const PauliString &other) const {
   assert(other.string.size() == string.size());
@@ -138,6 +138,66 @@ std::vector<int> PauliString::Weight() const {
     if (string[i] != I) weights.push_back(i);
   }
   return weights;
+}
+
+int PauliString::NonZWeight() const {
+  int count{};
+  for (size_t i{}; i < string.size(); i++) {
+    if (string[i] != I && string[i] != Z) count++;
+  }
+  return count;
+}
+
+bool PauliString::IsNegated() const { return negated; }
+
+void PauliString::Negate() { negated = !negated; }
+
+void PauliString::operator*=(const PauliString &other) {
+  assert(size() == other.size());
+  int iCount{};
+  negated = negated != other.negated;
+  for (int i{}; i < size(); i++) {
+    if (string[i] == other[i]) {
+      string[i] = I;
+    } else if (string[i] == I) {
+      string[i] = other[i];
+    } else if (string[i] == Z) {
+      if (other[i] == X) {
+        iCount--;
+        negated = !negated;
+        string[i] = Y;
+      } else if (other[i] == Y) {
+        string[i] = X;
+        iCount++;
+        negated = !negated;
+      }
+    } else if (string[i] == X) {
+      if (other[i] == Z) {
+        iCount--;
+        string[i] = Y;
+      } else if (other[i] == Y) {
+        iCount++;
+        string[i] = Z;
+      }
+    } else if (string[i] == Y) {
+      if (other[i] == Z) {
+        iCount++;
+        string[i] = X;
+      } else if (other[i] == X) {
+        string[i] = Z;
+        iCount++;
+        negated = !negated;
+      }
+    }
+  }
+  assert(iCount % 2 == 0);
+  if (iCount % 4 != 0) negated = !negated;
+}
+
+PauliString operator*(const PauliString &string1, const PauliString &string2) {
+  auto newString = string1;
+  newString *= string2;
+  return newString;
 }
 
 }  // namespace circuit

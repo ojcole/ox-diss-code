@@ -63,6 +63,12 @@ std::unique_ptr<qasmtools::ast::Expr> SubtractExprPhases(
                                        qasmtools::ast::object::clone(rhs));
 }
 
+std::unique_ptr<qasmtools::ast::Expr> NegateExprPhase(
+    const qasmtools::ast::Expr &expr) {
+  return qasmtools::ast::UExpr::create({}, qasmtools::ast::UnaryOp::Neg,
+                                       qasmtools::ast::object::clone(expr));
+}
+
 bool isPi(double num) {
   norm(num);
   return std::abs(std::abs(num) - PI) < EPSILON;

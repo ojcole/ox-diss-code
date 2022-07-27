@@ -36,7 +36,7 @@ class PauliExponential;
 
 class PauliString {
  public:
-  PauliString(const std::vector<PauliLetter> &string);
+  PauliString(const std::vector<PauliLetter> &string, bool negated = false);
 
   bool CommutesWith(const PauliString &other) const;
 
@@ -45,6 +45,11 @@ class PauliString {
   std::vector<int> GetMatrixForm() const;
 
   void Print() const {
+    if (negated) {
+      std::cout << "-";
+    } else {
+      std::cout << "+";
+    }
     for (auto letter : string) {
       std::cout << static_cast<char>(letter);
     }
@@ -52,6 +57,8 @@ class PauliString {
   }
 
   std::vector<PauliString> StringDecomps() const;
+
+  void operator*=(const PauliString &other);
 
   static PauliString StringDifference(const PauliString &string1,
                                       const PauliString &string2);
@@ -66,14 +73,22 @@ class PauliString {
   int size() const { return static_cast<int>(string.size()); }
 
   std::vector<int> Weight() const;
+  int NonZWeight() const;
+
+  bool IsNegated() const;
+
+  void Negate();
 
  private:
   PauliLetter &operator[](size_t index) { return string[index]; }
 
   std::vector<PauliLetter> string;
+  bool negated = false;
 
   friend class PauliExponential;
 };
+
+PauliString operator*(const PauliString &string1, const PauliString &string2);
 
 }  // namespace circuit
 }  // namespace qstabr

@@ -12,18 +12,21 @@ namespace qstabr {
 namespace circuit {
 
 class Diagonaliser {
+ public:
   Diagonaliser(std::unordered_map<int, PauliExponential> &paulis,
-               std::shared_ptr<QubitManager> qubitManager);
+               int numQubits);
 
   std::vector<CliffordGate> Diagonalise(const std::vector<int> &group);
 
  private:
+  void Print();
+
   void ResetState(const std::vector<int> &group);
 
   void ConjugateForDiag(int qubit, PauliLetter letter);
 
   bool DiagonaliseTrivial(int qubit);
-  void DiagonaliseCompatible();
+  bool DiagonaliseCompatible();
 
   bool VerifyMinWeight(const std::vector<int> &weightings,
                        const std::vector<int> &newWeightings);
@@ -34,7 +37,6 @@ class Diagonaliser {
   std::vector<int> group;
   std::vector<CliffordGate> conj;
   std::unordered_map<int, PauliExponential> &paulis;
-  std::shared_ptr<QubitManager> qubitManager;
   int numQubits;
 };
 
