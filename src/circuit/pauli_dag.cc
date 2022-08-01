@@ -192,7 +192,8 @@ PauliDAG::OptStats PauliDAG::GetStats() const {
     totalMerges : totalMerges,
     phaseRemovals : phaseRemovals,
     cancellations : cancellations,
-    cliffordRemovals : cliffordRemovals
+    cliffordRemovals : cliffordRemovals,
+    stringReductions : stringReductions
   };
 }
 
@@ -525,7 +526,7 @@ void PauliDAG::ReduceGroup(std::vector<int>& group,
               (newWeight == newSize && newNonZWeight < newZSize)) {
             newSize = newWeight;
             newZSize = newNonZWeight;
-            std::cout << "Reduced string!" << std::endl;
+            stringReductions++;
           } else {
             pauli.ApplyPauliStabiliser(initialString);
           }

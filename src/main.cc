@@ -41,7 +41,6 @@ int main(int argc, char const* argv[]) {
   // circuit.PrintDAG();
   circuit.Optimise(threads);
   size_t afterCount = circuit.PauliCount();
-  auto stats = circuit.GetOptStats();
 
   if (argc >= 3) {
     std::string fileName(argv[2]);
@@ -58,9 +57,10 @@ int main(int argc, char const* argv[]) {
   auto seconds = totalMillis / 1000;
   auto millis = totalMillis % 1000;
 
+  auto stats = circuit.GetOptStats();
   std::cout << group << "," << name << "," << beforeCount << "," << afterCount
             << "," << stats.identityMerges << "," << stats.totalMerges << ","
             << stats.phaseRemovals << "," << stats.cancellations << ","
-            << stats.cliffordRemovals << "," << seconds << "." << millis
-            << std::endl;
+            << stats.cliffordRemovals << "," << stats.stringReductions << ","
+            << seconds << "." << millis << std::endl;
 }
