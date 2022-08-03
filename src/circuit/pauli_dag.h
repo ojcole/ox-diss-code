@@ -40,7 +40,7 @@ class PauliDAG {
     int phaseRemovals;
     int cancellations;
     int cliffordRemovals;
-    int stringReductions;
+    double stringReductions;
   };
 
   OptStats GetStats() const;
@@ -116,7 +116,7 @@ class PauliDAG {
   int phaseRemovals{};
   int cliffordRemovals{};
   int cancellations{};
-  int stringReductions{};
+  double stringReductions{};
 };
 
 }  // namespace circuit

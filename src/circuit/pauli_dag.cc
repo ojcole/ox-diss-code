@@ -510,6 +510,10 @@ void PauliDAG::ReduceGroup(std::vector<int>& group,
     int newSize = pauliString.Weight().size();
     int currentZSize = 0;
     int newZSize = pauliString.NonZWeight();
+
+    const auto originalSize = newSize;
+    const auto originalZSize = newZSize;
+
     while (currentSize != newSize || currentZSize != newZSize) {
       currentSize = newSize;
       currentZSize = newZSize;
@@ -526,13 +530,15 @@ void PauliDAG::ReduceGroup(std::vector<int>& group,
               (newWeight == newSize && newNonZWeight < newZSize)) {
             newSize = newWeight;
             newZSize = newNonZWeight;
-            stringReductions++;
           } else {
             pauli.ApplyPauliStabiliser(initialString);
           }
         }
       }
     }
+    stringReductions +=
+        originalSize - newSize +
+        ((originalZSize - newZSize + numQubits) / (2.0 * numQubits));
   }
 }
 

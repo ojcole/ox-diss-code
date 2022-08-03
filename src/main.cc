@@ -26,7 +26,7 @@ int main(int argc, char const* argv[]) {
   int current = 0;
   size_t next = fileName.find("/", current);  // find if have any at all
   while (next != std::string::npos) {
-    if (current == 0) {
+    if (current != 0 && group.size() == 0) {
       group = fileName.substr(current, next - current);
     }
     current = next + 1;
