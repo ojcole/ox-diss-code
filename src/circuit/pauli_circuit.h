@@ -30,7 +30,7 @@ class PauliCircuit {
   void AddXRot(const Qubit &qubit, const phase::RationalPhase &phase);
   void AddCNOTGate(const Qubit &control, const Qubit &target);
 
-  void Synthesise(std::ostream &output, int threads = 1);
+  void Synthesise(std::ostream &output, const SynthOptions &options = {});
 
   size_t PauliCount() const;
 
@@ -38,7 +38,19 @@ class PauliCircuit {
 
   void PrintDAG() const;
 
-  PauliDAG::OptStats GetOptStats() const;
+  struct GateOptStats {
+    int originalGateCount;
+    int originalCNOTCount;
+    int resultingGateCount;
+    int resultingCNOTCount;
+  };
+
+  struct FullStats {
+    GateOptStats GateStats;
+    PauliDAG::OptStats DAGStats;
+  };
+
+  FullStats GetOptStats() const;
 
  private:
   void ProcessGates();
@@ -55,6 +67,11 @@ class PauliCircuit {
   std::vector<Gate> gates;
 
   int numQubits;
+
+  int originalGateCount{};
+  int originalCNOTCount{};
+  int resultingGateCount{};
+  int resultingCNOTCount{};
 };
 
 }  // namespace circuit

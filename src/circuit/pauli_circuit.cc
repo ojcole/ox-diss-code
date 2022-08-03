@@ -24,6 +24,8 @@ class GateReader : public qasmtools::ast::Traverse {
   }
 
   void visit(qasmtools::ast::UGate &gate) override {
+    gateCount++;
+
     const auto &arg = gate.arg();
     const auto &offset = arg.offset();
     assert(offset.has_value());
@@ -106,6 +108,9 @@ class GateReader : public qasmtools::ast::Traverse {
   }
 
   void visit(qasmtools::ast::CNOTGate &gate) override {
+    CNOTCount++;
+    gateCount++;
+
     const auto &control = gate.ctrl();
     const auto &target = gate.tgt();
     const auto &cOffset = control.offset();
@@ -114,8 +119,13 @@ class GateReader : public qasmtools::ast::Traverse {
     circuit.AddCNOTGate({control.var(), *cOffset}, {target.var(), *tOffset});
   }
 
+  int GetGateCount() const { return gateCount; }
+  int GetCNOTCount() const { return CNOTCount; }
+
  private:
   PauliCircuit &circuit;
+  int gateCount{};
+  int CNOTCount{};
 };
 
 }  // namespace
@@ -128,6 +138,8 @@ PauliCircuit::PauliCircuit(qasmtools::ast::Program &&program)
   NormaliseProgram(program);
   GateReader reader(*this);
   program.accept(reader);
+  originalGateCount = reader.GetGateCount();
+  originalCNOTCount = reader.GetCNOTCount();
   ProcessGates();
 }
 
@@ -238,39 +250,53 @@ std::vector<SimpleClifford> PauliCircuit::OptimiseCliffords(
   return cliffordDAG.SynthesiseCliffords(qubitPis);
 }
 
-void PauliCircuit::Synthesise(std::ostream &output, int threads) {
+void PauliCircuit::Synthesise(std::ostream &output,
+                              const SynthOptions &options) {
   output << "OPENQASM 2.0;" << std::endl;
   output << "include \"qelib1.inc\";" << std::endl;
   qubitManager->Synthesise(output);
   std::vector<SimpleGate> gates;
   auto stabilisers = tableau.GetStabilisers();
   tableau.Synthesise(gates);
-  pauli_graph.Synthesise(gates, stabilisers);
-  auto cliffords = OptimiseCliffords(gates, threads);
+  pauli_graph.Synthesise(gates, stabilisers, options);
+  auto cliffords = OptimiseCliffords(gates, options.threads);
   for (const auto &clifford : cliffords) {
     if (std::holds_alternative<CliffordGate>(clifford)) {
       const auto &cnot = std::get<CliffordGate>(clifford);
       assert(cnot.GetGateType() == CNOT);
       cnot.Synthesise(output, *qubitManager);
+      resultingCNOTCount++;
     } else {
       auto unitary = std::get<SingleQubitUnitary>(clifford);
       unitary.Simplify();
       unitary.Synthesise(output, *qubitManager);
     }
+    resultingGateCount++;
   }
   for (const auto &gate : gates) {
     if (std::holds_alternative<CliffordGate>(gate)) {
-      std::get<CliffordGate>(gate).Synthesise(output, *qubitManager);
+      const auto &clifford = std::get<CliffordGate>(gate);
+      if (clifford.GetGateType() == CNOT) {
+        resultingCNOTCount++;
+      }
+      clifford.Synthesise(output, *qubitManager);
     } else {
       std::get<ZGate>(gate).Synthesise(output, *qubitManager);
     }
+    resultingGateCount++;
   }
 }
 
 size_t PauliCircuit::PauliCount() const { return pauli_graph.Size(); }
 
-PauliDAG::OptStats PauliCircuit::GetOptStats() const {
-  return pauli_graph.GetStats();
+PauliCircuit::FullStats PauliCircuit::GetOptStats() const {
+  GateOptStats stats = {
+    originalGateCount : originalGateCount,
+    originalCNOTCount : originalCNOTCount,
+    resultingGateCount : resultingGateCount,
+    resultingCNOTCount : resultingCNOTCount,
+  };
+  return {stats, pauli_graph.GetStats()};
 }
 
 void PauliCircuit::Optimise(int threads) {

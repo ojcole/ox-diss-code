@@ -29,7 +29,8 @@ class PauliDAG {
   size_t Size() const;
 
   void Synthesise(std::vector<SimpleGate> &gates,
-                  std::vector<PauliString> stabilisers = {});
+                  std::vector<PauliString> stabilisers = {},
+                  const SynthOptions &options = {});
 
   std::vector<SimpleClifford> SynthesiseCliffords(
       const std::vector<bool> &qubitPis) const;

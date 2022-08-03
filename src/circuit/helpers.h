@@ -15,6 +15,11 @@ using SimpleGate = std::variant<CliffordGate, ZGate>;
 
 using SimpleClifford = std::variant<CliffordGate, SingleQubitUnitary>;
 
+struct SynthOptions {
+  int threads = 1;
+  bool reduceStrings = true;
+};
+
 void NormaliseProgram(qasmtools::ast::Program &program);
 
 std::unique_ptr<qasmtools::ast::Expr> AddPIByTwoToPhase(

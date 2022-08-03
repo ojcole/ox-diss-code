@@ -458,12 +458,15 @@ std::vector<SimpleClifford> PauliDAG::SynthesiseCliffords(
 }
 
 void PauliDAG::Synthesise(std::vector<SimpleGate>& gates,
-                          std::vector<PauliString> stabilisers) {
+                          std::vector<PauliString> stabilisers,
+                          const SynthOptions& options) {
   auto groupings = SimpleGroupings();
   Diagonaliser diagonaliser(paulis, numQubits);
   GraySynther graySynther(paulis, numQubits);
   for (auto& group : groupings) {
-    ReduceGroup(group, stabilisers);
+    if (options.reduceStrings) {
+      ReduceGroup(group, stabilisers);
+    }
     auto cliffords = diagonaliser.Diagonalise(group);
     for (const auto& clifford : cliffords) {
       gates.push_back(clifford);
