@@ -47,6 +47,10 @@ class StabiliserTableau {
 
   void ApplyCliffordGate(const CliffordGate &clifford);
 
+  void ApplyCliffordPauliExponential(const PauliExponential &pauli);
+
+  void ShiftPauliExponential(PauliExponential &pauli);
+
   inline bool operator==(const StabiliserTableau &other) {
     if (numQubits != other.numQubits) return false;
     for (int i{numQubits}; i < 2 * numQubits; i++) {
@@ -68,6 +72,8 @@ class StabiliserTableau {
  private:
   void GenerateTableau(qasmtools::ast::Program &normalisedProgram);
 
+  PauliString GetStabiliserString(int index) const;
+  PauliString GetDestabiliserString(int index) const;
   PauliString GetString(int index) const;
 
   enum SynthGateType {

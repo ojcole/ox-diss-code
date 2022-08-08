@@ -63,10 +63,10 @@ class PauliDAG {
   bool StringCommutesParents(int a, int b) const;
 
   void MergePair(int a, int b, bool sign);
-  void TryMergePair(int a, int b, const StabiliserTableau &tableau);
+  bool TryMergePair(int a, int b, const StabiliserTableau &tableau);
   std::optional<bool> CanMergePair(int a, int b,
                                    const StabiliserTableau &tableau) const;
-  void TryCancel(int a, const StabiliserTableau &tableau);
+  bool TryCancel(int a, const StabiliserTableau &tableau);
   bool CheckPhase(int a);
 
   void RemovePauli(int a);

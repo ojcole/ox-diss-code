@@ -124,6 +124,10 @@ void PauliExponential::ApplyPauliStabiliser(const PauliString &other) {
   string *= other;
 }
 
+void PauliExponential::SetPauliString(PauliString newString) {
+  string = std::move(newString);
+}
+
 bool PauliExponential::DiagAtQubit(int qubit) const {
   return string[qubit] == I || string[qubit] == Z;
 }

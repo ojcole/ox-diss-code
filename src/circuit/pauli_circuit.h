@@ -54,6 +54,8 @@ class PauliCircuit {
 
  private:
   void ProcessGates();
+  void ProcessGates2();
+  void ProcessGates3();
 
   std::vector<SimpleClifford> OptimiseCliffords(std::vector<SimpleGate> &gates,
                                                 int threads) const;

@@ -28,6 +28,8 @@ class PauliExponential {
 
   void ApplyPauliStabiliser(const PauliString &other);
 
+  void SetPauliString(PauliString newString);
+
   bool DiagAtQubit(int qubit) const;
 
   void DiagonaliseQubit(int qubit);

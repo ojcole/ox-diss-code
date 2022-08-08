@@ -188,6 +188,41 @@ void StabiliserTableau::ApplyCliffordGate(const CliffordGate &clifford) {
   }
 }
 
+void StabiliserTableau::ApplyCliffordPauliExponential(
+    const PauliExponential &pauli) {
+  auto phase = phase::GetRationalPhaseFromExpr(pauli.GetExpr());
+  if (pauli.IsNegated()) phase *= -1;
+  assert(phase.IsClifford());
+  std::vector<SimpleGate> gates;
+  pauli.Synthesise(gates);
+  for (const auto &gate : gates) {
+    if (std::holds_alternative<CliffordGate>(gate)) {
+      ApplyCliffordGate(std::get<CliffordGate>(gate));
+    } else {
+      assert(std::holds_alternative<ZGate>(gate));
+      auto &zgate = std::get<ZGate>(gate);
+      ApplyZRot(zgate.GetQubit(), phase);
+    }
+  }
+}
+
+void StabiliserTableau::ShiftPauliExponential(PauliExponential &pauli) {
+  const auto &stringCopy = pauli.GetString();
+  PauliString baseString(std::vector<PauliLetter>(numQubits, I));
+
+  for (int i{}; i < numQubits; i++) {
+    if (stringCopy[i] == X || stringCopy[i] == Y) {
+      baseString *= GetDestabiliserString(i);
+    }
+    if (stringCopy[i] == Z || stringCopy[i] == Y) {
+      baseString *= GetStabiliserString(i);
+    }
+  }
+
+  assert(!pauli.IsNegated());
+  pauli.SetPauliString(std::move(baseString));
+}
+
 void StabiliserTableau::Print() const {
   for (int i{}; i < 2 * numQubits; i++) {
     for (int j{}; j < 2 * numQubits + 1; j++) {
@@ -242,23 +277,28 @@ void SwapRows(std::vector<std::vector<int>> &augMat, std::vector<int> &vec,
 
 }  // namespace
 
+PauliString StabiliserTableau::GetStabiliserString(int index) const {
+  return GetString(index + numQubits);
+}
+
+PauliString StabiliserTableau::GetDestabiliserString(int index) const {
+  return GetString(index);
+}
+
 PauliString StabiliserTableau::GetString(int index) const {
   std::vector<PauliLetter> string;
   for (int i{}; i < numQubits; i++) {
-    if (grid[index + numQubits][i] == 1 &&
-        grid[index + numQubits][i + numQubits] == 1) {
+    if (grid[index][i] == 1 && grid[index][i + numQubits] == 1) {
       string.push_back(Y);
-    } else if (grid[index + numQubits][i] == 0 &&
-               grid[index + numQubits][i + numQubits] == 1) {
+    } else if (grid[index][i] == 0 && grid[index][i + numQubits] == 1) {
       string.push_back(Z);
-    } else if (grid[index + numQubits][i] == 1 &&
-               grid[index + numQubits][i + numQubits] == 0) {
+    } else if (grid[index][i] == 1 && grid[index][i + numQubits] == 0) {
       string.push_back(X);
     } else {
       string.push_back(I);
     }
   }
-  return {string, grid[index + numQubits][2 * numQubits] == 1};
+  return {string, grid[index][2 * numQubits] == 1};
 }
 
 std::optional<bool> StabiliserTableau::CanCreate(
@@ -302,7 +342,7 @@ std::optional<bool> StabiliserTableau::CanCreate(
   PauliString baseString(std::vector<PauliLetter>(numQubits, I));
   for (int i{}; i < numQubits; i++) {
     if (targetMat[i] == 1) {
-      auto str = GetString(i);
+      auto str = GetStabiliserString(i);
       auto prod = PauliString::StringMultiply(baseString, str);
       if (prod.first) negated ^= 1;
       baseString = prod.second;
@@ -319,7 +359,7 @@ std::optional<bool> StabiliserTableau::CanCreate(
 std::vector<PauliString> StabiliserTableau::GetStabilisers() const {
   std::vector<PauliString> stabilisers;
   for (int i{}; i < numQubits; i++) {
-    stabilisers.push_back(GetString(i));
+    stabilisers.push_back(GetStabiliserString(i));
   }
   return stabilisers;
 }

@@ -128,6 +128,66 @@ class GateReader : public qasmtools::ast::Traverse {
   int CNOTCount{};
 };
 
+PauliExponential CreatePauliExp(const phase::RationalPhase &phase,
+                                int numQubits, int qubit1, PauliLetter letter1,
+                                int qubit2 = -1, PauliLetter letter2 = I) {
+  std::vector<PauliLetter> string(numQubits, I);
+  string[qubit1] = letter1;
+  if (qubit2 != -1) string[qubit2] = letter2;
+  return PauliExponential(string, phase.ToExpr());
+}
+
+inline void AddCNOTPauliExponential(std::vector<PauliExponential> &paulis,
+                                    int numQubits, int index1, int index2) {
+  paulis.push_back(CreatePauliExp(phase::RationalPhase({-1, 2}), numQubits,
+                                  index1, Z, index2, X));
+  paulis.push_back(
+      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index1, Z));
+  paulis.push_back(
+      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index2, X));
+}
+
+inline void AddHADPauliExponential(std::vector<PauliExponential> &paulis,
+                                   int numQubits, int index1) {
+  paulis.push_back(
+      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index1, Z));
+  paulis.push_back(
+      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index1, X));
+  paulis.push_back(
+      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index1, Z));
+}
+
+inline void AddZRotPauliExponential(std::vector<PauliExponential> &paulis,
+                                    int numQubits, int index1,
+                                    const phase::RationalPhase &phase) {
+  paulis.push_back(CreatePauliExp(phase, numQubits, index1, Z));
+}
+
+inline void AddXRotPauliExponential(std::vector<PauliExponential> &paulis,
+                                    int numQubits, int index1,
+                                    const phase::RationalPhase &phase) {
+  paulis.push_back(CreatePauliExp(phase, numQubits, index1, X));
+}
+
+inline std::vector<PauliExponential> CliffordToPaulis(
+    const CliffordGate &clifford, int numQubits) {
+  std::vector<PauliExponential> paulis;
+  int index1 = clifford.GetFirstQubit();
+  if (clifford.GetGateType() == CNOT) {
+    int index2 = clifford.GetSecondQubit();
+    AddCNOTPauliExponential(paulis, numQubits, index1, index2);
+  } else if (clifford.GetGateType() == HAD) {
+    AddHADPauliExponential(paulis, numQubits, index1);
+  } else if (clifford.GetGateType() == ZROT) {
+    AddZRotPauliExponential(paulis, numQubits, index1, *clifford.GetPhase());
+  } else {
+    assert(clifford.GetGateType() == XROT);
+    AddXRotPauliExponential(paulis, numQubits, index1, *clifford.GetPhase());
+  }
+
+  return paulis;
+}
+
 }  // namespace
 
 PauliCircuit::PauliCircuit(qasmtools::ast::Program &&program)
@@ -140,7 +200,7 @@ PauliCircuit::PauliCircuit(qasmtools::ast::Program &&program)
   program.accept(reader);
   originalGateCount = reader.GetGateCount();
   originalCNOTCount = reader.GetCNOTCount();
-  ProcessGates();
+  ProcessGates3();
 }
 
 void PauliCircuit::PrintDAG() const {
@@ -150,19 +210,6 @@ void PauliCircuit::PrintDAG() const {
   tableau.Print();
   std::cout << std::endl;
 }
-
-namespace {
-
-PauliExponential CreatePauliExp(const phase::RationalPhase &phase,
-                                int numQubits, int qubit1, PauliLetter letter1,
-                                int qubit2 = -1, PauliLetter letter2 = I) {
-  std::vector<PauliLetter> string(numQubits, I);
-  string[qubit1] = letter1;
-  if (qubit2 != -1) string[qubit2] = letter2;
-  return PauliExponential(string, phase.ToExpr());
-}
-
-}  // namespace
 
 std::vector<SimpleClifford> PauliCircuit::OptimiseCliffords(
     std::vector<SimpleGate> &gates, int threads) const {
@@ -182,34 +229,21 @@ std::vector<SimpleClifford> PauliCircuit::OptimiseCliffords(
           newGates.push_back(gate);
           continue;
         }
-        // Add three pauli exps
-        paulis.push_back(CreatePauliExp(phase::RationalPhase({-1, 2}),
-                                        numQubits, index1, Z, index2, X));
-
-        paulis.push_back(
-            CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index1, Z));
-        paulis.push_back(
-            CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index2, X));
+        AddCNOTPauliExponential(paulis, numQubits, index1, index2);
       } else {
         if (!activeQubits[index1]) {
           newGates.push_back(gate);
           continue;
         }
         if (clifford.GetGateType() == HAD) {
-          paulis.push_back(CreatePauliExp(phase::RationalPhase({1, 2}),
-                                          numQubits, index1, Z));
-          paulis.push_back(CreatePauliExp(phase::RationalPhase({1, 2}),
-                                          numQubits, index1, X));
-          paulis.push_back(CreatePauliExp(phase::RationalPhase({1, 2}),
-                                          numQubits, index1, Z));
-          // Add three exponentials
+          AddHADPauliExponential(paulis, numQubits, index1);
         } else if (clifford.GetGateType() == ZROT) {
-          paulis.push_back(
-              CreatePauliExp(*clifford.GetPhase(), numQubits, index1, Z));
+          AddZRotPauliExponential(paulis, numQubits, index1,
+                                  *clifford.GetPhase());
         } else {
           assert(clifford.GetGateType() == XROT);
-          paulis.push_back(
-              CreatePauliExp(*clifford.GetPhase(), numQubits, index1, X));
+          AddXRotPauliExponential(paulis, numQubits, index1,
+                                  *clifford.GetPhase());
         }
       }
     } else {
@@ -339,6 +373,66 @@ void PauliCircuit::ProcessGates() {
   }
   for (auto it = cliffords.rbegin(); it != cliffords.rend(); it++) {
     tableau.ApplyCliffordGate(std::get<CliffordGate>(gates[*it]));
+  }
+}
+
+void PauliCircuit::ProcessGates2() {
+  for (auto it = gates.rbegin(); it != gates.rend(); it++) {
+    if (std::holds_alternative<CliffordGate>(*it)) {
+      auto paulis =
+          CliffordToPaulis(std::move(std::get<CliffordGate>(*it)), numQubits);
+      for (auto pauliIt = paulis.rbegin(); pauliIt != paulis.rend();
+           pauliIt++) {
+        tableau.ShiftPauliExponential(*pauliIt);
+        tableau.ApplyCliffordPauliExponential(*pauliIt);
+      }
+    } else {
+      auto &pauli = std::get<PauliExponential>(*it);
+      tableau.ShiftPauliExponential(pauli);
+      pauli_graph.AddPauli(std::move(pauli));
+    }
+  }
+}
+
+void PauliCircuit::ProcessGates3() {
+  size_t cutOff = numQubits * numQubits * 35;
+  std::vector<int> cliffords;
+  int i = static_cast<int>(gates.size() - 1);
+  for (; i >= 0; i--) {
+    if (std::holds_alternative<CliffordGate>(gates[i])) {
+      cliffords.push_back(i);
+      if (cliffords.size() > cutOff) {
+        i--;
+        break;
+      }
+    } else {
+      auto &pauli = std::get<PauliExponential>(gates[i]);
+      for (auto it = cliffords.rbegin(); it != cliffords.rend(); it++) {
+        const auto &cliffordGate = std::get<CliffordGate>(gates[*it]);
+        pauli.PushCliffordThrough(cliffordGate);
+      }
+      pauli_graph.AddPauli(std::move(pauli));
+    }
+  }
+
+  for (auto it = cliffords.rbegin(); it != cliffords.rend(); it++) {
+    tableau.ApplyCliffordGate(std::get<CliffordGate>(gates[*it]));
+  }
+  for (; i >= 0; i--) {
+    auto &gate = gates[i];
+    if (std::holds_alternative<CliffordGate>(gate)) {
+      auto paulis =
+          CliffordToPaulis(std::move(std::get<CliffordGate>(gate)), numQubits);
+      for (auto pauliIt = paulis.rbegin(); pauliIt != paulis.rend();
+           pauliIt++) {
+        tableau.ShiftPauliExponential(*pauliIt);
+        tableau.ApplyCliffordPauliExponential(*pauliIt);
+      }
+    } else {
+      auto &pauli = std::get<PauliExponential>(gate);
+      tableau.ShiftPauliExponential(pauli);
+      pauli_graph.AddPauli(std::move(pauli));
+    }
   }
 }
 

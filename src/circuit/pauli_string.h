@@ -31,7 +31,6 @@ inline std::vector<PauliLetter> operator"" _p(const char *str, size_t len) {
   return letters;
 }
 
-class PauliStringHash;
 class PauliExponential;
 
 class PauliString {

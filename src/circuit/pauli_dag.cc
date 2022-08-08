@@ -55,16 +55,16 @@ std::vector<PauliExponential> PauliDAG::GetPaulis() {
 std::vector<CliffordGate> PauliDAG::PullOutCliffords() {
   auto tsort = TopologicalSort();
   std::vector<CliffordGate> cliffordGates;
-  for (size_t i{}; i < tsort.size(); i++) {
+  // Need to process in reverse order to avoid affecting back edge set
+  for (size_t x{}; x < tsort.size(); x++) {
+    size_t i = tsort.size() - 1 - x;
     auto idx = tsort[i];
     auto& pauli = paulis.at(idx);
     auto cliffords = pauli.GetCliffordRepresentation();
     if (!cliffords.has_value()) continue;
     cliffordRemovals++;
     for (const auto& clifford : *cliffords) {
-      for (size_t j{}; j < i; j++) {
-        auto prevIdx = tsort[j];
-        if (paulis.find(prevIdx) == paulis.end()) continue;
+      for (auto prevIdx : back_edges[idx]) {
         auto& prevPauli = paulis.at(prevIdx);
         prevPauli.PushCliffordThrough(clifford);
       }
@@ -78,7 +78,8 @@ std::vector<CliffordGate> PauliDAG::PullOutCliffords() {
 std::vector<CliffordGate> PauliDAG::PullOutPis() {
   auto tsort = TopologicalSort();
   std::vector<CliffordGate> cliffordGates;
-  for (size_t i{}; i < tsort.size(); i++) {
+  for (size_t x{}; x < tsort.size(); x++) {
+    size_t i = tsort.size() - 1 - x;
     auto idx = tsort[i];
     auto& pauli = paulis.at(idx);
     const auto& string = pauli.GetString();
@@ -96,9 +97,7 @@ std::vector<CliffordGate> PauliDAG::PullOutPis() {
       }
     }
     if (hasY) continue;
-    for (size_t j{}; j < i; j++) {
-      auto prevIdx = tsort[j];
-      if (paulis.find(prevIdx) == paulis.end()) continue;
+    for (auto prevIdx : back_edges[idx]) {
       auto& prevPauli = paulis.at(prevIdx);
       for (auto x_index : x_indices) {
         auto clifford =
@@ -153,21 +152,6 @@ void PauliDAG::RemovePauliEdges(int a) {
 }
 
 void PauliDAG::MergePair(int a, int b, bool sign) {
-  {
-    const auto& pauliA = paulis.at(a).GetString();
-    const auto& pauliB = paulis.at(b).GetString();
-
-    int aCount{}, bCount{};
-    for (int i{}; i < pauliA.size(); i++) {
-      if (pauliA[i] != I) aCount++;
-      if (pauliB[i] != I) bCount++;
-    }
-
-    if (aCount > bCount) {
-      std::swap(a, b);
-    }
-  }
-
   const auto& pauliA = paulis.at(a).GetString();
   const auto& pauliB = paulis.at(b).GetString();
 
@@ -214,19 +198,21 @@ std::optional<bool> PauliDAG::CanMergePair(
   return tableau.CanCreate(mergeString);
 }
 
-void PauliDAG::TryMergePair(int a, int b, const StabiliserTableau& tableau) {
+bool PauliDAG::TryMergePair(int a, int b, const StabiliserTableau& tableau) {
   auto createSign = CanMergePair(a, b, tableau);
-  if (!createSign.has_value()) return;
+  if (!createSign.has_value()) return false;
 
   MergePair(a, b, *createSign);
+  return true;
 }
 
-void PauliDAG::TryCancel(int a, const StabiliserTableau& tableau) {
+bool PauliDAG::TryCancel(int a, const StabiliserTableau& tableau) {
   const auto& pauli = paulis.at(a);
-  if (back_edges[a].size() > 0) return;
-  if (!tableau.CanCreate(pauli.GetString())) return;
+  if (back_edges[a].size() > 0) return false;
+  if (!tableau.CanCreate(pauli.GetString())) return false;
   cancellations++;
   RemovePauli(a);
+  return true;
 }
 
 bool PauliDAG::CheckPhase(int a) {
@@ -242,26 +228,38 @@ bool PauliDAG::CheckPhase(int a) {
 }
 
 void PauliDAG::ExhaustiveRunner(const StabiliserTableau& tableau) {
-  size_t size = paulis.size();
-  size_t newSize = size;
+  bool done = false;
+  auto tsort = TopologicalSort();
+  std::list<int> tsortList(tsort.begin(), tsort.end());
   do {
-    size = newSize;
-    auto tsort = TopologicalSort();
-    for (auto idx : tsort) {
-      for (auto other : tsort) {
-        if (paulis.find(idx) == paulis.end()) break;
-        if (paulis.find(other) == paulis.end()) continue;
-        if (idx == other) continue;
-        TryMergePair(other, idx, tableau);
+    auto firstIt = tsortList.begin();
+    while (firstIt != tsortList.end()) {
+      auto secondIt = firstIt;
+      secondIt++;
+      while (secondIt != tsortList.end()) {
+        if (TryMergePair(*secondIt, *firstIt, tableau)) {
+          secondIt = tsortList.erase(secondIt);
+        } else {
+          secondIt++;
+        }
+      }
+      firstIt++;
+    }
+    done = true;
+    {
+      auto it = tsortList.begin();
+      while (it != tsortList.end()) {
+        if (CheckPhase(*it)) {
+          done = false;
+          it = tsortList.erase(it);
+        } else if (TryCancel(*it, tableau)) {
+          it = tsortList.erase(it);
+        } else {
+          it++;
+        }
       }
     }
-    for (auto idx : tsort) {
-      if (paulis.find(idx) == paulis.end()) continue;
-      if (CheckPhase(idx)) continue;
-      TryCancel(idx, tableau);
-    }
-    newSize = paulis.size();
-  } while (newSize > 0 && newSize < size);
+  } while (!done);
 }
 
 void ExhaustiveRunnerParallelWorker(std::shared_ptr<PauliDAG::Config> config,
@@ -298,10 +296,8 @@ void ExhaustiveRunnerParallelWorker(std::shared_ptr<PauliDAG::Config> config,
 
 void PauliDAG::ExhaustiveRunnerParallel(const StabiliserTableau& tableau,
                                         int threadCount) {
-  size_t size = paulis.size();
-  size_t newSize = size;
+  bool done = false;
   do {
-    size = newSize;
     std::vector<std::thread> threads;
     threads.reserve(threadCount);
     auto tsort = TopologicalSort();
@@ -330,13 +326,16 @@ void PauliDAG::ExhaustiveRunnerParallel(const StabiliserTableau& tableau,
         MergePair(merge.pauli1, merge.pauli2, merge.sign);
       }
     }
+    done = true;
     for (auto idx : tsort) {
       if (paulis.find(idx) == paulis.end()) continue;
-      if (CheckPhase(idx)) continue;
-      TryCancel(idx, tableau);
+      if (CheckPhase(idx)) {
+        done = false;
+      } else {
+        TryCancel(idx, tableau);
+      }
     }
-    newSize = paulis.size();
-  } while (newSize > 0 && newSize < size);
+  } while (!done);
 }
 
 std::vector<int> PauliDAG::TopologicalSort() const {
@@ -354,6 +353,7 @@ void PauliDAG::Print() const {
   auto tsort = TopologicalSort();
   std::cout << tsort.size() << std::endl;
   for (const auto& pauli : tsort) {
+    std::cout << pauli << " ";
     paulis.at(pauli).Print();
   }
 }
