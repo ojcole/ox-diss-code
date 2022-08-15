@@ -37,3 +37,11 @@ http_archive(
     strip_prefix = "json-3.10.5",
     urls = ["https://github.com/nlohmann/json/archive/refs/tags/v3.10.5.tar.gz"],
 )
+
+http_archive(
+    name = "sparsepp",
+    build_file = "@//external_build:sparsepp.BUILD",
+    sha256 = "5516c814fe56c692aaa36f49e696f4a6292f04b5ae79f4ab7bd121e2cc48b917",
+    strip_prefix = "sparsepp-1.22",
+    urls = ["https://github.com/greg7mdp/sparsepp/archive/refs/tags/1.22.tar.gz"],
+)

@@ -1,15 +1,14 @@
 #ifndef CIRCUIT_PAULI_DAG_H_
 #define CIRCUIT_PAULI_DAG_H_
 
-#include <shared_mutex>
 #include <unordered_map>
 #include <unordered_set>
-#include <variant>
 #include <vector>
 
 #include "helpers.h"
 #include "moodycamel/concurrentqueue.h"
 #include "pauli_exponential.h"
+#include "sparsepp/spp.h"
 #include "stabiliser_tableau.h"
 
 namespace qstabr {
@@ -105,9 +104,7 @@ class PauliDAG {
 
   int nextIndex{};
   std::unordered_map<int, PauliExponential> paulis;
-  std::unordered_map<int, std::unordered_set<int>> back_edges;
-
-  std::shared_mutex rw_lock;
+  std::unordered_map<int, spp::sparse_hash_set<int>> back_edges;
 
   int identityMerges{};
   int totalMerges{};

@@ -70,6 +70,7 @@ cc_library(
         ":pauli_exponential",
         ":stabiliser_tableau",
         "@moodycamel",
+        "@sparsepp",
     ],
 )
 
