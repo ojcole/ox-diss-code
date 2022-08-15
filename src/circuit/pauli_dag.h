@@ -71,8 +71,6 @@ class PauliDAG {
 
   void RemovePauli(int a);
 
-  void RemovePauliEdges(int a);
-
   std::vector<int> TopologicalSort() const;
 
   struct Config {
@@ -107,7 +105,6 @@ class PauliDAG {
 
   int nextIndex{};
   std::unordered_map<int, PauliExponential> paulis;
-  std::unordered_map<int, std::unordered_set<int>> edges;
   std::unordered_map<int, std::unordered_set<int>> back_edges;
 
   std::shared_mutex rw_lock;

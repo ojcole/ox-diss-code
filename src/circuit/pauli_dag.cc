@@ -21,21 +21,14 @@ void PauliDAG::AddPauli(PauliExponential&& newPauli) {
       AddEdge(index, pair.first);
     }
   }
-  edges[index];
   back_edges[index];
   paulis.insert({index, std::move(newPauli)});
   nextIndex++;
 }
 
-void PauliDAG::AddEdge(int a, int b) {
-  edges[a].insert(b);
-  back_edges[b].insert(a);
-}
+void PauliDAG::AddEdge(int a, int b) { back_edges[b].insert(a); }
 
-void PauliDAG::RemoveEdge(int a, int b) {
-  edges[a].erase(b);
-  back_edges[b].erase(a);
-}
+void PauliDAG::RemoveEdge(int a, int b) { back_edges[b].erase(a); }
 
 std::vector<PauliExponential> PauliDAG::GetPaulis() {
   std::vector<PauliExponential> pauliVector;
@@ -46,7 +39,6 @@ std::vector<PauliExponential> PauliDAG::GetPaulis() {
 
   nextIndex = 0;
   paulis.clear();
-  edges.clear();
   back_edges.clear();
 
   return pauliVector;
@@ -65,6 +57,7 @@ std::vector<CliffordGate> PauliDAG::PullOutCliffords() {
     cliffordRemovals++;
     for (const auto& clifford : *cliffords) {
       for (auto prevIdx : back_edges[idx]) {
+        if (paulis.find(prevIdx) == paulis.end()) continue;
         auto& prevPauli = paulis.at(prevIdx);
         prevPauli.PushCliffordThrough(clifford);
       }
@@ -98,6 +91,7 @@ std::vector<CliffordGate> PauliDAG::PullOutPis() {
     }
     if (hasY) continue;
     for (auto prevIdx : back_edges[idx]) {
+      if (paulis.find(prevIdx) == paulis.end()) continue;
       auto& prevPauli = paulis.at(prevIdx);
       for (auto x_index : x_indices) {
         auto clifford =
@@ -131,24 +125,8 @@ bool PauliDAG::StringCommutesParents(int a, int b) const {
 }
 
 void PauliDAG::RemovePauli(int a) {
-  RemovePauliEdges(a);
-
   paulis.erase(a);
-  edges.erase(a);
   back_edges.erase(a);
-}
-
-void PauliDAG::RemovePauliEdges(int a) {
-  std::unordered_set<int> children = edges[a];
-  std::unordered_set<int> parents = back_edges[a];
-
-  for (auto parent : parents) {
-    RemoveEdge(parent, a);
-  }
-
-  for (auto child : children) {
-    RemoveEdge(a, child);
-  }
 }
 
 void PauliDAG::MergePair(int a, int b, bool sign) {
@@ -183,10 +161,6 @@ PauliDAG::OptStats PauliDAG::GetStats() const {
 
 std::optional<bool> PauliDAG::CanMergePair(
     int a, int b, const StabiliserTableau& tableau) const {
-  // if (paulis.find(a) == paulis.end() || paulis.find(b) == paulis.end()) {
-  //   return std::nullopt;
-  // }
-
   assert(paulis.find(a) != paulis.end() && paulis.find(b) != paulis.end());
 
   if (!StringCommutesParents(a, b)) return std::nullopt;
@@ -210,7 +184,9 @@ bool PauliDAG::TryMergePair(int a, int b, const StabiliserTableau& tableau) {
 
 bool PauliDAG::TryCancel(int a, const StabiliserTableau& tableau) {
   const auto& pauli = paulis.at(a);
-  if (back_edges[a].size() > 0) return false;
+  for (auto prevIdx : back_edges[a]) {
+    if (paulis.find(prevIdx) != paulis.end()) return false;
+  }
   if (!tableau.CanCreate(pauli.GetString())) return false;
   cancellations++;
   RemovePauli(a);
@@ -234,6 +210,7 @@ void PauliDAG::ExhaustiveRunner(const StabiliserTableau& tableau) {
   auto tsort = TopologicalSort();
   std::list<int> tsortList(tsort.rbegin(), tsort.rend());
   do {
+    std::vector<int> removed;
     auto firstIt = tsortList.begin();
     while (firstIt != tsortList.end()) {
       const auto& parents = back_edges[*firstIt];
@@ -242,6 +219,7 @@ void PauliDAG::ExhaustiveRunner(const StabiliserTableau& tableau) {
       while (secondIt != tsortList.end()) {
         if (parents.find(*secondIt) != parents.end()) break;
         if (TryMergePair(*secondIt, *firstIt, tableau)) {
+          removed.push_back(*secondIt);
           secondIt = tsortList.erase(secondIt);
         } else {
           secondIt++;
@@ -255,15 +233,28 @@ void PauliDAG::ExhaustiveRunner(const StabiliserTableau& tableau) {
       while (it != tsortList.end()) {
         if (CheckPhase(*it)) {
           done = false;
-          it = tsortList.erase(it);
-        } else if (TryCancel(*it, tableau)) {
+          removed.push_back(*it);
           it = tsortList.erase(it);
         } else {
           it++;
         }
       }
     }
+
+    if (!done) {
+      auto tsort = TopologicalSort();
+      for (const auto t : tsort) {
+        auto& parents = back_edges[t];
+        for (const auto r : removed) {
+          parents.erase(r);
+        }
+      }
+    }
   } while (!done);
+
+  for (const auto t : tsortList) {
+    TryCancel(t, tableau);
+  }
 }
 
 void ExhaustiveRunnerParallelWorker(std::shared_ptr<PauliDAG::Config> config,
@@ -286,10 +277,10 @@ void ExhaustiveRunnerParallelWorker(std::shared_ptr<PauliDAG::Config> config,
       if (merged.find(index) != merged.end()) continue;
       auto idx = tsort[index];
       int j = static_cast<int>(index) - 1;
-      const auto& set = dag->back_edges[idx];
+      const auto& parents = dag->back_edges[idx];
       for (; j >= 0; j--) {
         int other = tsort[j];
-        if (set.find(other) != set.end()) break;
+        if (parents.find(other) != parents.end()) break;
 
         bool sign;
         auto createSign = dag->CanMergePair(other, idx, tableau);
@@ -324,6 +315,8 @@ void PauliDAG::ExhaustiveRunnerParallel(const StabiliserTableau& tableau,
     for (int i{}; i < threadCount; i++) {
       threads[i].join();
     }
+
+    std::vector<int> removed;
     for (int i{}; i < threadCount; i++) {
       const auto& merges = *allMerges[i];
       for (const auto& merge : merges) {
@@ -332,18 +325,37 @@ void PauliDAG::ExhaustiveRunnerParallel(const StabiliserTableau& tableau,
           continue;
         }
         MergePair(merge.pauli1, merge.pauli2, merge.sign);
+        removed.push_back(merge.pauli1);
       }
     }
-    done = true;
-    for (auto idx : tsort) {
-      if (paulis.find(idx) == paulis.end()) continue;
-      if (CheckPhase(idx)) {
-        done = false;
-      } else {
-        TryCancel(idx, tableau);
+
+    {
+      auto tsort = TopologicalSort();
+      done = true;
+      for (auto idx : tsort) {
+        if (CheckPhase(idx)) {
+          done = false;
+          removed.push_back(idx);
+        }
+      }
+    }
+
+    // If we need to repeat need to reset back edges
+    if (!done) {
+      auto tsort = TopologicalSort();
+      for (const auto t : tsort) {
+        auto& parents = back_edges[t];
+        for (const auto r : removed) {
+          parents.erase(r);
+        }
       }
     }
   } while (!done);
+
+  const auto tsort = TopologicalSort();
+  for (const auto t : tsort) {
+    TryCancel(t, tableau);
+  }
 }
 
 std::vector<int> PauliDAG::TopologicalSort() const {
@@ -559,23 +571,34 @@ std::vector<std::vector<int>> PauliDAG::SimpleGroupings() {
     remaining.push_back(pauli.first);
   }
 
-  std::vector<std::vector<int>> result;
-  while (!remaining.empty()) {
-    std::vector<std::list<int>::iterator> currentGroup;
-    for (auto it = remaining.begin(); it != remaining.end(); it++) {
-      if (back_edges.at(*it).size() == 0) {
-        currentGroup.push_back(it);
+  std::vector<std::vector<int>> result{{}};
+  std::vector<int> tsort = TopologicalSort();
+
+  for (const auto t : tsort) {
+    const int last = static_cast<int>(result.size()) - 1;
+    int current = last;
+    const auto& parents = back_edges[t];
+    for (int i = current - 1; i >= 0; i--) {
+      const auto& group = result[i];
+      bool commutesAll = true;
+      for (const auto g : group) {
+        if (parents.find(g) != parents.end()) {
+          commutesAll = false;
+          break;
+        }
+      }
+
+      if (commutesAll) {
+        current = i;
+      } else {
+        break;
       }
     }
-    std::vector<int> group;
-    for (auto& it : currentGroup) {
-      RemovePauliEdges(*it);
-      group.push_back(*it);
-      remaining.erase(it);
+    if (current == last) {
+      result.push_back({});
     }
-    result.push_back(std::move(group));
+    result[current].push_back(t);
   }
-
   return result;
 }
 
