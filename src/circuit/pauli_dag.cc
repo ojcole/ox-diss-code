@@ -183,9 +183,11 @@ PauliDAG::OptStats PauliDAG::GetStats() const {
 
 std::optional<bool> PauliDAG::CanMergePair(
     int a, int b, const StabiliserTableau& tableau) const {
-  if (paulis.find(a) == paulis.end() || paulis.find(b) == paulis.end()) {
-    return std::nullopt;
-  }
+  // if (paulis.find(a) == paulis.end() || paulis.find(b) == paulis.end()) {
+  //   return std::nullopt;
+  // }
+
+  assert(paulis.find(a) != paulis.end() && paulis.find(b) != paulis.end());
 
   if (!StringCommutesParents(a, b)) return std::nullopt;
 
@@ -230,13 +232,15 @@ bool PauliDAG::CheckPhase(int a) {
 void PauliDAG::ExhaustiveRunner(const StabiliserTableau& tableau) {
   bool done = false;
   auto tsort = TopologicalSort();
-  std::list<int> tsortList(tsort.begin(), tsort.end());
+  std::list<int> tsortList(tsort.rbegin(), tsort.rend());
   do {
     auto firstIt = tsortList.begin();
     while (firstIt != tsortList.end()) {
+      const auto& parents = back_edges[*firstIt];
       auto secondIt = firstIt;
       secondIt++;
       while (secondIt != tsortList.end()) {
+        if (parents.find(*secondIt) != parents.end()) break;
         if (TryMergePair(*secondIt, *firstIt, tableau)) {
           secondIt = tsortList.erase(secondIt);
         } else {
@@ -271,7 +275,7 @@ void ExhaustiveRunnerParallelWorker(std::shared_ptr<PauliDAG::Config> config,
 
   std::unordered_set<size_t> merged;
 
-  const size_t batchSize = 20;
+  const size_t batchSize = 40;
   std::vector<size_t> indices;
   indices.resize(batchSize);
   size_t count;
@@ -281,8 +285,12 @@ void ExhaustiveRunnerParallelWorker(std::shared_ptr<PauliDAG::Config> config,
       size_t index = indices[i];
       if (merged.find(index) != merged.end()) continue;
       auto idx = tsort[index];
-      for (size_t j = index + 1; j < tsort.size(); j++) {
+      int j = static_cast<int>(index) - 1;
+      const auto& set = dag->back_edges[idx];
+      for (; j >= 0; j--) {
         int other = tsort[j];
+        if (set.find(other) != set.end()) break;
+
         bool sign;
         auto createSign = dag->CanMergePair(other, idx, tableau);
         if (!createSign.has_value()) continue;
@@ -303,7 +311,7 @@ void PauliDAG::ExhaustiveRunnerParallel(const StabiliserTableau& tableau,
     auto tsort = TopologicalSort();
     moodycamel::ConcurrentQueue<size_t> queue(tsort.size());
     for (size_t i{}; i < tsort.size(); i++) {
-      queue.enqueue(i);
+      queue.enqueue(tsort.size() - 1 - i);
     }
     std::vector<std::shared_ptr<MergeVec>> allMerges;
     auto config = std::make_shared<Config>(Config({tableau, queue, tsort}));

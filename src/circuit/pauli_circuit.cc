@@ -278,7 +278,7 @@ std::vector<SimpleClifford> PauliCircuit::OptimiseCliffords(
       }
       // ZROTs just get ignored by tableau since kappas pop through
     }
-    if (repeat) ReconstructDAG(cliffordDAG);
+    // if (repeat) ReconstructDAG(cliffordDAG);
   } while (repeat);
   gates = std::move(newGates);
   return cliffordDAG.SynthesiseCliffords(qubitPis);
