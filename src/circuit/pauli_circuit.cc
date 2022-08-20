@@ -299,12 +299,14 @@ void PauliCircuit::Synthesise(std::ostream &output,
       assert(cnot.GetGateType() == CNOT);
       cnot.Synthesise(output, *qubitManager);
       resultingCNOTCount++;
+      resultingGateCount++;
     } else {
       auto unitary = std::get<SingleQubitUnitary>(clifford);
-      unitary.Simplify();
+      if (!unitary.Simplify()) {
+        resultingGateCount++;
+      }
       unitary.Synthesise(output, *qubitManager);
     }
-    resultingGateCount++;
   }
   for (const auto &gate : gates) {
     if (std::holds_alternative<CliffordGate>(gate)) {

@@ -20,7 +20,7 @@ class SingleQubitUnitary {
 
   void Synthesise(std::ostream &output, const QubitManager &manager) const;
 
-  void Simplify();
+  bool Simplify();
 
  private:
   int qubit;

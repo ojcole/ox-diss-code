@@ -50,7 +50,7 @@ bool SingleQubitUnitary::CommutesPast(const PauliLetter letter) {
   return alpha == 0 && gamma == 0;
 }
 
-void SingleQubitUnitary::Simplify() {
+bool SingleQubitUnitary::Simplify() {
   if (beta == 1) {
     alpha -= gamma;
     gamma = phase::RationalPhase(0);
@@ -59,6 +59,7 @@ void SingleQubitUnitary::Simplify() {
     alpha += gamma;
     gamma = phase::RationalPhase(0);
   }
+  return alpha == 0 && beta == 0 && gamma == 0;
 }
 
 int SingleQubitUnitary::GetQubit() const { return qubit; }
