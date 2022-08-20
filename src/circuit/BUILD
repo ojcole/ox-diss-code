@@ -75,16 +75,6 @@ cc_library(
 )
 
 cc_library(
-    name = "pauli_graph",
-    srcs = ["pauli_graph.cc"],
-    hdrs = ["pauli_graph.h"],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":pauli_exponential",
-    ],
-)
-
-cc_library(
     name = "pauli_string",
     srcs = ["pauli_string.cc"],
     hdrs = ["pauli_string.h"],
@@ -163,6 +153,63 @@ cc_library(
         ":helpers",
         ":pauli_exponential",
         "@staq",
+    ],
+)
+
+cc_library(
+    name = "test_helpers",
+    srcs = [],
+    hdrs = ["test_helpers.h"],
+    visibility = ["//visibility:private"],
+    deps = [
+        ":pauli_exponential",
+    ],
+)
+
+cc_test(
+    name = "clifford_gate_test",
+    size = "small",
+    srcs = ["clifford_gate_test.cc"],
+    deps = [
+        ":clifford_gate",
+        ":qubit_manager",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "diagonaliser_test",
+    size = "small",
+    srcs = ["diagonaliser_test.cc"],
+    deps = [
+        ":diagonaliser",
+        ":test_helpers",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "gray_synther_test",
+    size = "medium",
+    srcs = ["gray_synther_test.cc"],
+    deps = [
+        ":gray_synther",
+        ":test_helpers",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "helpers_test",
+    size = "small",
+    srcs = ["helpers_test.cc"],
+    deps = [
+        ":helpers",
+        "@gtest",
+        "@gtest//:gtest_main",
     ],
 )
 

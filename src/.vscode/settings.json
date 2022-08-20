@@ -76,7 +76,12 @@
         "csignal": "cpp",
         "future": "cpp",
         "cfenv": "cpp",
-        "cassert": "cpp"
+        "cassert": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp"
     },
     "editor.tabSize": 2
 }

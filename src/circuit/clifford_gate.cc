@@ -22,9 +22,9 @@ void CliffordGate::Synthesise(std::ostream &output,
     const Qubit &q2 = manager.GetIndexQubit(qubit2);
     output << "cx " << q1 << "," << q2;
   } else if (type == HAD) {
-    output << "h " << q1;
+    output << "u3(pi/2,0,pi) " << q1;
   } else if (type == ZROT) {
-    output << "u1(" << *phase << ") " << q1;
+    output << "u3(0,0," << *phase << ") " << q1;
   } else {
     assert(type == XROT);
     output << "u3(" << *phase << ",-pi/2,pi/2) " << q1;
