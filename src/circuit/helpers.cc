@@ -18,7 +18,7 @@ std::unique_ptr<qasmtools::ast::Expr> GetPIByTwo() {
       {}, std::move(pi), qasmtools::ast::BinaryOp::Divide, std::move(two));
 }
 
-const double EPSILON = 1e-7;
+const double EPSILON = 1e-6;
 const double PI = 3.14159265358979323846;
 const double PI2 = 1.57079632679489661923;
 
