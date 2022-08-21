@@ -214,6 +214,52 @@ cc_test(
 )
 
 cc_test(
+    name = "pauli_exponential_test",
+    size = "small",
+    srcs = ["pauli_exponential_test.cc"],
+    deps = [
+        ":pauli_exponential",
+        ":test_helpers",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "pauli_string_test",
+    size = "small",
+    srcs = ["pauli_string_test.cc"],
+    deps = [
+        ":pauli_string",
+        ":test_helpers",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "qubit_manager_test",
+    size = "small",
+    srcs = ["qubit_manager_test.cc"],
+    deps = [
+        ":qubit_manager",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "single_qubit_unitary_test",
+    size = "small",
+    srcs = ["single_qubit_unitary.cc"],
+    deps = [
+        ":single_qubit_unitary",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
     name = "stabiliser_tableau_test",
     size = "small",
     srcs = ["stabiliser_tableau_test.cc"],

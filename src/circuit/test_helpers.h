@@ -10,7 +10,7 @@ const std::vector<qstabr::circuit::PauliLetter> ALL_LETTERS = {
     qstabr::circuit::I, qstabr::circuit::Z, qstabr::circuit::X,
     qstabr::circuit::Y};
 
-qstabr::circuit::PauliExponential RandomPauliExp(
+qstabr::circuit::PauliString RandomPauliString(
     int qubits,
     const std::vector<qstabr::circuit::PauliLetter> &pool = ALL_LETTERS) {
   std::random_device rd;
@@ -24,7 +24,18 @@ qstabr::circuit::PauliExponential RandomPauliExp(
     pauliString.push_back(pool[letter]);
   }
 
+  return pauliString;
+}
+
+qstabr::circuit::PauliExponential CreatePauliExp(
+    qstabr::circuit::PauliString &&pauliString) {
   return {pauliString, qasmtools::ast::RealExpr::create({}, 0.3234)};
+}
+
+qstabr::circuit::PauliExponential RandomPauliExp(
+    int qubits,
+    const std::vector<qstabr::circuit::PauliLetter> &pool = ALL_LETTERS) {
+  return CreatePauliExp(RandomPauliString(qubits, pool));
 }
 
 std::unordered_map<int, qstabr::circuit::PauliExponential> RandomCommutingGroup(

@@ -162,6 +162,11 @@ std::vector<int> PauliExponential::GetMatrixForm() const {
 
 qasmtools::ast::Expr &PauliExponential::GetExpr() const { return *phaseExpr; }
 
+void PauliExponential::Print() const {
+  phaseExpr->pretty_print(std::cout);
+  std::cout << " " << string << std::endl;
+}
+
 namespace {
 
 void SynthesisePhasePoly(std::vector<SimpleGate> &gates,

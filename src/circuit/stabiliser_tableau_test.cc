@@ -52,12 +52,10 @@ TEST(CanCreate, AcceptsValid) {
     tableau.ApplyCNOTGate(MkQubit(2), MkQubit(1));
     tableau.Print();
     {
-      PauliString("YYYI"_p).Print();
       auto canCreate = tableau.CanCreate("YYYI"_p);
       EXPECT_TRUE(canCreate.has_value() && !*canCreate);
     }
     {
-      PauliString("YZZZ"_p).Print();
       auto canCreate = tableau.CanCreate("YZZZ"_p);
       EXPECT_TRUE(canCreate.has_value() && *canCreate);
     }

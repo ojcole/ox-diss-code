@@ -59,7 +59,7 @@ bool Diagonaliser::DiagonaliseTrivial(int qubit) {
   return true;
 }
 
-void Diagonaliser::Print() {
+void Diagonaliser::Print() const {
   for (const auto pauli : group) {
     paulis.at(pauli).Print();
   }

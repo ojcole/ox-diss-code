@@ -53,14 +53,14 @@ TEST(Diagonalise, RandomTests) {
       }
       auto result = diag.Diagonalise(all);
       for (auto &p : exponentials) {
-        p.second.GetString().Print();
-        copy.at(p.first).GetString().Print();
+        std::cout << p.second.GetString() << std::endl;
+        std::cout << copy.at(p.first).GetString() << std::endl;
         for (auto it = result.rbegin(); it != result.rend(); it++) {
           it->Synthesise(std::cout, *manager);
           p.second.PushCliffordThrough(it->Dagger());
         }
-        p.second.GetString().Print();
-        copy.at(p.first).GetString().Print();
+        std::cout << p.second.GetString() << std::endl;
+        std::cout << copy.at(p.first).GetString() << std::endl;
         ASSERT_EQ(p.second.GetString(), copy.at(p.first).GetString());
         ASSERT_EQ(p.second.GetExpr().constant_eval(),
                   copy.at(p.first).GetExpr().constant_eval());

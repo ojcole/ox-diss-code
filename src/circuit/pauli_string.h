@@ -39,34 +39,14 @@ class PauliString {
 
   bool CommutesWith(const PauliString &other) const;
 
-  bool operator==(const PauliString &other) const;
-
   std::vector<int> GetMatrixForm() const;
-
-  void Print() const {
-    if (negated) {
-      std::cout << "-";
-    } else {
-      std::cout << "+";
-    }
-    for (auto letter : string) {
-      std::cout << static_cast<char>(letter);
-    }
-    std::cout << std::endl;
-  }
-
   std::vector<PauliString> StringDecomps() const;
 
+  void Negate();
+  bool IsNegated() const;
+
+  bool operator==(const PauliString &other) const;
   void operator*=(const PauliString &other);
-
-  static PauliString StringDifference(const PauliString &string1,
-                                      const PauliString &string2);
-
-  static std::pair<bool, PauliString> StringMultiply(
-      const PauliString &string1, const PauliString &string2);
-
-  static bool StringMultiplySign(const PauliString &string1,
-                                 const PauliString &string2);
 
   const PauliLetter &operator[](size_t index) const { return string[index]; }
   int size() const { return static_cast<int>(string.size()); }
@@ -74,9 +54,12 @@ class PauliString {
   std::vector<int> Weight() const;
   int NonZWeight() const;
 
-  bool IsNegated() const;
-
-  void Negate();
+  static PauliString StringDifference(const PauliString &string1,
+                                      const PauliString &string2);
+  static std::pair<bool, PauliString> StringMultiply(
+      const PauliString &string1, const PauliString &string2);
+  static bool StringMultiplySign(const PauliString &string1,
+                                 const PauliString &string2);
 
  private:
   PauliLetter &operator[](size_t index) { return string[index]; }
@@ -86,6 +69,19 @@ class PauliString {
 
   friend class PauliExponential;
 };
+
+inline std::ostream &operator<<(std::ostream &stream,
+                                const PauliString &string) {
+  if (string.IsNegated()) {
+    stream << "-";
+  } else {
+    stream << "+";
+  }
+  for (int i{}; i < string.size(); i++) {
+    stream << static_cast<char>(string[i]);
+  }
+  return stream;
+}
 
 PauliString operator*(const PauliString &string1, const PauliString &string2);
 

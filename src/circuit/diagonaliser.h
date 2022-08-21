@@ -19,7 +19,7 @@ class Diagonaliser {
   std::vector<CliffordGate> Diagonalise(const std::vector<int> &group);
 
  private:
-  void Print();
+  void Print() const;
 
   void ResetState(const std::vector<int> &group);
 

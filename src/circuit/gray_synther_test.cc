@@ -15,7 +15,7 @@ TEST(GraySynth, RandomisedTests) {
       auto exponentials = RandomCommutingGroup(numQubits, 1024, {Z, I});
       std::unordered_map<int, PauliExponential> copy;
       for (const auto &p : exponentials) {
-        p.second.GetString().Print();
+        std::cout << p.second.GetString() << std::endl;
         PauliExponential expCopy = {
             p.second.GetString(), qasmtools::ast::RealExpr::create(
                                       {}, *p.second.GetExpr().constant_eval())};
