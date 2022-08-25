@@ -36,13 +36,27 @@ cc_binary(
 cc_binary(
     name = "test",
     srcs = ["test.cc"],
-    deps = ["//phase"],
+    deps = [
+        "//circuit:single_qubit_unitary",
+        "//phase",
+    ],
 )
 
 cc_binary(
     name = "normalise",
     srcs = ["normalise.cc"],
     deps = [
+        "@staq",
+        "@staq//:staq_tools",
+    ],
+)
+
+cc_binary(
+    name = "counter",
+    srcs = ["counter.cc"],
+    deps = [
+        "//circuit:helpers",
+        "//circuit:qubit_manager",
         "@staq",
         "@staq//:staq_tools",
     ],

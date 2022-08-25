@@ -21,14 +21,14 @@ void SingleQubitUnitary::AddXPhase(const phase::RationalPhase &phase) {
   if (beta == 0) {
     alpha = alpha + gamma;
     beta = phase;
-    gamma = phase::RationalPhase(0);
+    gamma = phase::ZERO;
     return;
   }
 
   if (beta == 1) {
     alpha -= gamma;
     beta = phase + 1;
-    gamma = phase::RationalPhase(0);
+    gamma = phase::ZERO;
     return;
   }
 
@@ -39,7 +39,7 @@ void SingleQubitUnitary::AddXPhase(const phase::RationalPhase &phase) {
 
 void SingleQubitUnitary::ClearAlpha() {
   Simplify();
-  alpha = phase::RationalPhase(0);
+  alpha = phase::ZERO;
 }
 
 bool SingleQubitUnitary::CommutesPast(const PauliLetter letter) {
@@ -53,11 +53,11 @@ bool SingleQubitUnitary::CommutesPast(const PauliLetter letter) {
 bool SingleQubitUnitary::Simplify() {
   if (beta == 1) {
     alpha -= gamma;
-    gamma = phase::RationalPhase(0);
+    gamma = phase::ZERO;
   }
   if (beta == 0) {
     alpha += gamma;
-    gamma = phase::RationalPhase(0);
+    gamma = phase::ZERO;
   }
   return alpha == 0 && beta == 0 && gamma == 0;
 }

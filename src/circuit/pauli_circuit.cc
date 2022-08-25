@@ -139,22 +139,17 @@ PauliExponential CreatePauliExp(const phase::RationalPhase &phase,
 
 inline void AddCNOTPauliExponential(std::vector<PauliExponential> &paulis,
                                     int numQubits, int index1, int index2) {
-  paulis.push_back(CreatePauliExp(phase::RationalPhase({-1, 2}), numQubits,
-                                  index1, Z, index2, X));
   paulis.push_back(
-      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index1, Z));
-  paulis.push_back(
-      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index2, X));
+      CreatePauliExp(phase::MINUS_PI_BY_2, numQubits, index1, Z, index2, X));
+  paulis.push_back(CreatePauliExp(phase::PI_BY_2, numQubits, index1, Z));
+  paulis.push_back(CreatePauliExp(phase::PI_BY_2, numQubits, index2, X));
 }
 
 inline void AddHADPauliExponential(std::vector<PauliExponential> &paulis,
                                    int numQubits, int index1) {
-  paulis.push_back(
-      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index1, Z));
-  paulis.push_back(
-      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index1, X));
-  paulis.push_back(
-      CreatePauliExp(phase::RationalPhase({1, 2}), numQubits, index1, Z));
+  paulis.push_back(CreatePauliExp(phase::PI_BY_2, numQubits, index1, Z));
+  paulis.push_back(CreatePauliExp(phase::PI_BY_2, numQubits, index1, X));
+  paulis.push_back(CreatePauliExp(phase::PI_BY_2, numQubits, index1, Z));
 }
 
 inline void AddZRotPauliExponential(std::vector<PauliExponential> &paulis,
@@ -271,7 +266,7 @@ std::vector<SimpleClifford> PauliCircuit::OptimiseCliffords(
       if (clifford.GetGateType() == XROT) {
         auto phase = clifford.GetPhase();
         assert(phase.has_value());
-        assert(*phase == phase::RationalPhase(1));
+        assert(*phase == phase::PI);
         auto qubit = clifford.GetFirstQubit();
         qubitPis[qubit] = !qubitPis[qubit];
         tableau.ApplyXRot(clifford.GetFirstQubit(), *phase);

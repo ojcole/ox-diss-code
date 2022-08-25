@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "circuit/single_qubit_unitary.h"
 #include "phase/phase.h"
 
 using namespace qstabr;
@@ -16,10 +17,13 @@ bool isPi(double num) {
 }
 
 int main(int argc, char const* argv[]) {
-  double x = -3.14159274101257f;
-  std::cout << isPi(x) << std::endl;
-  norm(x);
-  std::cout << x << std::endl;
-  phase::RationalPhase phase({-1, 2});
-  std::cout << (phase * -1) << std::endl;
+  circuit::QubitManager manager;
+  manager.AddQubits("qubit", 1);
+  circuit::SingleQubitUnitary unitary(0);
+  unitary.AddZPhase(phase::PI_BY_2);
+  unitary.AddXPhase(phase::PI_BY_2);
+  unitary.AddZPhase(phase::PI_BY_2);
+  unitary.AddXPhase(phase::PI);
+  unitary.AddXPhase(phase::PI_BY_2);
+  unitary.Synthesise(std::cout, manager);
 }

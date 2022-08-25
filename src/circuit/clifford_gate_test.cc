@@ -32,67 +32,63 @@ TEST(Dagger, HValid) {
 
 TEST(Dagger, RZValid) {
   {
-    CliffordGate gate = CliffordGate::CreateZRot(1, phase::RationalPhase(1));
+    CliffordGate gate = CliffordGate::CreateZRot(1, phase::PI);
     auto dagger = gate.Dagger();
     ASSERT_EQ(dagger.GetFirstQubit(), 1);
     ASSERT_EQ(dagger.GetGateType(), ZROT);
-    ASSERT_EQ(*dagger.GetPhase(), phase::RationalPhase(1));
+    ASSERT_EQ(*dagger.GetPhase(), phase::PI);
   }
   {
-    CliffordGate gate = CliffordGate::CreateZRot(1, phase::RationalPhase(0));
+    CliffordGate gate = CliffordGate::CreateZRot(1, phase::ZERO);
     auto dagger = gate.Dagger();
     ASSERT_EQ(dagger.GetFirstQubit(), 1);
     ASSERT_EQ(dagger.GetGateType(), ZROT);
-    ASSERT_EQ(*dagger.GetPhase(), phase::RationalPhase(0));
+    ASSERT_EQ(*dagger.GetPhase(), phase::ZERO);
   }
   {
-    CliffordGate gate =
-        CliffordGate::CreateZRot(1, phase::RationalPhase({1, 2}));
+    CliffordGate gate = CliffordGate::CreateZRot(1, phase::PI_BY_2);
     auto dagger = gate.Dagger();
     ASSERT_EQ(dagger.GetFirstQubit(), 1);
     ASSERT_EQ(dagger.GetGateType(), ZROT);
-    ASSERT_EQ(*dagger.GetPhase(), phase::RationalPhase({-1, 2}));
+    ASSERT_EQ(*dagger.GetPhase(), phase::MINUS_PI_BY_2);
   }
   {
-    CliffordGate gate =
-        CliffordGate::CreateZRot(1, phase::RationalPhase({-1, 2}));
+    CliffordGate gate = CliffordGate::CreateZRot(1, phase::MINUS_PI_BY_2);
     auto dagger = gate.Dagger();
     ASSERT_EQ(dagger.GetFirstQubit(), 1);
     ASSERT_EQ(dagger.GetGateType(), ZROT);
-    ASSERT_EQ(*dagger.GetPhase(), phase::RationalPhase({1, 2}));
+    ASSERT_EQ(*dagger.GetPhase(), phase::PI_BY_2);
   }
 }
 
 TEST(Dagger, RXValid) {
   {
-    CliffordGate gate = CliffordGate::CreateXRot(1, phase::RationalPhase(1));
+    CliffordGate gate = CliffordGate::CreateXRot(1, phase::PI);
     auto dagger = gate.Dagger();
     ASSERT_EQ(dagger.GetFirstQubit(), 1);
     ASSERT_EQ(dagger.GetGateType(), XROT);
-    ASSERT_EQ(*dagger.GetPhase(), phase::RationalPhase(1));
+    ASSERT_EQ(*dagger.GetPhase(), phase::PI);
   }
   {
-    CliffordGate gate = CliffordGate::CreateXRot(1, phase::RationalPhase(0));
+    CliffordGate gate = CliffordGate::CreateXRot(1, phase::ZERO);
     auto dagger = gate.Dagger();
     ASSERT_EQ(dagger.GetFirstQubit(), 1);
     ASSERT_EQ(dagger.GetGateType(), XROT);
-    ASSERT_EQ(*dagger.GetPhase(), phase::RationalPhase(0));
+    ASSERT_EQ(*dagger.GetPhase(), phase::ZERO);
   }
   {
-    CliffordGate gate =
-        CliffordGate::CreateXRot(1, phase::RationalPhase({1, 2}));
+    CliffordGate gate = CliffordGate::CreateXRot(1, phase::PI_BY_2);
     auto dagger = gate.Dagger();
     ASSERT_EQ(dagger.GetFirstQubit(), 1);
     ASSERT_EQ(dagger.GetGateType(), XROT);
-    ASSERT_EQ(*dagger.GetPhase(), phase::RationalPhase({-1, 2}));
+    ASSERT_EQ(*dagger.GetPhase(), phase::MINUS_PI_BY_2);
   }
   {
-    CliffordGate gate =
-        CliffordGate::CreateXRot(1, phase::RationalPhase({-1, 2}));
+    CliffordGate gate = CliffordGate::CreateXRot(1, phase::MINUS_PI_BY_2);
     auto dagger = gate.Dagger();
     ASSERT_EQ(dagger.GetFirstQubit(), 1);
     ASSERT_EQ(dagger.GetGateType(), XROT);
-    ASSERT_EQ(*dagger.GetPhase(), phase::RationalPhase({1, 2}));
+    ASSERT_EQ(*dagger.GetPhase(), phase::PI_BY_2);
   }
 }
 
@@ -146,8 +142,7 @@ TEST(Synthesise, RZValid) {
   manager->AddQubits(QUBIT, 4);
 
   {
-    CliffordGate gate =
-        CliffordGate::CreateZRot(1, phase::RationalPhase({1, 2}));
+    CliffordGate gate = CliffordGate::CreateZRot(1, phase::PI_BY_2);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();
@@ -155,8 +150,7 @@ TEST(Synthesise, RZValid) {
   }
 
   {
-    CliffordGate gate =
-        CliffordGate::CreateZRot(2, phase::RationalPhase({1, 2}));
+    CliffordGate gate = CliffordGate::CreateZRot(2, phase::PI_BY_2);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();
@@ -164,7 +158,7 @@ TEST(Synthesise, RZValid) {
   }
 
   {
-    CliffordGate gate = CliffordGate::CreateZRot(1, phase::RationalPhase(0));
+    CliffordGate gate = CliffordGate::CreateZRot(1, phase::ZERO);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();
@@ -172,7 +166,7 @@ TEST(Synthesise, RZValid) {
   }
 
   {
-    CliffordGate gate = CliffordGate::CreateZRot(1, phase::RationalPhase(1));
+    CliffordGate gate = CliffordGate::CreateZRot(1, phase::PI);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();
@@ -180,8 +174,7 @@ TEST(Synthesise, RZValid) {
   }
 
   {
-    CliffordGate gate =
-        CliffordGate::CreateZRot(1, phase::RationalPhase({-1, 2}));
+    CliffordGate gate = CliffordGate::CreateZRot(1, phase::MINUS_PI_BY_2);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();
@@ -195,8 +188,7 @@ TEST(Synthesise, RXValid) {
   manager->AddQubits(QUBIT, 4);
 
   {
-    CliffordGate gate =
-        CliffordGate::CreateXRot(1, phase::RationalPhase({1, 2}));
+    CliffordGate gate = CliffordGate::CreateXRot(1, phase::PI_BY_2);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();
@@ -204,8 +196,7 @@ TEST(Synthesise, RXValid) {
   }
 
   {
-    CliffordGate gate =
-        CliffordGate::CreateXRot(2, phase::RationalPhase({1, 2}));
+    CliffordGate gate = CliffordGate::CreateXRot(2, phase::PI_BY_2);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();
@@ -213,7 +204,7 @@ TEST(Synthesise, RXValid) {
   }
 
   {
-    CliffordGate gate = CliffordGate::CreateXRot(1, phase::RationalPhase(0));
+    CliffordGate gate = CliffordGate::CreateXRot(1, phase::ZERO);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();
@@ -221,7 +212,7 @@ TEST(Synthesise, RXValid) {
   }
 
   {
-    CliffordGate gate = CliffordGate::CreateXRot(1, phase::RationalPhase(1));
+    CliffordGate gate = CliffordGate::CreateXRot(1, phase::PI);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();
@@ -229,8 +220,7 @@ TEST(Synthesise, RXValid) {
   }
 
   {
-    CliffordGate gate =
-        CliffordGate::CreateXRot(1, phase::RationalPhase({-1, 2}));
+    CliffordGate gate = CliffordGate::CreateXRot(1, phase::MINUS_PI_BY_2);
     std::stringstream stream;
     gate.Synthesise(stream, *manager);
     std::string result = stream.str();

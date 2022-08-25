@@ -94,25 +94,21 @@ std::vector<CliffordGate> PauliDAG::PullOutPis() {
       if (paulis.find(prevIdx) == paulis.end()) continue;
       auto& prevPauli = paulis.at(prevIdx);
       for (auto x_index : x_indices) {
-        auto clifford =
-            CliffordGate::CreateXRot(x_index, phase::RationalPhase(1));
+        auto clifford = CliffordGate::CreateXRot(x_index, phase::PI);
         prevPauli.PushCliffordThrough(clifford);
       }
       for (auto z_index : z_indices) {
-        auto clifford =
-            CliffordGate::CreateZRot(z_index, phase::RationalPhase(1));
+        auto clifford = CliffordGate::CreateZRot(z_index, phase::PI);
         prevPauli.PushCliffordThrough(clifford);
       }
     }
 
     for (auto x_index : x_indices) {
-      auto clifford =
-          CliffordGate::CreateXRot(x_index, phase::RationalPhase(1));
+      auto clifford = CliffordGate::CreateXRot(x_index, phase::PI);
       cliffordGates.push_back(clifford);
     }
     for (auto z_index : z_indices) {
-      auto clifford =
-          CliffordGate::CreateZRot(z_index, phase::RationalPhase(1));
+      auto clifford = CliffordGate::CreateZRot(z_index, phase::PI);
       cliffordGates.push_back(clifford);
     }
     RemovePauli(idx);
@@ -401,7 +397,7 @@ std::vector<SimpleClifford> PauliDAG::SynthesiseCliffords(
   for (int i{}; i < numQubits; i++) {
     SingleQubitUnitary unitary(i);
     if (qubitPis[i]) {
-      unitary.AddXPhase(phase::RationalPhase(1));
+      unitary.AddXPhase(phase::PI);
     }
     result.push_back(unitary);
     unitaries.push_back(i);

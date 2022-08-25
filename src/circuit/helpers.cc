@@ -90,10 +90,10 @@ bool isNegPi2(double num) {
 }
 
 std::optional<phase::RationalPhase> CliffordPhaseFromDouble(double phase) {
-  if (isPi(phase)) return phase::RationalPhase(1);
-  if (isZero(phase)) return phase::RationalPhase(0);
-  if (isPi2(phase)) return phase::RationalPhase({1, 2});
-  if (isNegPi2(phase)) return phase::RationalPhase({-1, 2});
+  if (isPi(phase)) return phase::PI;
+  if (isZero(phase)) return phase::ZERO;
+  if (isPi2(phase)) return phase::PI_BY_2;
+  if (isNegPi2(phase)) return phase::MINUS_PI_BY_2;
   return std::nullopt;
 }
 

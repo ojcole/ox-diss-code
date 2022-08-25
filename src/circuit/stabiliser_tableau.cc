@@ -132,7 +132,7 @@ void StabiliserTableau::ApplyZRot(const Qubit &qubit,
 }
 
 void StabiliserTableau::ApplyPhase(int qubit) {
-  ApplyZRot(qubit, phase::RationalPhase({1, 2}));
+  ApplyZRot(qubit, phase::PI_BY_2);
 }
 
 void StabiliserTableau::ApplyPhase(const Qubit &qubit) {
@@ -526,8 +526,7 @@ void StabiliserTableau::Synthesise(std::vector<SimpleGate> &gates) {
     if (it->type == HAD) {
       gates.push_back(CliffordGate::CreateHAD(qubit));
     } else if (it->type == PHASE) {
-      gates.push_back(
-          CliffordGate::CreateZRot(qubit, phase::RationalPhase({-1, 2})));
+      gates.push_back(CliffordGate::CreateZRot(qubit, phase::MINUS_PI_BY_2));
     } else {
       auto qubit2 = it->qubit2;
       gates.push_back(CliffordGate::CreateCNOT(qubit, qubit2));
